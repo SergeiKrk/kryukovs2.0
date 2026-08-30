@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ServiceIcon from "../../components/ServiceIcon.astro";
+import { ArrowRight, CheckCircle } from "@phosphor-icons/react";
+import { services } from "../../data/services";
+---
+
+<BaseLayout
+  title="Услуги веб-разработки — Сергей Крюков"
+  description="Сайты на Astro и React, веб-приложения, калькуляторы, Telegram Mini Apps, доработки и технический SEO-аудит."
+  canonical="/services/"
+>
+  <section class="page-hero">
+    <div class="container page-hero-grid">
+      <div>
+        <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span aria-hidden="true">/</span><span>Услуги</span></nav>
+        <p class="eyebrow">Разработка + продукт + SEO</p>
+        <h1>Закрываю задачу целиком — от идеи до работающего результата</h1>
+        <p class="lead">Выберите услугу по своей задаче. Если не уверены, начнём с короткого разговора и разложим проект на понятные этапы.</p>
+        <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer">Обсудить задачу <ArrowRight aria-hidden="true" /></a>
+      </div>
+      <aside class="hero-aside" aria-label="Общие условия работы">
+        <dl>
+          <div><dt>Формат</dt><dd>Удалённо, с письменной фиксацией решений</dd></div>
+          <div><dt>Подход</dt><dd>Короткие итерации и промежуточные показы</dd></div>
+          <div><dt>После запуска</dt><dd>14 дней поддержки</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="services-title">
+    <div class="container">
+      <div class="section-heading">
+        <div><p class="eyebrow">Направления</p><h2 id="services-title">Что могу сделать</h2></div>
+        <p>Фиксированные пакеты не навязываю: состав работ зависит от бизнес-задачи, текущего состояния проекта и требуемого результата.</p>
+      </div>
+      <div class="service-grid">
+        {services.map((service) => (
+          <a class="service-card" href={`/services/${service.slug}/`}>
+            <div>
+              <ServiceIcon name={service.icon} />
+              <h2>{service.shortTitle}</h2>
+              <p>{service.promise}</p>
+            </div>
+            <span class="card-link">Подробнее <ArrowRight aria-hidden="true" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" aria-labelledby="principles-title">
+    <div class="container detail-grid">
+      <div class="detail-copy">
+        <p class="eyebrow">Общий стандарт</p>
+        <h2 id="principles-title">В каждом проекте</h2>
+        <ul class="check-list">
+          {[
+            "Сначала понимаю задачу и ограничения, потом предлагаю технологию",
+            "Показываю промежуточный результат и фиксирую договорённости",
+            "Проверяю мобильную версию, скорость и доступность",
+            "Передаю рабочий проект, инструкцию и понятный список изменений",
+          ].map((item) => <li><CheckCircle aria-hidden="true" weight="fill" />{item}</li>)}
+        </ul>
+      </div>
+      <div class="service-proof">
+        <CheckCircle aria-hidden="true" weight="duotone" />
+        <h3>Не знаете, какая услуга нужна?</h3>
+        <p>Опишите задачу своими словами. Я предложу вариант решения и скажу, с чего разумно начать.</p>
+        <a href="/contacts/">Заполнить короткий бриф <ArrowRight aria-hidden="true" /></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

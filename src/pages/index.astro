@@ -1,0 +1,237 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CaseSlider from "../components/CaseSlider";
+import {
+  ArrowRight,
+  Article,
+  Browser,
+  Browsers,
+  CalendarBlank,
+  ChartLineUp,
+  Code,
+  Eye,
+  Headset,
+  MagnifyingGlass,
+  PaperPlaneTilt,
+  PencilSimple,
+  RocketLaunch,
+  ShieldCheck,
+  SquaresFour,
+  User,
+} from "@phosphor-icons/react";
+
+const title = "Разработка сайтов и веб-сервисов — Сергей Крюков";
+const description = "Проектирую и разрабатываю сайты, React-приложения, калькуляторы и Telegram Mini Apps. Подключаю SEO и аналитику — от задачи до запуска.";
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="hero hero-hybrid" aria-label="Hero с интерактивной аналитикой" data-hero-hybrid>
+    <div class="container hero-hybrid__layout">
+      <div class="hero-copy">
+        <h1 class="eyebrow hero-service-title">Разработка сайтов и веб-сервисов</h1>
+        <p class="hero-promise">Создаю <span class="accent-primary hero-gradient-teal">удобные</span> сайты, которые превращают посетителей в <span class="accent-violet hero-gradient-violet">покупателей</span></p>
+        <p class="lead">Делаю быстрые и понятные сайты и веб-сервисы на React и Astro. Подключаю SEO, аналитику и помогаю привлекать трафик. После запуска — 14 дней поддержки.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer">
+            <PaperPlaneTilt aria-hidden="true" weight="duotone" /> Обсудить проект
+          </a>
+          <a class="button button-link" href="#cases">Смотреть кейсы <ArrowRight aria-hidden="true" /></a>
+        </div>
+        <div class="hero-metric" aria-label="До 98,6 тысяч посетителей в месяц">
+          <strong>до 98,6 <span>тыс.</span></strong>
+          <small>посетителей в месяц</small>
+        </div>
+      </div>
+
+      <figure class="hero-hybrid__scene" data-hero-scene>
+        <div class="hero-hybrid__tilt">
+          <div class="hero-workbench__screen hero-hybrid__screen" data-hero-screen>
+            <div class="hero-hybrid__parallax-layer">
+              <img src="/assets/analytics.jpg" alt="Рост трафика проекта в аналитике" width="1785" height="1110" />
+              <figcaption>Аналитика проекта · поисковый трафик растёт</figcaption>
+            </div>
+          </div>
+        </div>
+        <img class="hero-workbench__portrait hero-hybrid__portrait" src="/assets/sergey-front.webp" alt="Сергей Крюков представляет результат проекта" width="832" height="900" />
+      </figure>
+    </div>
+  </section>
+
+  <script>
+    const scene = document.querySelector<HTMLElement>("[data-hero-scene]");
+    const analyticsScreen = document.querySelector<HTMLElement>("[data-hero-screen]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (scene && analyticsScreen && !reducedMotion.matches) {
+      let frame = 0;
+      const updateParallax = () => {
+        frame = 0;
+        const bounds = scene.getBoundingClientRect();
+        const distanceFromCenter = (window.innerHeight / 2) - (bounds.top + bounds.height / 2);
+        const verticalOffset = Math.max(-28, Math.min(44, distanceFromCenter * 0.075));
+        const horizontalOffset = Math.max(-48, Math.min(112, distanceFromCenter * 0.21));
+        analyticsScreen.style.setProperty("--parallax-x", `${horizontalOffset}px`);
+        analyticsScreen.style.setProperty("--parallax-y", `${verticalOffset}px`);
+      };
+      const queueParallax = () => {
+        if (!frame) frame = window.requestAnimationFrame(updateParallax);
+      };
+      const updateTilt = (event: PointerEvent) => {
+        if (event.pointerType !== "mouse") return;
+        const bounds = scene.getBoundingClientRect();
+        const pointerX = (event.clientX - bounds.left) / bounds.width;
+        const pointerY = (event.clientY - bounds.top) / bounds.height;
+        scene.style.setProperty("--tilt-x", `${(0.5 - pointerY) * 7}deg`);
+        scene.style.setProperty("--tilt-y", `${(pointerX - 0.5) * 9}deg`);
+        scene.style.setProperty("--glow-x", `${pointerX * 100}%`);
+        scene.style.setProperty("--glow-y", `${pointerY * 100}%`);
+        scene.dataset.tilting = "true";
+      };
+      const resetTilt = () => {
+        scene.style.setProperty("--tilt-x", "0deg");
+        scene.style.setProperty("--tilt-y", "0deg");
+        scene.style.setProperty("--glow-x", "50%");
+        scene.style.setProperty("--glow-y", "42%");
+        delete scene.dataset.tilting;
+      };
+
+      updateParallax();
+      window.addEventListener("scroll", queueParallax, { passive: true });
+      window.addEventListener("resize", queueParallax, { passive: true });
+      scene.addEventListener("pointermove", updateTilt);
+      scene.addEventListener("pointerleave", resetTilt);
+      scene.addEventListener("pointercancel", resetTilt);
+    }
+  </script>
+
+  <section class="journey" aria-labelledby="journey-title">
+    <div class="container container-narrow">
+      <div class="journey-board">
+        <div class="journey-heading">
+          <div>
+            <p class="eyebrow">Один специалист — весь путь</p>
+            <h2 id="journey-title">Как задача превращается в работающий продукт</h2>
+          </div>
+          <div class="availability">
+            <span class="availability-indicator relative inline-flex" aria-hidden="true">
+              <span class="availability-ping-wave absolute inline-flex h-full w-full animate-ping rounded-full bg-green-700 opacity-75"></span>
+              <span class="availability-ping-core relative inline-flex rounded-full bg-green-700"></span>
+            </span>
+            Свободен для проекта в сентябре 2026
+          </div>
+        </div>
+        <div class="journey-steps">
+          <article class="journey-step">
+            <div class="journey-icon"><Article aria-hidden="true" weight="duotone" /></div>
+            <div><h3>Задача</h3><p>Упорядочиваю цель, рисую карту решения и расставляю приоритеты.</p></div>
+          </article>
+          <span class="journey-curve journey-curve-green" aria-hidden="true"></span>
+          <article class="journey-step journey-step-violet">
+            <div class="journey-icon"><Browsers aria-hidden="true" weight="duotone" /></div>
+            <div><h3>Прототип</h3><p>Показываю структуру и сценарии, согласуем интерфейс и логику.</p></div>
+          </article>
+          <span class="journey-curve journey-curve-violet" aria-hidden="true"></span>
+          <article class="journey-step journey-step-violet">
+            <div class="journey-icon"><Code aria-hidden="true" weight="duotone" /></div>
+            <div><h3>Разработка</h3><p>Пишу чистый код, тестирую и подключаю необходимые сервисы.</p></div>
+          </article>
+          <span class="journey-curve journey-curve-green" aria-hidden="true"></span>
+          <article class="journey-step">
+            <div class="journey-icon"><ChartLineUp aria-hidden="true" weight="duotone" /></div>
+            <div><h3>Трафик</h3><p>Подключаю аналитику, запускаю SEO и улучшаю метрики.</p></div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cases" class="section section-soft" aria-labelledby="cases-title">
+    <div class="container container-narrow">
+      <div class="section-heading">
+        <div><p class="eyebrow">Кейсы</p><h2 id="cases-title">Работающие сайты, а не обещания</h2></div>
+      </div>
+      <CaseSlider client:load />
+    </div>
+  </section>
+
+  <section id="process" class="section section-tight" aria-labelledby="process-title">
+    <div class="container container-narrow">
+      <div class="section-heading">
+        <div><p class="eyebrow">Как я работаю</p><h2 id="process-title">Короткими понятными циклами</h2></div>
+        <p>Вы видите промежуточный результат и понимаете, что происходит с задачей — без сюрприза в самом конце.</p>
+      </div>
+      <div class="work-grid">
+        <article class="work-item" data-step="1"><MagnifyingGlass aria-hidden="true" weight="duotone" /><h3>Разбираюсь в задаче</h3><p>Задаю вопросы, изучаю нишу и предлагаю лучшее решение.</p></article>
+        <article class="work-item" data-step="2"><PencilSimple aria-hidden="true" weight="duotone" /><h3>Проектирую</h3><p>Согласовываем прототип, структуру и UI/UX-подход.</p></article>
+        <article class="work-item" data-step="3"><Eye aria-hidden="true" weight="duotone" /><h3>Показываю результат</h3><p>Делаю итерации, учитываю обратную связь и фиксирую договорённости.</p></article>
+        <article class="work-item" data-step="4"><RocketLaunch aria-hidden="true" weight="duotone" /><h3>Запускаю и поддерживаю</h3><p>Публикую, настраиваю аналитику и поддерживаю 14 дней.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" aria-labelledby="start-title">
+    <div class="container">
+      <div class="start-panel">
+        <p class="eyebrow">С чего начнём</p>
+        <h2 id="start-title">Выберите ближайшую задачу</h2>
+        <div class="start-grid">
+          <a class="start-card" href="/services/web-development/"><Browser className="start-icon" aria-hidden="true" weight="duotone" /><strong>Новый сайт</strong><span>Маркетинговый сайт, лендинг или корпоративный проект.</span><ArrowRight className="start-arrow" aria-hidden="true" /></a>
+          <a class="start-card" href="/services/react-apps/"><SquaresFour className="start-icon" aria-hidden="true" weight="duotone" /><strong>Веб-приложение</strong><span>Сервис, личный кабинет, калькулятор или сложный инструмент.</span><ArrowRight className="start-arrow" aria-hidden="true" /></a>
+          <a class="start-card" href="/services/site-support/"><ChartLineUp className="start-icon" aria-hidden="true" weight="duotone" /><strong>Доработка и SEO</strong><span>Улучшение существующего сайта, скорость, трафик и конверсия.</span><ArrowRight className="start-arrow" aria-hidden="true" /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reliable" class="section section-tight" aria-labelledby="reliable-title">
+    <div class="container container-narrow">
+      <div class="reliability">
+        <p class="eyebrow">Доказательства</p>
+        <h2 id="reliable-title">Почему со мной надёжно</h2>
+        <div class="reliable-grid">
+          <article class="reliable-item"><User aria-hidden="true" weight="duotone" /><div><h3>10+ лет production-разработки</h3><p>React, TypeScript, Astro, продуктовый подход и современные практики.</p></div></article>
+          <article class="reliable-item"><CalendarBlank aria-hidden="true" weight="duotone" /><div><h3>5 лет в финтехе</h3><p>Командная разработка, Contract First, код-ревью и дизайн-система.</p></div></article>
+          <article class="reliable-item"><ShieldCheck aria-hidden="true" weight="duotone" /><div><h3>14 дней поддержки</h3><p>Помогаю после запуска и не оставляю вас один на один с результатом.</p></div></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="cta-title">
+    <div class="container cta-panel">
+      <div><h2 id="cta-title">Покажите задачу — предложу вариант решения</h2><p>Обсудим цели, сроки и подход. Отвечаю в течение дня.</p></div>
+      <div class="cta-actions">
+        <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer"><PaperPlaneTilt aria-hidden="true" weight="duotone" />Написать в Telegram</a>
+        <a class="button button-secondary button-max" href="https://max.ru/u/f9LHodD0cOJnvKBT3lzI_frHwvBIZXJVtfvP_VynzhsCBdFg_ZGlsLzi1Gw" target="_blank" rel="noreferrer"><img src="/assets/max-logo-colored.svg" alt="" width="80" height="32" />Написать в MAX</a>
+        <a class="button button-secondary" href="/contacts/"><Headset aria-hidden="true" weight="duotone" />Отправить бриф</a>
+      </div>
+      <img class="cta-photo" src="/assets/sergey-look.webp" alt="Сергей Крюков" width="832" height="900" />
+    </div>
+  </section>
+
+  <script>
+  const prepareJourneyMotion = () => {
+    const board = document.querySelector<HTMLElement>(".journey-board");
+    if (!board || board.dataset.motionReady === "true") return;
+
+    board.dataset.motionReady = "true";
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+      board.classList.add("is-visible");
+      return;
+    }
+
+    board.classList.add("journey-motion");
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      board.classList.add("is-visible");
+      window.setTimeout(() => board.classList.add("journey-settled"), 1550);
+      observer.disconnect();
+    }, { threshold: 0.2 });
+
+    observer.observe(board);
+  };
+
+  prepareJourneyMotion();
+  document.addEventListener("astro:page-load", prepareJourneyMotion);
+  </script>
+</BaseLayout>

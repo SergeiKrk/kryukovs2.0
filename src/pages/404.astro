@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { ArrowLeft } from "@phosphor-icons/react";
+---
+
+<BaseLayout title="Страница не найдена — Сергей Крюков" description="Запрошенная страница не найдена." noindex={true}>
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Ошибка 404</p>
+      <h1>Такой страницы нет</h1>
+      <p class="lead">Возможно, ссылка устарела. Вернитесь на главную или посмотрите список услуг.</p>
+      <div class="hero-actions"><a class="button button-primary" href="/"><ArrowLeft aria-hidden="true" />На главную</a><a class="button button-secondary" href="/services/">Все услуги</a></div>
+    </div>
+  </section>
+</BaseLayout>

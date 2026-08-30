@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { ArrowUpRight, Envelope, PaperPlaneTilt, Phone } from "@phosphor-icons/react";
+---
+
+<BaseLayout title="Контакты и бриф — Сергей Крюков" description="Расскажите о задаче Сергею Крюкову: Telegram, почта или телефон. Короткий список вопросов для первого обсуждения." canonical="/contacts/">
+  <section class="page-hero">
+    <div class="container page-hero-grid">
+      <div>
+        <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="/">Главная</a><span aria-hidden="true">/</span><span>Контакты</span></nav>
+        <p class="eyebrow">Первый шаг</p>
+        <h1>Расскажите о задаче своими словами</h1>
+        <p class="lead">Не нужен готовый документ или техническое задание. Достаточно описать, что должно измениться для бизнеса и что уже есть сейчас.</p>
+      </div>
+      <aside class="hero-aside"><dl><div><dt>Ответ</dt><dd>Обычно в течение рабочего дня</dd></div><div><dt>Формат</dt><dd>Удалённо, Telegram или MAX</dd></div><div><dt>Первый разговор</dt><dd>Коротко и по делу, без обязательств</dd></div></dl></aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container contact-grid">
+      <div class="contact-card">
+        <p class="eyebrow">Связаться</p><h2>Выберите удобный канал</h2>
+        <ul class="contact-list">
+          <li><a href="https://t.me/sergeikrk" target="_blank" rel="noreferrer"><span><PaperPlaneTilt aria-hidden="true" weight="duotone" /> Telegram: @sergeikrk</span><ArrowUpRight aria-hidden="true" /></a></li>
+          <li><a href="https://max.ru/u/f9LHodD0cOJnvKBT3lzI_frHwvBIZXJVtfvP_VynzhsCBdFg_ZGlsLzi1Gw" target="_blank" rel="noreferrer"><span><img class="contact-max-logo" src="/assets/max-logo-colored.svg" alt="MAX" width="80" height="32" /></span><ArrowUpRight aria-hidden="true" /></a></li>
+          <li><a href="mailto:ksv.progect@gmail.com"><span><Envelope aria-hidden="true" weight="duotone" /> ksv.progect@gmail.com</span><ArrowUpRight aria-hidden="true" /></a></li>
+          <li><a href="tel:+79176103476"><span><Phone aria-hidden="true" weight="duotone" /> +7 917 610-34-76</span><ArrowUpRight aria-hidden="true" /></a></li>
+        </ul>
+      </div>
+      <div class="contact-card">
+        <p class="eyebrow">Короткий бриф</p><h2>Что написать</h2>
+        <ol class="check-list">
+          <li><span>1.</span><span>Что нужно сделать или исправить?</span></li>
+          <li><span>2.</span><span>Для кого сайт или сервис?</span></li>
+          <li><span>3.</span><span>Что уже есть: сайт, макет, тексты, API?</span></li>
+          <li><span>4.</span><span>Есть ли желаемый срок и ориентир бюджета?</span></li>
+          <li><span>5.</span><span>Каким должен быть успешный результат?</span></li>
+        </ol>
+        <a class="button button-primary" href="mailto:ksv.progect@gmail.com?subject=Задача%20по%20сайту&body=Что%20нужно%20сделать:%0A%0AДля%20кого:%0A%0AЧто%20уже%20есть:%0A%0AСрок:%0A%0AОжидаемый%20результат:">Открыть письмо <Envelope aria-hidden="true" /></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

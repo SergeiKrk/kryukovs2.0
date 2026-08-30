@@ -1,0 +1,32 @@
+{
+  "name": "kryukovs-services",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@astrojs/react": "latest",
+    "@astrojs/sitemap": "latest",
+    "@fontsource-variable/manrope": "latest",
+    "@phosphor-icons/react": "latest",
+    "astro": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@astrojs/check": "latest",
+    "@storybook/addon-a11y": "^10.5.10",
+    "@storybook/react-vite": "^10.5.10",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "storybook": "^10.5.10",
+    "typescript": "^6.0.0"
+  },
+  "packageManager": "pnpm@10.15.1"
+}

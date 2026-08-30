@@ -1,0 +1,28 @@
+---
+import {
+  Browser,
+  Calculator,
+  ChartLineUp,
+  Lifebuoy,
+  PaperPlaneTilt,
+  SquaresFour,
+} from "@phosphor-icons/react";
+
+interface Props {
+  name: "browser" | "app" | "calculator" | "telegram" | "support" | "seo";
+  size?: number;
+}
+
+const { name, size = 30 } = Astro.props;
+const icons = {
+  browser: Browser,
+  app: SquaresFour,
+  calculator: Calculator,
+  telegram: PaperPlaneTilt,
+  support: Lifebuoy,
+  seo: ChartLineUp,
+};
+const Icon = icons[name];
+---
+
+<Icon aria-hidden="true" weight="duotone" size={size} />

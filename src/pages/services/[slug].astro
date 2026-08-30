@@ -1,0 +1,123 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ServiceIcon from "../../components/ServiceIcon.astro";
+import { ArrowRight, ArrowUpRight, CheckCircle, PaperPlaneTilt } from "@phosphor-icons/react";
+import { serviceBySlug, services, type Service } from "../../data/services";
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+interface Props { service: Service }
+const { service } = Astro.props;
+const related = service.related.map((slug) => serviceBySlug[slug]).filter(Boolean);
+const canonical = `/services/${service.slug}/`;
+const title = `${service.title} — Сергей Крюков`;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: service.title,
+  description: service.promise,
+  provider: {
+    "@type": "Person",
+    name: "Сергей Крюков",
+    url: "https://kryukovs.ru/",
+  },
+  areaServed: "RU",
+  url: new URL(canonical, Astro.site ?? Astro.url.origin).toString(),
+};
+---
+
+<BaseLayout title={title} description={service.promise} canonical={canonical}>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+  <section class="page-hero">
+    <div class="container page-hero-grid">
+      <div>
+        <nav class="breadcrumbs" aria-label="Хлебные крошки">
+          <a href="/">Главная</a><span aria-hidden="true">/</span><a href="/services/">Услуги</a><span aria-hidden="true">/</span><span>{service.shortTitle}</span>
+        </nav>
+        <p class="eyebrow">{service.eyebrow}</p>
+        <h1>{service.title}</h1>
+        <p class="lead">{service.promise}</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer"><PaperPlaneTilt aria-hidden="true" weight="duotone" />Обсудить задачу</a>
+          <a class="button button-secondary" href="#details">Что входит <ArrowRight aria-hidden="true" /></a>
+        </div>
+      </div>
+      <aside class="hero-aside" aria-label="Результат и сроки">
+        <dl>
+          <div><dt>Результат</dt><dd>{service.result}</dd></div>
+          <div><dt>Срок</dt><dd>{service.timeline}</dd></div>
+          <div><dt>Оценка</dt><dd>После короткого брифа и декомпозиции</dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <section id="details" class="section" aria-labelledby="outcomes-title">
+    <div class="container detail-grid">
+      <div class="detail-copy">
+        <p class="eyebrow">Результат для бизнеса</p>
+        <h2 id="outcomes-title">Что изменится после работы</h2>
+        <p>{service.description}</p>
+        <ul class="check-list">
+          {service.outcomes.map((item) => <li><CheckCircle aria-hidden="true" weight="fill" />{item}</li>)}
+        </ul>
+      </div>
+      <aside class="service-proof">
+        <ServiceIcon name={service.icon} size={34} />
+        <h3>{service.proof.title}</h3>
+        <p>{service.proof.text}</p>
+        {service.proof.href && <a href={service.proof.href} target="_blank" rel="noreferrer">Открыть проект <ArrowUpRight aria-hidden="true" /></a>}
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-soft" aria-labelledby="included-title">
+    <div class="container">
+      <div class="section-heading">
+        <div><p class="eyebrow">Состав работ</p><h2 id="included-title">Что входит</h2></div>
+        <p>Финальный состав фиксируем после брифа. Ниже — базовая рамка, которая помогает получить цельный результат.</p>
+      </div>
+      <div class="service-grid">
+        {service.includes.map((item) => <article class="service-card"><CheckCircle aria-hidden="true" weight="duotone" /><h2>{item}</h2></article>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="stages-title">
+    <div class="container">
+      <div class="section-heading"><div><p class="eyebrow">Процесс</p><h2 id="stages-title">Четыре понятных этапа</h2></div><p>Каждый этап заканчивается конкретным результатом, который можно посмотреть и обсудить.</p></div>
+      <div class="process-list">
+        {service.stages.map((stage) => <article class="process-card"><h3>{stage.title}</h3><p>{stage.text}</p></article>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" aria-labelledby="related-title">
+    <div class="container">
+      <div class="section-heading"><div><p class="eyebrow">Дополнить решение</p><h2 id="related-title">Связанные услуги</h2></div><p>Можно собрать проект целиком или начать с одного понятного этапа.</p></div>
+      <div class="related-services">
+        {related.map((item) => (
+          <a class="service-card" href={`/services/${item.slug}/`}>
+            <ServiceIcon name={item.icon} />
+            <h2>{item.shortTitle}</h2>
+            <p>{item.promise}</p>
+            <span class="card-link">Подробнее <ArrowRight aria-hidden="true" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container cta-panel">
+      <div><h2>Покажите задачу — предложу следующий шаг</h2><p>Без продажи лишних работ: разберём цель, ограничения и разумный первый этап.</p></div>
+      <div class="cta-actions">
+        <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer"><PaperPlaneTilt aria-hidden="true" weight="duotone" />Написать в Telegram</a>
+        <a class="button button-secondary" href="/contacts/">Отправить бриф</a>
+      </div>
+      <img class="cta-photo" src="/assets/sergey-front.webp" alt="Сергей Крюков" width="832" height="900" />
+    </div>
+  </section>
+</BaseLayout>
