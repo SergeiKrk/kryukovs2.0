@@ -1,5 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { ArrowRight, ChartLineUp, PaperPlaneTilt } from "@phosphor-icons/react";
+import {
+  ArrowRight,
+  Article,
+  Bell,
+  Browsers,
+  ChartLineUp,
+  CheckCircle,
+  Code,
+  CursorClick,
+  DeviceMobile,
+  Gauge,
+  MagnifyingGlass,
+  Megaphone,
+  PaperPlaneTilt,
+  RocketLaunch,
+  StackSimple,
+} from "@phosphor-icons/react";
 import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
 import "./hero-alternatives.css";
 
@@ -165,6 +181,10 @@ function TiltWorkbenchScene() {
         </div>
       </div>
       <img className="hero-workbench__portrait hero-hybrid__portrait" src="/assets/sergey-front.webp" alt="Сергей Крюков представляет результат проекта" width="832" height="900" />
+      <div className="hero-metric hero-hybrid__identity" aria-label="Сергей Крюков — Full-stack разработчик, маркетинг и SEO">
+        <strong>Сергей Крюков</strong>
+        <small>Full-stack разработчик · маркетинг и SEO</small>
+      </div>
     </figure>
   );
 }
@@ -254,6 +274,412 @@ function WorkbenchScene() {
   );
 }
 
+const workshopStageLabels = ["Задача", "Структура", "Интерфейс", "Разработка", "Запуск"];
+
+const clampWorkshopProgress = (value: number) => Math.max(0, Math.min(1, value));
+
+const easeWorkshopProgress = (value: number) => {
+  const progress = clampWorkshopProgress(value);
+  return progress * progress * (3 - (2 * progress));
+};
+
+const addWorkshopStops = (rawProgress: number) => {
+  const progress = clampWorkshopProgress(rawProgress);
+  if (progress === 1) return 1;
+
+  const segmentCount = workshopStageLabels.length - 1;
+  const scaled = progress * segmentCount;
+  const segment = Math.min(segmentCount - 1, Math.floor(scaled));
+  const localProgress = scaled - segment;
+  const plateau = 0.32;
+  const movingProgress = clampWorkshopProgress((localProgress - plateau) / (1 - (plateau * 2)));
+
+  return (segment + easeWorkshopProgress(movingProgress)) / segmentCount;
+};
+
+function ModularWorkshopScene() {
+  return (
+    <figure className="workshop-scene" aria-labelledby="workshop-scene-caption">
+      <div className="workshop-scene__board" aria-hidden="true">
+        <div className="workshop-stage-rail">
+          {workshopStageLabels.map((label, index) => (
+            <span key={label} data-stage-index={index}>
+              <i>{index + 1}</i>
+              {label}
+            </span>
+          ))}
+        </div>
+
+        <div className="workshop-module workshop-module--brief">
+          <Article weight="duotone" />
+          <div>
+            <strong>Бриф проекта</strong>
+            <span>Цель и задачи</span>
+            <span>Целевая аудитория</span>
+            <span>Ключевое действие</span>
+          </div>
+        </div>
+
+        <div className="workshop-module workshop-module--prototype">
+          <StackSimple weight="duotone" />
+          <div>
+            <strong>Прототип</strong>
+            <span>Логика экранов</span>
+            <span>Путь пользователя</span>
+            <span>Ключевые состояния</span>
+          </div>
+        </div>
+
+        <div className="workshop-module workshop-module--navigation">
+          <Browsers weight="duotone" />
+          <strong>Навигация сайта</strong>
+          <span>Главная</span>
+          <span>Услуги</span>
+          <span>Контакты</span>
+        </div>
+
+        <div className="workshop-module workshop-module--form">
+          <RocketLaunch weight="duotone" />
+          <strong>Форма заявки</strong>
+          <span className="workshop-field">Имя</span>
+          <span className="workshop-field">Телефон</span>
+          <span className="workshop-submit">Отправить</span>
+        </div>
+
+        <div className="workshop-module workshop-module--analytics">
+          <ChartLineUp weight="duotone" />
+          <div>
+            <strong>Аналитика</strong>
+            <span>События подключены</span>
+          </div>
+        </div>
+
+        <div className="workshop-browser">
+          <div className="workshop-browser__chrome">
+            <span></span><span></span><span></span>
+            <small>demo-service.ru</small>
+          </div>
+          <div className="workshop-browser__wireframe">
+            <span className="workshop-wire workshop-wire--headline"></span>
+            <span className="workshop-wire workshop-wire--copy"></span>
+            <span className="workshop-wire workshop-wire--button"></span>
+            <span className="workshop-wire workshop-wire--media"></span>
+          </div>
+          <div className="workshop-browser__surface">
+            <header>
+              <strong>Демо-проект</strong>
+              <nav><span>Главная</span><span>Решения</span><span>Контакты</span></nav>
+              <span className="workshop-browser__action">Связаться</span>
+            </header>
+            <main>
+              <div>
+                <span className="workshop-browser__eyebrow">Сервис для бизнеса</span>
+                <h2>Решения для роста вашего бизнеса</h2>
+                <p>Понятный сайт, личный кабинет и автоматизация обращений.</p>
+                <span className="workshop-browser__action">Оставить заявку</span>
+              </div>
+              <aside>
+                <Gauge weight="duotone" />
+                <strong>Всё измеримо</strong>
+                <span>Цели и события настроены</span>
+              </aside>
+            </main>
+            <footer>
+              <span><CheckCircle weight="fill" /> Быстрый запуск</span>
+              <span><CheckCircle weight="fill" /> Адаптивный интерфейс</span>
+              <span><CheckCircle weight="fill" /> Поддержка после релиза</span>
+            </footer>
+          </div>
+        </div>
+
+        <div className="workshop-code">
+          <div><Code weight="duotone" /> React / TypeScript / Astro</div>
+          <code><span>&lt;section</span> className="service"&gt;</code>
+          <code>&nbsp;&nbsp;&lt;LeadForm analytics="connected" /&gt;</code>
+          <code><span>&lt;/section&gt;</span></code>
+        </div>
+
+        <div className="workshop-phone">
+          <div className="workshop-phone__speaker"></div>
+          <div className="workshop-phone__header"><strong>Демо</strong><span>•••</span></div>
+          <DeviceMobile weight="duotone" />
+          <strong>Mini App</strong>
+          <span>Заявка в два шага</span>
+          <span className="workshop-phone__action">Продолжить</span>
+        </div>
+
+        <div className="workshop-integrations">
+          <span><MagnifyingGlass weight="duotone" /><strong>SEO</strong><small>Готово</small></span>
+          <span><ChartLineUp weight="duotone" /><strong>Аналитика</strong><small>Подключена</small></span>
+          <span><Bell weight="duotone" /><strong>Уведомления</strong><small>Работают</small></span>
+          <span className="workshop-integration--ads"><Megaphone weight="duotone" /><strong>Реклама</strong><small>Маркетинг</small></span>
+        </div>
+
+        <CursorClick className="workshop-cursor" weight="fill" />
+        <div className="workshop-launch-status">
+          <CheckCircle weight="fill" />
+          <div><strong>Проект запущен</strong><span>Все системы работают</span></div>
+        </div>
+      </div>
+
+      <img
+        className="workshop-scene__portrait"
+        src="/assets/sergey-front.webp"
+        alt="Сергей Крюков, разработчик проекта"
+        width="832"
+        height="900"
+      />
+      <div className="hero-metric workshop-portrait__metric" aria-label="Сергей Крюков — Full-stack разработчик, маркетинг и SEO">
+        <strong>Сергей Крюков</strong>
+        <small>Full-stack разработчик · маркетинг и SEO</small>
+      </div>
+      <figcaption id="workshop-scene-caption" className="workshop-visually-hidden">
+        Демонстрационная сцена: из брифа и прототипа собираются сайт, мобильное приложение и подключения SEO, аналитики, уведомлений и рекламы.
+      </figcaption>
+    </figure>
+  );
+}
+
+function ScrollWorkshopHero() {
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const compactLayout = window.matchMedia("(max-width: 68rem)");
+    let animationFrame = 0;
+
+    const renderProgress = () => {
+      animationFrame = 0;
+      const bounds = hero.getBoundingClientRect();
+      let progress = 1;
+
+      if (!reducedMotion.matches) {
+        if (compactLayout.matches) {
+          const sceneBounds = hero.querySelector<HTMLElement>(".workshop-scene")?.getBoundingClientRect();
+          const sceneDistance = Math.max(1, window.innerHeight + (sceneBounds?.height ?? 0));
+          progress = easeWorkshopProgress((window.innerHeight - (sceneBounds?.top ?? window.innerHeight)) / sceneDistance);
+        } else {
+          const scrollDistance = Math.max(1, hero.offsetHeight - window.innerHeight);
+          progress = addWorkshopStops((-bounds.top) / scrollDistance);
+        }
+      }
+
+      const normalizedProgress = clampWorkshopProgress(progress);
+      const activeStage = Math.min(workshopStageLabels.length - 1, Math.round(normalizedProgress * (workshopStageLabels.length - 1)));
+      hero.style.setProperty("--workshop-progress", normalizedProgress.toFixed(4));
+      hero.dataset.workshopStage = String(activeStage);
+    };
+
+    const queueProgress = () => {
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(renderProgress);
+    };
+
+    renderProgress();
+    window.addEventListener("scroll", queueProgress, { passive: true });
+    window.addEventListener("resize", queueProgress, { passive: true });
+    reducedMotion.addEventListener("change", queueProgress);
+    compactLayout.addEventListener("change", queueProgress);
+
+    return () => {
+      window.removeEventListener("scroll", queueProgress);
+      window.removeEventListener("resize", queueProgress);
+      reducedMotion.removeEventListener("change", queueProgress);
+      compactLayout.removeEventListener("change", queueProgress);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    };
+  }, []);
+
+  return (
+    <section ref={heroRef} className="hero-workshop" aria-label="Hero — цифровая мастерская" data-workshop-stage="0">
+      <div className="hero-workshop__sticky">
+        <div className="container hero-workshop__layout">
+          <BaselineHeroCopy />
+          <ModularWorkshopScene />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ExplodedProductScene() {
+  return (
+    <figure className="exploded-scene" aria-labelledby="exploded-scene-caption">
+      <div className="exploded-scene__board" aria-hidden="true">
+        <div className="exploded-node exploded-node--analytics">
+          <ChartLineUp weight="duotone" />
+          <div><strong>Аналитика</strong><span>Цели и события</span></div>
+        </div>
+        <div className="exploded-node exploded-node--brief">
+          <Article weight="duotone" />
+          <div><strong>Бриф</strong><span>Задача согласована</span></div>
+        </div>
+        <div className="exploded-node exploded-node--notifications">
+          <Bell weight="duotone" />
+          <div><strong>Уведомления</strong><span>Telegram и MAX</span></div>
+        </div>
+        <div className="exploded-node exploded-node--seo">
+          <MagnifyingGlass weight="duotone" />
+          <div><strong>SEO-настройки</strong><span>Страницы готовы</span></div>
+        </div>
+        <div className="exploded-node exploded-node--structure">
+          <Browsers weight="duotone" />
+          <div><strong>Структура</strong><span>Связи экранов</span></div>
+        </div>
+
+        <span className="exploded-anchor exploded-anchor--brief"></span>
+        <span className="exploded-anchor exploded-anchor--structure"></span>
+        <span className="exploded-anchor exploded-anchor--analytics"></span>
+        <span className="exploded-anchor exploded-anchor--seo"></span>
+        <span className="exploded-anchor exploded-anchor--notifications"></span>
+
+        <div className="exploded-stack">
+          <section className="exploded-layer exploded-layer--browser">
+            <div className="exploded-browser__chrome">
+              <span></span><span></span><span></span>
+              <small>kryukovs.ru</small>
+            </div>
+            <header>
+              <strong>Главная</strong>
+              <nav><span>Услуги</span><span>Кейсы</span><span>Процесс</span></nav>
+              <span className="exploded-layer__action">Обсудить проект</span>
+            </header>
+            <div className="exploded-browser__content">
+              <div>
+                <span className="exploded-layer__eyebrow">Сайт для бизнеса</span>
+                <h2>Разработка сайтов<br />и веб-сервисов</h2>
+                <p>Понятный продукт, аналитика и поддержка после запуска.</p>
+                <span className="exploded-layer__action exploded-layer__action--violet">Оставить заявку</span>
+              </div>
+              <img src="/assets/green-crown-desktop.png" alt="" width="1440" height="900" />
+            </div>
+          </section>
+
+          <section className="exploded-layer exploded-layer--wireframe">
+            <strong>Структура интерфейса</strong>
+            <div className="exploded-wireframe__grid">
+              <span></span><span></span><span></span>
+              <span></span><span></span><span></span>
+            </div>
+          </section>
+
+          <section className="exploded-layer exploded-layer--system">
+            <div className="exploded-system__swatches"><i></i><i></i><i></i><i></i></div>
+            <div className="exploded-system__type"><strong>Manrope</strong><span>Заголовки, текст и интерфейсные подписи</span></div>
+            <div className="exploded-system__preview"><span></span><span></span><span></span></div>
+          </section>
+
+          <section className="exploded-layer exploded-layer--code">
+            <div><Code weight="duotone" /> Компонент Hero</div>
+            <code><span>&lt;Hero</span> analytics="connected" seo="ready" <span>/&gt;</span></code>
+          </section>
+
+          <section className="exploded-layer exploded-layer--miniapp">
+            <div><DeviceMobile weight="duotone" /><strong>Mini App</strong></div>
+            <span>Заявка отправляется в два шага</span>
+            <span className="exploded-miniapp__action">Обсудить проект</span>
+          </section>
+        </div>
+
+        <div className="exploded-selection exploded-selection--primary">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <CursorClick
+          className="exploded-cursor exploded-cursor--primary"
+          data-exploded-cursor="primary"
+          weight="fill"
+        />
+
+        <div className="exploded-selection exploded-selection--secondary">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <CursorClick
+          className="exploded-cursor exploded-cursor--secondary"
+          data-exploded-cursor="secondary"
+          weight="fill"
+        />
+      </div>
+
+      <img
+        className="exploded-scene__portrait"
+        src="/assets/sergey-front.webp"
+        alt="Сергей Крюков, разработчик проекта"
+        width="832"
+        height="900"
+      />
+      <figcaption id="exploded-scene-caption" className="workshop-visually-hidden">
+        Демонстрационная сцена: сайт разложен на структуру, визуальную систему, код, Mini App и подключения аналитики, SEO и уведомлений.
+      </figcaption>
+    </figure>
+  );
+}
+
+function ExplodedLayersHero() {
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const compactLayout = window.matchMedia("(max-width: 54rem)");
+    let animationFrame = 0;
+
+    const renderProgress = () => {
+      animationFrame = 0;
+      const bounds = hero.getBoundingClientRect();
+      const scrollDistance = Math.max(1, hero.offsetHeight - window.innerHeight);
+      const progress = reducedMotion.matches || compactLayout.matches
+        ? 1
+        : addWorkshopStops((-bounds.top) / scrollDistance);
+      const normalizedProgress = clampWorkshopProgress(progress);
+      const activeStage = Math.min(
+        workshopStageLabels.length - 1,
+        Math.round(normalizedProgress * (workshopStageLabels.length - 1)),
+      );
+
+      hero.style.setProperty("--exploded-progress", normalizedProgress.toFixed(4));
+      hero.dataset.explodedStage = String(activeStage);
+    };
+
+    const queueProgress = () => {
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(renderProgress);
+    };
+
+    renderProgress();
+    window.addEventListener("scroll", queueProgress, { passive: true });
+    window.addEventListener("resize", queueProgress, { passive: true });
+    reducedMotion.addEventListener("change", queueProgress);
+    compactLayout.addEventListener("change", queueProgress);
+
+    return () => {
+      window.removeEventListener("scroll", queueProgress);
+      window.removeEventListener("resize", queueProgress);
+      reducedMotion.removeEventListener("change", queueProgress);
+      compactLayout.removeEventListener("change", queueProgress);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    };
+  }, []);
+
+  return (
+    <section
+      ref={heroRef}
+      className="hero hero-exploded"
+      aria-label="Hero — слои цифрового продукта"
+      data-exploded-stage="0"
+    >
+      <div className="hero-exploded__sticky">
+        <div className="container hero-exploded__layout">
+          <BaselineHeroCopy />
+          <ExplodedProductScene />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 const meta = {
   title: "Секции главной/Hero — альтернативы",
   parameters: {
@@ -288,4 +714,14 @@ export const WorkbenchPortrait: Story = {
 export const AnalyticsTiltScene: Story = {
   name: "4 · 3D-аналитика",
   render: () => <AnalyticsTiltHero />,
+};
+
+export const ScrollWorkshopScene: Story = {
+  name: "5 · Scroll-мастерская",
+  render: () => <ScrollWorkshopHero />,
+};
+
+export const ExplodedProductLayers: Story = {
+  name: "6 · Слои продукта",
+  render: () => <ExplodedLayersHero />,
 };

@@ -4,48 +4,152 @@ import CaseSlider from "../components/CaseSlider";
 import {
   ArrowRight,
   Article,
+  Bell,
   Browser,
   Browsers,
   CalendarBlank,
   ChartLineUp,
+  CheckCircle,
   Code,
+  CursorClick,
+  DeviceMobile,
   Eye,
+  Gauge,
   Headset,
   MagnifyingGlass,
+  Megaphone,
   PaperPlaneTilt,
   PencilSimple,
   RocketLaunch,
   ShieldCheck,
+  StackSimple,
   SquaresFour,
   User,
 } from "@phosphor-icons/react";
 
 const title = "Разработка сайтов и веб-сервисов — Сергей Крюков";
 const description = "Проектирую и разрабатываю сайты, React-приложения, калькуляторы и Telegram Mini Apps. Подключаю SEO и аналитику — от задачи до запуска.";
+const workshopStages = ["Задача", "Структура", "Интерфейс", "Разработка", "Запуск"];
 ---
 
 <BaseLayout title={title} description={description}>
-  <section class="hero hero-hybrid" aria-label="Hero с интерактивной аналитикой" data-hero-hybrid>
+  <section class="hero-workshop hero-workshop--primary" aria-label="Hero — цифровая мастерская" data-workshop-hero data-workshop-stage="0">
+    <div class="hero-workshop__sticky">
+      <div class="container hero-workshop__layout">
+        <div class="hero-copy">
+          <h1 class="eyebrow hero-service-title">Разработка сайтов и веб-сервисов</h1>
+          <p class="hero-promise">Создаю <span class="accent-primary hero-gradient-teal">удобные</span> сайты, которые превращают посетителей в <span class="accent-violet hero-gradient-violet">покупателей</span></p>
+          <p class="lead">Делаю быстрые и понятные сайты и веб-сервисы на React и Astro. Подключаю SEO, аналитику и помогаю привлекать трафик. После запуска — 14 дней поддержки.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer"><PaperPlaneTilt aria-hidden="true" weight="duotone" /> Обсудить проект</a>
+            <a class="button button-link" href="#cases">Смотреть кейсы <ArrowRight aria-hidden="true" /></a>
+          </div>
+          <div class="hero-metric" aria-label="До 98,6 тысяч посетителей в месяц"><strong>до 98,6 <span>тыс.</span></strong><small>посетителей в месяц</small></div>
+        </div>
+
+        <figure class="workshop-scene" aria-labelledby="workshop-scene-caption">
+          <div class="workshop-scene__board" aria-hidden="true">
+            <div class="workshop-stage-rail">{workshopStages.map((stage, index) => <span data-stage-index={index}><i>{index + 1}</i>{stage}</span>)}</div>
+            <div class="workshop-module workshop-module--brief"><Article weight="duotone" /><div><strong>Бриф проекта</strong><span>Цель и задачи</span><span>Целевая аудитория</span><span>Ключевое действие</span></div></div>
+            <div class="workshop-module workshop-module--prototype"><StackSimple weight="duotone" /><div><strong>Прототип</strong><span>Логика экранов</span><span>Путь пользователя</span><span>Ключевые состояния</span></div></div>
+            <div class="workshop-module workshop-module--navigation"><Browsers weight="duotone" /><strong>Навигация сайта</strong><span>Главная</span><span>Услуги</span><span>Контакты</span></div>
+            <div class="workshop-module workshop-module--form"><RocketLaunch weight="duotone" /><strong>Форма заявки</strong><span class="workshop-field">Имя</span><span class="workshop-field">Телефон</span><span class="workshop-submit">Отправить</span></div>
+            <div class="workshop-module workshop-module--analytics"><ChartLineUp weight="duotone" /><div><strong>Аналитика</strong><span>События подключены</span></div></div>
+
+            <div class="workshop-browser">
+              <div class="workshop-browser__chrome"><span></span><span></span><span></span><small>demo-service.ru</small></div>
+              <div class="workshop-browser__wireframe"><span class="workshop-wire workshop-wire--headline"></span><span class="workshop-wire workshop-wire--copy"></span><span class="workshop-wire workshop-wire--button"></span><span class="workshop-wire workshop-wire--media"></span></div>
+              <div class="workshop-browser__surface">
+                <header><strong>Демо-проект</strong><nav><span>Главная</span><span>Решения</span><span>Контакты</span></nav><span class="workshop-browser__action">Связаться</span></header>
+                <main><div><span class="workshop-browser__eyebrow">Сервис для бизнеса</span><h2>Решения для роста вашего бизнеса</h2><p>Понятный сайт, личный кабинет и автоматизация обращений.</p><span class="workshop-browser__action">Оставить заявку</span></div><aside><Gauge weight="duotone" /><strong>Всё измеримо</strong><span>Цели и события настроены</span></aside></main>
+                <footer><span><CheckCircle weight="fill" /> Быстрый запуск</span><span><CheckCircle weight="fill" /> Адаптивный интерфейс</span><span><CheckCircle weight="fill" /> Поддержка после релиза</span></footer>
+              </div>
+            </div>
+
+            <div class="workshop-code"><div><Code weight="duotone" /> React / TypeScript / Astro</div><code><span>&lt;section</span> className="service"&gt;</code><code>&nbsp;&nbsp;&lt;LeadForm analytics="connected" /&gt;</code><code><span>&lt;/section&gt;</span></code></div>
+            <div class="workshop-phone"><div class="workshop-phone__speaker"></div><div class="workshop-phone__header"><strong>Демо</strong><span>•••</span></div><DeviceMobile weight="duotone" /><strong>Mini App</strong><span>Заявка в два шага</span><span class="workshop-phone__action">Продолжить</span></div>
+            <div class="workshop-integrations"><span><MagnifyingGlass weight="duotone" /><strong>SEO</strong><small>Готово</small></span><span><ChartLineUp weight="duotone" /><strong>Аналитика</strong><small>Подключена</small></span><span><Bell weight="duotone" /><strong>Уведомления</strong><small>Работают</small></span><span class="workshop-integration--ads"><Megaphone weight="duotone" /><strong>Реклама</strong><small>Маркетинг</small></span></div>
+            <CursorClick className="workshop-cursor" weight="fill" />
+            <div class="workshop-launch-status"><CheckCircle weight="fill" /><div><strong>Проект запущен</strong><span>Все системы работают</span></div></div>
+          </div>
+          <img class="workshop-scene__portrait" src="/assets/sergey-front.webp" alt="Сергей Крюков, разработчик проекта" width="832" height="900" />
+          <div class="hero-metric workshop-portrait__metric" aria-label="Сергей Крюков — Full-stack разработчик, маркетинг и SEO"><strong>Сергей Крюков</strong><small>Full-stack разработчик · маркетинг и SEO</small></div>
+          <figcaption id="workshop-scene-caption" class="workshop-visually-hidden">Демонстрационная сцена: из брифа и прототипа собираются сайт, мобильное приложение и подключения SEO, аналитики, уведомлений и рекламы.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const hero = document.querySelector<HTMLElement>("[data-workshop-hero]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const compactLayout = window.matchMedia("(max-width: 68rem)");
+    const clampProgress = (value: number) => Math.max(0, Math.min(1, value));
+    const easeProgress = (value: number) => {
+      const progress = clampProgress(value);
+      return progress * progress * (3 - (2 * progress));
+    };
+    const addStops = (rawProgress: number) => {
+      const progress = clampProgress(rawProgress);
+      if (progress === 1) return 1;
+      const scaled = progress * 4;
+      const segment = Math.min(3, Math.floor(scaled));
+      const localProgress = scaled - segment;
+      const movingProgress = clampProgress((localProgress - 0.32) / 0.36);
+      return (segment + easeProgress(movingProgress)) / 4;
+    };
+
+    if (hero) {
+      let frame = 0;
+      const renderProgress = () => {
+        frame = 0;
+        const bounds = hero.getBoundingClientRect();
+        let progress = 1;
+        if (!reducedMotion.matches) {
+          const scrollDistance = Math.max(1, hero.offsetHeight - window.innerHeight);
+          if (compactLayout.matches) {
+            const sceneBounds = hero.querySelector<HTMLElement>(".workshop-scene")?.getBoundingClientRect();
+            const sceneDistance = Math.max(1, window.innerHeight + (sceneBounds?.height ?? 0));
+            progress = easeProgress((window.innerHeight - (sceneBounds?.top ?? window.innerHeight)) / sceneDistance);
+          } else {
+            progress = addStops((-bounds.top) / scrollDistance);
+          }
+        }
+        const normalized = clampProgress(progress);
+        hero.style.setProperty("--workshop-progress", normalized.toFixed(4));
+        hero.dataset.workshopStage = String(Math.min(4, Math.round(normalized * 4)));
+      };
+      const queueProgress = () => { if (!frame) frame = window.requestAnimationFrame(renderProgress); };
+      renderProgress();
+      window.addEventListener("scroll", queueProgress, { passive: true });
+      window.addEventListener("resize", queueProgress, { passive: true });
+      reducedMotion.addEventListener("change", queueProgress);
+      compactLayout.addEventListener("change", queueProgress);
+      document.addEventListener("astro:before-swap", () => {
+        window.removeEventListener("scroll", queueProgress);
+        window.removeEventListener("resize", queueProgress);
+        reducedMotion.removeEventListener("change", queueProgress);
+        compactLayout.removeEventListener("change", queueProgress);
+        if (frame) window.cancelAnimationFrame(frame);
+      }, { once: true });
+    }
+  </script>
+
+  <section class="hero hero-hybrid hero-hybrid--mobile" aria-label="Hero с 3D-аналитикой">
     <div class="container hero-hybrid__layout">
       <div class="hero-copy">
         <h1 class="eyebrow hero-service-title">Разработка сайтов и веб-сервисов</h1>
         <p class="hero-promise">Создаю <span class="accent-primary hero-gradient-teal">удобные</span> сайты, которые превращают посетителей в <span class="accent-violet hero-gradient-violet">покупателей</span></p>
         <p class="lead">Делаю быстрые и понятные сайты и веб-сервисы на React и Astro. Подключаю SEO, аналитику и помогаю привлекать трафик. После запуска — 14 дней поддержки.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer">
-            <PaperPlaneTilt aria-hidden="true" weight="duotone" /> Обсудить проект
-          </a>
+          <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer"><PaperPlaneTilt aria-hidden="true" weight="duotone" /> Обсудить проект</a>
           <a class="button button-link" href="#cases">Смотреть кейсы <ArrowRight aria-hidden="true" /></a>
         </div>
-        <div class="hero-metric" aria-label="До 98,6 тысяч посетителей в месяц">
-          <strong>до 98,6 <span>тыс.</span></strong>
-          <small>посетителей в месяц</small>
-        </div>
+        <div class="hero-metric" aria-label="До 98,6 тысяч посетителей в месяц"><strong>до 98,6 <span>тыс.</span></strong><small>посетителей в месяц</small></div>
       </div>
-
-      <figure class="hero-hybrid__scene" data-hero-scene>
+      <figure class="hero-hybrid__scene">
         <div class="hero-hybrid__tilt">
-          <div class="hero-workbench__screen hero-hybrid__screen" data-hero-screen>
+          <div class="hero-workbench__screen hero-hybrid__screen">
             <div class="hero-hybrid__parallax-layer">
               <img src="/assets/analytics.jpg" alt="Рост трафика проекта в аналитике" width="1785" height="1110" />
               <figcaption>Аналитика проекта · поисковый трафик растёт</figcaption>
@@ -53,56 +157,10 @@ const description = "Проектирую и разрабатываю сайты
           </div>
         </div>
         <img class="hero-workbench__portrait hero-hybrid__portrait" src="/assets/sergey-front.webp" alt="Сергей Крюков представляет результат проекта" width="832" height="900" />
+        <div class="hero-metric hero-hybrid__identity" aria-label="Сергей Крюков — Full-stack разработчик, маркетинг и SEO"><strong>Сергей Крюков</strong><small>Full-stack разработчик · маркетинг и SEO</small></div>
       </figure>
     </div>
   </section>
-
-  <script>
-    const scene = document.querySelector<HTMLElement>("[data-hero-scene]");
-    const analyticsScreen = document.querySelector<HTMLElement>("[data-hero-screen]");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    if (scene && analyticsScreen && !reducedMotion.matches) {
-      let frame = 0;
-      const updateParallax = () => {
-        frame = 0;
-        const bounds = scene.getBoundingClientRect();
-        const distanceFromCenter = (window.innerHeight / 2) - (bounds.top + bounds.height / 2);
-        const verticalOffset = Math.max(-28, Math.min(44, distanceFromCenter * 0.075));
-        const horizontalOffset = Math.max(-48, Math.min(112, distanceFromCenter * 0.21));
-        analyticsScreen.style.setProperty("--parallax-x", `${horizontalOffset}px`);
-        analyticsScreen.style.setProperty("--parallax-y", `${verticalOffset}px`);
-      };
-      const queueParallax = () => {
-        if (!frame) frame = window.requestAnimationFrame(updateParallax);
-      };
-      const updateTilt = (event: PointerEvent) => {
-        if (event.pointerType !== "mouse") return;
-        const bounds = scene.getBoundingClientRect();
-        const pointerX = (event.clientX - bounds.left) / bounds.width;
-        const pointerY = (event.clientY - bounds.top) / bounds.height;
-        scene.style.setProperty("--tilt-x", `${(0.5 - pointerY) * 7}deg`);
-        scene.style.setProperty("--tilt-y", `${(pointerX - 0.5) * 9}deg`);
-        scene.style.setProperty("--glow-x", `${pointerX * 100}%`);
-        scene.style.setProperty("--glow-y", `${pointerY * 100}%`);
-        scene.dataset.tilting = "true";
-      };
-      const resetTilt = () => {
-        scene.style.setProperty("--tilt-x", "0deg");
-        scene.style.setProperty("--tilt-y", "0deg");
-        scene.style.setProperty("--glow-x", "50%");
-        scene.style.setProperty("--glow-y", "42%");
-        delete scene.dataset.tilting;
-      };
-
-      updateParallax();
-      window.addEventListener("scroll", queueParallax, { passive: true });
-      window.addEventListener("resize", queueParallax, { passive: true });
-      scene.addEventListener("pointermove", updateTilt);
-      scene.addEventListener("pointerleave", resetTilt);
-      scene.addEventListener("pointercancel", resetTilt);
-    }
-  </script>
 
   <section class="journey" aria-labelledby="journey-title">
     <div class="container container-narrow">

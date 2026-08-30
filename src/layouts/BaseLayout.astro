@@ -22,6 +22,41 @@ const {
 
 const canonicalUrl = new URL(canonical, Astro.site ?? Astro.url.origin);
 const imageUrl = new URL(image, Astro.site ?? Astro.url.origin);
+const siteUrl = new URL("/", Astro.site ?? Astro.url.origin).toString();
+const pageSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${canonicalUrl}#webpage`,
+      url: canonicalUrl.toString(),
+      name: title,
+      description,
+      inLanguage: "ru-RU",
+      isPartOf: { "@id": `${siteUrl}#website` },
+      primaryImageOfPage: imageUrl.toString(),
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}#website`,
+      url: siteUrl,
+      name: "Сергей Крюков — разработка сайтов и веб-сервисов",
+      inLanguage: "ru-RU",
+      publisher: { "@id": `${siteUrl}#professional` },
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": `${siteUrl}#professional`,
+      name: "Сергей Крюков — разработка сайтов и веб-сервисов",
+      url: siteUrl,
+      image: new URL("/assets/sergey-front.webp", Astro.site ?? Astro.url.origin).toString(),
+      email: "ksv.progect@gmail.com",
+      telephone: "+79176103476",
+      areaServed: { "@type": "Country", name: "Россия" },
+      sameAs: ["https://t.me/sergeikrk"],
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -41,8 +76,22 @@ const imageUrl = new URL(image, Astro.site ?? Astro.url.origin);
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={imageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
+    {!noindex && <script type="application/ld+json" is:inline set:html={JSON.stringify(pageSchema)} />}
+    <!-- Yandex.Metrika counter -->
+    <script is:inline>
+      (function(m,e,t,r,i,k,a){
+          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=112080682', 'ym');
+
+      ym(112080682, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <!-- /Yandex.Metrika counter -->
   </head>
   <body>
+    <noscript><div><img src="https://mc.yandex.ru/watch/112080682" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <a class="skip-link" href="#main-content">Перейти к содержанию</a>
     <Header client:load />
     <main id="main-content"><slot /></main>

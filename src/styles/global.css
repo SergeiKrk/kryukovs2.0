@@ -1,3 +1,5 @@
+@import "../components/hero-alternatives.css";
+
 :root {
   --color-primary: #079c8c;
   --color-primary-dark: #05796e;
@@ -784,17 +786,39 @@ h3 {
   height: auto;
 }
 .hero-hybrid__portrait {
+  overflow: hidden;
+  border-radius: 0 0 1.25rem 1.25rem;
   transform: none;
   filter: none;
-  -webkit-mask-image:
-    linear-gradient(to bottom, #000 0 72%, transparent 100%),
-    linear-gradient(to right, #000 0 78%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to bottom, #000 0 72%, transparent 100%),
-    linear-gradient(to right, #000 0 78%, transparent 100%);
-  mask-composite: intersect;
+  -webkit-mask-image: none;
+  mask-image: none;
 }
+.hero-hybrid__identity {
+  position: absolute;
+  z-index: 5;
+  right: 0.2rem;
+  bottom: 0.35rem;
+  display: grid;
+  width: min(23rem, 49%);
+  gap: 0.22rem;
+  overflow: hidden;
+  padding: 1rem 1.15rem 1.05rem;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 1rem 1rem 1.25rem 1.25rem;
+  background: linear-gradient(135deg, #101827, #163034);
+  box-shadow: 0 1.25rem 2.8rem rgb(16 24 39 / 24%);
+}
+.hero-hybrid__identity::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 0.24rem;
+  content: "";
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent) 72%, transparent);
+}
+.hero-hybrid__identity strong { color: #ffffff; font-size: 1rem; line-height: 1.25; }
+.hero-hybrid__identity small { max-width: none; color: rgb(230 241 241 / 78%); font-size: 0.72rem; font-weight: 600; line-height: 1.4; }
 
 .portrait-swap {
   position: relative;
@@ -1549,6 +1573,7 @@ h3 {
   .hero-hybrid__scene { width: min(100%, 48rem); min-height: 28rem; justify-self: center; }
   .hero-hybrid__screen img { height: auto; aspect-ratio: auto; }
   .hero-hybrid__portrait { right: -0.75rem; bottom: -1rem; width: 58%; }
+  .hero-hybrid__identity { right: -0.15rem; bottom: 0.1rem; width: min(20rem, 72%); }
   .portrait-swap { min-height: 26rem; order: 2; overflow: hidden; }
   .portrait-swap img {
     inset: 0;
