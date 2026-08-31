@@ -19,59 +19,15 @@ import {
 import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
 import "./hero-alternatives.css";
 
-const heroCopy = {
-  eyebrow: "Разработка сайтов и веб-сервисов",
-  promise: (
-    <>
-      Создаю <span className="hero-concept__teal">удобные</span> сайты, которые превращают посетителей в{" "}
-      <span className="hero-concept__violet">покупателей</span>
-    </>
-  ),
-  lead:
-    "Делаю быстрые и понятные сайты и веб-сервисы на React и Astro. Подключаю SEO, аналитику и помогаю привлекать трафик. После запуска — 14 дней поддержки.",
-};
-
-function HeroActions() {
-  return (
-    <div className="hero-concept__actions">
-      <a className="button button-primary" href="#contact">
-        <PaperPlaneTilt aria-hidden="true" weight="duotone" /> Обсудить проект
-      </a>
-      <a className="button button-link" href="#cases">
-        Смотреть кейсы <ArrowRight aria-hidden="true" />
-      </a>
-    </div>
-  );
-}
-
-function HeroIntro() {
-  return (
-    <>
-      <p className="eyebrow hero-concept__eyebrow">{heroCopy.eyebrow}</p>
-      <h1 className="hero-concept__promise">{heroCopy.promise}</h1>
-      <p className="hero-concept__lead">{heroCopy.lead}</p>
-      <HeroActions />
-    </>
-  );
-}
-
-function Metric({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className={`hero-concept__metric${compact ? " hero-concept__metric--compact" : ""}`} aria-label="До 98,6 тысяч посетителей в месяц">
-      <ChartLineUp aria-hidden="true" weight="duotone" />
-      <p>
-        до <strong>98,6 тыс.</strong> <span>посетителей в месяц</span>
-      </p>
-    </div>
-  );
-}
-
 function BaselineHeroCopy() {
   return (
     <div className="hero-copy">
       <h1 className="eyebrow hero-service-title">Разработка сайтов и веб-сервисов</h1>
       <p className="hero-promise">
-        Создаю <span className="accent-primary hero-gradient-teal">удобные</span> сайты, которые превращают посетителей в <span className="accent-violet hero-gradient-violet">покупателей</span>
+        <span className="hero-promise__line hero-promise__line--opening">Создаю <span className="accent-primary hero-gradient-teal">удобные</span> сайты,</span>
+        <span className="hero-promise__line">которые превращают</span>
+        <span className="hero-promise__line">посетителей</span>
+        <span className="hero-promise__line">в <span className="accent-violet hero-gradient-violet">покупателей</span></span>
       </p>
       <p className="lead">Делаю быстрые и понятные сайты и веб-сервисы на React и Astro. Подключаю SEO, аналитику и помогаю привлекать трафик. После запуска — 14 дней поддержки.</p>
       <div className="hero-actions">
@@ -195,80 +151,6 @@ function AnalyticsTiltHero() {
       <div className="container hero-hybrid__layout">
         <BaselineHeroCopy />
         <TiltWorkbenchScene />
-      </div>
-    </section>
-  );
-}
-
-function PortraitSignature() {
-  return (
-    <section className="hero-concept hero-concept--signature" aria-label="Hero — портрет как подпись">
-      <div className="hero-concept__container hero-signature__layout">
-        <div className="hero-concept__copy hero-signature__copy">
-          <HeroIntro />
-          <div className="hero-signature__proof">
-            <Metric compact />
-            <figure className="hero-signature__analytics">
-              <img src="/assets/analytics.jpg" alt="Рост просмотров, визитов и посетителей в аналитике" width="1785" height="1110" />
-              <figcaption>Результат проекта в аналитике</figcaption>
-            </figure>
-          </div>
-        </div>
-        <figure className="hero-signature__portrait">
-          <img src="/assets/sergey-front.webp" alt="Сергей Крюков смотрит прямо" width="832" height="900" />
-          <figcaption>Сергей Крюков · frontend-разработчик</figcaption>
-        </figure>
-      </div>
-    </section>
-  );
-}
-
-function EditorialFrame() {
-  return (
-    <section className="hero-concept hero-concept--editorial" aria-label="Hero — редакционная рамка">
-      <div className="hero-concept__container hero-editorial__layout">
-        <div className="hero-concept__copy hero-editorial__copy">
-          <HeroIntro />
-          <Metric />
-        </div>
-        <div className="hero-editorial__proof">
-          <figure className="hero-editorial__portrait">
-            <div className="hero-editorial__portrait-window">
-              <img src="/assets/sergey-look.webp" alt="Сергей Крюков смотрит в сторону текста" width="832" height="900" />
-            </div>
-            <figcaption>
-              <strong>Сергей Крюков</strong>
-              <span>frontend-разработчик · один специалист на весь проект</span>
-            </figcaption>
-          </figure>
-          <figure className="hero-editorial__analytics">
-            <img src="/assets/analytics.jpg" alt="Показатели просмотров, визитов и посетителей в аналитике" width="1785" height="1110" />
-            <figcaption>
-              <strong>Не обещания, а цифры</strong>
-              <span>Реальный проект после SEO и развития</span>
-            </figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function WorkbenchScene() {
-  return (
-    <section className="hero-concept hero-concept--workbench" aria-label="Hero — рабочая сцена">
-      <div className="hero-concept__container hero-workbench__layout">
-        <div className="hero-concept__copy hero-workbench__copy">
-          <HeroIntro />
-          <Metric />
-        </div>
-        <figure className="hero-workbench__scene">
-          <div className="hero-workbench__screen">
-            <img src="/assets/analytics.jpg" alt="Рост трафика проекта в аналитике" width="1785" height="1110" />
-            <figcaption>Аналитика проекта · поисковый трафик растёт</figcaption>
-          </div>
-          <img className="hero-workbench__portrait" src="/assets/sergey-look.webp" alt="Сергей Крюков представляет результат проекта" width="832" height="900" />
-        </figure>
       </div>
     </section>
   );
@@ -694,21 +576,6 @@ type Story = StoryObj<typeof meta>;
 export const BaselineHero: Story = {
   name: "0 · Портрет и аналитика",
   render: () => <BaselineHeroSection />,
-};
-
-export const PortraitAsSignature: Story = {
-  name: "1 · Портрет как подпись",
-  render: () => <PortraitSignature />,
-};
-
-export const EditorialPortrait: Story = {
-  name: "2 · Редакционная рамка",
-  render: () => <EditorialFrame />,
-};
-
-export const WorkbenchPortrait: Story = {
-  name: "3 · Рабочая сцена",
-  render: () => <WorkbenchScene />,
 };
 
 export const AnalyticsTiltScene: Story = {
