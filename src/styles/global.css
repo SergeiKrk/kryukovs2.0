@@ -490,6 +490,9 @@ h3 {
   font-weight: 650;
 }
 
+.mobile-nav nav > a:not(.button) + .button { margin-top: 0.75rem; }
+.mobile-nav nav > .button + .button { margin-top: 0.65rem; }
+
 .section {
   padding-block: clamp(4.8rem, 8vw, 7rem);
 }
@@ -1436,6 +1439,21 @@ h3 {
 .cta-actions .button-primary { color: #ffffff; background: linear-gradient(135deg, #0db5a2, var(--color-primary) 52%, #087d73); box-shadow: 0 0.95rem 1.9rem rgb(7 156 140 / 24%), inset 0 0.14rem 0.3rem rgb(255 255 255 / 40%), inset 0 -0.22rem 0.48rem rgb(4 105 96 / 21%); }
 .cta-actions .button-primary:hover { color: #ffffff; background: linear-gradient(135deg, #10c5af, #078d81 55%, #066f68); box-shadow: 0 1.1rem 2.2rem rgb(7 156 140 / 30%), inset 0 0.15rem 0.32rem rgb(255 255 255 / 46%), inset 0 -0.22rem 0.48rem rgb(4 105 96 / 22%); }
 .cta-photo { position: absolute; right: -1.25rem; bottom: -1.35rem; width: 11.4rem; height: 12.5rem; object-fit: contain; object-position: right bottom; }
+
+@media (min-width: 46.0625rem) and (max-width: 87.6875rem) {
+  .cta-panel {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    align-items: start;
+    gap: 1.25rem;
+    min-height: clamp(12rem, 18vw, 15rem);
+    padding: clamp(1.5rem, 3vw, 2.2rem) clamp(10.5rem, 18vw, 13rem) clamp(1.5rem, 3vw, 2.2rem) clamp(1.5rem, 3vw, 2.2rem);
+  }
+
+  .cta-panel > div:first-child { min-width: 0; max-width: 44rem; }
+  .cta-panel h2 { max-width: 24ch; }
+  .cta-actions { flex-wrap: wrap; }
+}
 
 .site-footer {
   padding-block: 2rem;

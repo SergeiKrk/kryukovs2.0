@@ -439,8 +439,8 @@
   --workshop-portrait-shrink: clamp(0, calc(var(--workshop-progress) * 10), 1);
   --workshop-prototype-reveal: clamp(0, calc(var(--workshop-s2) * 2.5), 1);
   --workshop-prototype-trip: min(
-    clamp(0, calc((var(--workshop-s2) - 0.12) * 2.7778), 1),
-    clamp(0, calc((0.96 - var(--workshop-s2)) * 6.25), 1)
+    clamp(0, calc((var(--workshop-s2) - 0.12) * 3.3333), 1),
+    clamp(0, calc((0.98 - var(--workshop-s2)) * 10), 1)
   );
   position: relative;
   min-height: 390vh;
@@ -1432,6 +1432,8 @@
 }
 
 @media (max-width: 68rem) {
+  .hero-workshop--primary { margin-bottom: clamp(3rem, 6vw, 5rem); }
+
   .hero-concept,
   .hero-concept__container { min-height: auto; }
 
