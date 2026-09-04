@@ -3,30 +3,39 @@ import "lenis/dist/lenis.css";
 ---
 
 <script>
-  import Lenis from "lenis";
+  import type Lenis from "lenis";
 
   type ScrollWindow = Window & { __kryukovsLenis?: Lenis };
 
-  const scrollWindow = window as ScrollWindow;
-  scrollWindow.__kryukovsLenis?.destroy();
+  const enhancedScroll = window.matchMedia("(min-width: 46.01rem) and (prefers-reduced-motion: no-preference)");
 
-  const lenis = new Lenis({
-    autoRaf: true,
-    anchors: { offset: -112 },
-    lerp: 0.09,
-    smoothWheel: true,
-    wheelMultiplier: 0.9,
-    stopInertiaOnNavigate: true,
-    respectReducedMotion: true,
-  });
+  const initializeLenis = async () => {
+    if (!enhancedScroll.matches) return;
+    const scrollWindow = window as ScrollWindow;
+    if (scrollWindow.__kryukovsLenis) return;
+    const { default: Lenis } = await import("lenis");
+    if (!enhancedScroll.matches) return;
 
-  const announceScroll = () => window.dispatchEvent(new Event("lenis:scroll"));
-  lenis.on("scroll", announceScroll);
-  scrollWindow.__kryukovsLenis = lenis;
+    const lenis = new Lenis({
+      autoRaf: true,
+      anchors: { offset: -112 },
+      lerp: 0.09,
+      smoothWheel: true,
+      wheelMultiplier: 0.9,
+      stopInertiaOnNavigate: true,
+      respectReducedMotion: true,
+    });
+    const announceScroll = () => window.dispatchEvent(new Event("lenis:scroll"));
+    lenis.on("scroll", announceScroll);
+    scrollWindow.__kryukovsLenis = lenis;
 
-  window.addEventListener("pagehide", () => {
-    lenis.off("scroll", announceScroll);
-    lenis.destroy();
-    if (scrollWindow.__kryukovsLenis === lenis) delete scrollWindow.__kryukovsLenis;
-  }, { once: true });
+    window.addEventListener("pagehide", () => {
+      lenis.off("scroll", announceScroll);
+      lenis.destroy();
+      if (scrollWindow.__kryukovsLenis === lenis) delete scrollWindow.__kryukovsLenis;
+    }, { once: true });
+  };
+
+  void initializeLenis();
+  enhancedScroll.addEventListener("change", initializeLenis, { once: true });
 </script>

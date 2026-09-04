@@ -6,6 +6,9 @@ export default defineConfig({
   site: "https://kryukovs.ru",
   output: "static",
   trailingSlash: "always",
+  build: {
+    inlineStylesheets: "always",
+  },
   integrations: [react(), sitemap()],
   vite: {
     server: {

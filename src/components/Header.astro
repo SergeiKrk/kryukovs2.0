@@ -1,0 +1,78 @@
+---
+import { List, PaperPlaneTilt, X } from "@phosphor-icons/react";
+
+const maxHref = "https://max.ru/u/f9LHodD0cOJnvKBT3lzI_frHwvBIZXJVtfvP_VynzhsCBdFg_ZGlsLzi1Gw";
+const links = [
+  { href: "/services/", label: "Услуги" },
+  { href: "/#cases", label: "Кейсы" },
+  { href: "/#process", label: "Процесс" },
+  { href: "/#reliable", label: "Обо мне" },
+];
+---
+
+<header class="site-header" data-site-header>
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Сергей Крюков — главная">
+      <span>K</span><span>S</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Основная навигация">
+      {links.map((link) => <a href={link.href}>{link.label}</a>)}
+    </nav>
+    <div class="header-actions">
+      <div class="header-contact-copy">
+        <strong class="header-contact-kicker"><span>Напишите мне</span></strong>
+        <span>Обсудим проект</span>
+      </div>
+      <div class="header-contact-links">
+        <a class="header-contact-button header-telegram" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer" aria-label="Написать Сергею в Telegram" title="Telegram">
+          <PaperPlaneTilt aria-hidden="true" weight="fill" />
+        </a>
+        <a class="header-contact-button header-max" href={maxHref} target="_blank" rel="noreferrer" aria-label="Написать Сергею в MAX" title="MAX">
+          <img src="/assets/max-logo-wikimedia.svg" alt="" width="1000" height="1000" />
+        </a>
+      </div>
+    </div>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation" aria-label="Открыть меню">
+      <List className="menu-toggle__open" aria-hidden="true" />
+      <X className="menu-toggle__close" aria-hidden="true" />
+    </button>
+  </div>
+  <div id="mobile-navigation" class="mobile-nav" hidden>
+    <nav class="container" aria-label="Мобильная навигация">
+      {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer">
+        <PaperPlaneTilt aria-hidden="true" weight="duotone" />
+        Обсудить проект
+      </a>
+      <a class="button button-secondary button-max" href={maxHref} target="_blank" rel="noreferrer">
+        <img src="/assets/max-logo-wikimedia.svg" alt="" width="1000" height="1000" /> Написать в MAX
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  const toggle = header?.querySelector<HTMLButtonElement>(".menu-toggle");
+  const navigation = header?.querySelector<HTMLElement>("#mobile-navigation");
+
+  const setMenuOpen = (open: boolean) => {
+    if (!header || !toggle || !navigation) return;
+    header.dataset.menuOpen = String(open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
+    navigation.hidden = !open;
+    navigation.classList.toggle("is-open", open);
+  };
+
+  toggle?.addEventListener("click", () => setMenuOpen(toggle.getAttribute("aria-expanded") !== "true"));
+  navigation?.addEventListener("click", (event) => {
+    if ((event.target as Element).closest("a")) setMenuOpen(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && toggle?.getAttribute("aria-expanded") === "true") {
+      setMenuOpen(false);
+      toggle.focus();
+    }
+  });
+</script>

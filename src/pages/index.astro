@@ -176,12 +176,12 @@ const workshopStages = ["Задача", "Структура", "Интерфей�
         <div class="hero-hybrid__tilt">
           <div class="hero-workbench__screen hero-hybrid__screen">
             <div class="hero-hybrid__parallax-layer">
-              <img src="/assets/analytics.jpg" alt="Рост трафика проекта в аналитике" width="1785" height="1110" />
+              <img src="/assets/analytics.jpg" alt="Рост трафика проекта в аналитике" width="1785" height="1110" loading="lazy" decoding="async" fetchpriority="low" />
               <figcaption>Аналитика проекта · поисковый трафик растёт</figcaption>
             </div>
           </div>
         </div>
-        <img class="hero-workbench__portrait hero-hybrid__portrait" src="/assets/sergey-front.webp" alt="Сергей Крюков представляет результат проекта" width="832" height="900" />
+        <img class="hero-workbench__portrait hero-hybrid__portrait" src="/assets/sergey-front.webp" alt="Сергей Крюков представляет результат проекта" width="832" height="900" loading="lazy" decoding="async" fetchpriority="low" />
         <div class="hero-metric hero-hybrid__identity" aria-label="Сергей Крюков — Full-stack разработчик, маркетинг и SEO"><strong>Сергей Крюков</strong><small>Full-stack разработчик · маркетинг и SEO</small></div>
       </figure>
     </div>
@@ -233,7 +233,7 @@ const workshopStages = ["Задача", "Структура", "Интерфей�
       <div class="section-heading">
         <div><p class="eyebrow">Кейсы</p><h2 id="cases-title">Работающие сайты, а не обещания</h2></div>
       </div>
-      <CaseSlider client:load />
+      <CaseSlider client:visible={{ rootMargin: "500px" }} />
     </div>
   </section>
 
@@ -288,7 +288,7 @@ const workshopStages = ["Задача", "Структура", "Интерфей�
         <a class="button button-secondary button-max" href="https://max.ru/u/f9LHodD0cOJnvKBT3lzI_frHwvBIZXJVtfvP_VynzhsCBdFg_ZGlsLzi1Gw" target="_blank" rel="noreferrer"><img src="/assets/max-logo-colored.svg" alt="" width="80" height="32" />Написать в MAX</a>
         <a class="button button-secondary" href="/contacts/"><Headset aria-hidden="true" weight="duotone" />Отправить бриф</a>
       </div>
-      <img class="cta-photo" src="/assets/sergey-look.webp" alt="Сергей Крюков" width="832" height="900" />
+      <img class="cta-photo" src="/assets/sergey-look.webp" alt="Сергей Крюков" width="832" height="900" loading="lazy" decoding="async" />
     </div>
   </section>
 

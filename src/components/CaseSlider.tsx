@@ -166,7 +166,7 @@ export default function CaseSlider() {
             onPointerMove={(event) => tiltDevice(event, 5.5)}
             onPointerLeave={resetDeviceTilt}
           >
-            <div className="desktop-screen"><img src={item.desktop} alt={`${item.name}: версия для компьютера`} width="1440" height="900" /></div>
+            <div className="desktop-screen"><img src={item.desktop} alt={`${item.name}: версия для компьютера`} width="1440" height="900" loading="lazy" decoding="async" /></div>
             <div className="laptop-hinge" aria-hidden="true" />
             <div className="laptop-base" aria-hidden="true" />
           </figure>
@@ -175,7 +175,7 @@ export default function CaseSlider() {
             onPointerMove={(event) => tiltDevice(event, 8)}
             onPointerLeave={resetDeviceTilt}
           >
-            <div className="phone-screen"><img src={item.mobile} alt={`${item.name}: мобильная версия`} width="390" height="844" /></div>
+            <div className="phone-screen"><img src={item.mobile} alt={`${item.name}: мобильная версия`} width="390" height="844" loading="lazy" decoding="async" /></div>
             <span className="phone-controls" aria-hidden="true" />
           </figure>
         </div>

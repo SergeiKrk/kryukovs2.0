@@ -469,6 +469,9 @@ h3 {
 }
 
 .menu-toggle svg { font-size: 1.6rem; }
+.menu-toggle__close { display: none; }
+[data-site-header][data-menu-open="true"] .menu-toggle__open { display: none; }
+[data-site-header][data-menu-open="true"] .menu-toggle__close { display: block; }
 
 .mobile-nav {
   border-top: 1px solid var(--color-border);
