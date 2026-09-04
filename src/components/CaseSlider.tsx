@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import { ArrowLeft, ArrowRight, Calculator, ChartLineUp, Files, RocketLaunch } from "@phosphor-icons/react";
 
 const cases = [
@@ -87,13 +87,100 @@ const cases = [
 
 export default function CaseSlider() {
   const [active, setActive] = useState(0);
+  const [previous, setPrevious] = useState<number | null>(null);
+  const [direction, setDirection] = useState<"next" | "previous">("next");
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const current = cases[active];
+  const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (transitionTimer.current) clearTimeout(transitionTimer.current);
+  }, []);
 
-  const select = (next: number) => {
+  const select = (next: number, focusTab = true) => {
     const normalized = (next + cases.length) % cases.length;
+    if (normalized === active) return;
+
+    const isPrevious = normalized === (active - 1 + cases.length) % cases.length
+      || (normalized < active && !(active === cases.length - 1 && normalized === 0));
+
+    if (transitionTimer.current) clearTimeout(transitionTimer.current);
+    setDirection(isPrevious ? "previous" : "next");
+    setPrevious(active);
     setActive(normalized);
-    tabRefs.current[normalized]?.focus();
+    transitionTimer.current = setTimeout(() => setPrevious(null), 760);
+
+    if (focusTab) tabRefs.current[normalized]?.focus();
+  };
+
+  const tiltDevice = (event: ReactPointerEvent<HTMLElement>, intensity: number) => {
+    if (event.pointerType === "touch") return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    event.currentTarget.style.setProperty("--device-tilt-x", `${(-y * intensity).toFixed(2)}deg`);
+    event.currentTarget.style.setProperty("--device-tilt-y", `${(x * intensity).toFixed(2)}deg`);
+    event.currentTarget.style.setProperty("--device-glow-x", `${((x + 1) / 2 * 100).toFixed(1)}%`);
+    event.currentTarget.style.setProperty("--device-glow-y", `${((y + 1) / 2 * 100).toFixed(1)}%`);
+  };
+
+  const resetDeviceTilt = (event: ReactPointerEvent<HTMLElement>) => {
+    event.currentTarget.style.removeProperty("--device-tilt-x");
+    event.currentTarget.style.removeProperty("--device-tilt-y");
+    event.currentTarget.style.removeProperty("--device-glow-x");
+    event.currentTarget.style.removeProperty("--device-glow-y");
+  };
+
+  const renderSlide = (index: number, state: "current" | "previous") => {
+    const item = cases[index];
+    const slideClass = `case-slide is-${state} case-direction-${direction}`;
+
+    return (
+      <div
+        key={`${state}-${item.name}`}
+        className={slideClass}
+        aria-hidden={state === "previous" ? "true" : undefined}
+        style={{ "--case-accent": item.accent, "--case-tint": item.tint } as CSSProperties}
+      >
+        <div className="case-copy">
+          <p className="case-type">{item.type}</p>
+          <h3>{item.name}</h3>
+          <p className="case-title">{item.title}</p>
+          <p className="case-description">{item.text}</p>
+          <ul className="case-metrics" aria-label="Показатели проекта">
+            {item.metrics.map((metric) => {
+              const MetricIcon = metric.icon;
+              return (
+                <li key={metric.label}>
+                  <MetricIcon aria-hidden="true" weight="duotone" />
+                  <strong>{metric.value}</strong>
+                  <span>{metric.label}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <div className="case-media" aria-label={`Скриншоты проекта ${item.name}`}>
+          <RocketLaunch className="case-rocket" aria-hidden="true" weight="duotone" />
+          <figure
+            className="desktop-shot"
+            onPointerMove={(event) => tiltDevice(event, 5.5)}
+            onPointerLeave={resetDeviceTilt}
+          >
+            <div className="desktop-screen"><img src={item.desktop} alt={`${item.name}: версия для компьютера`} width="1440" height="900" /></div>
+            <div className="laptop-hinge" aria-hidden="true" />
+            <div className="laptop-base" aria-hidden="true" />
+          </figure>
+          <figure
+            className="mobile-shot"
+            onPointerMove={(event) => tiltDevice(event, 8)}
+            onPointerLeave={resetDeviceTilt}
+          >
+            <div className="phone-screen"><img src={item.mobile} alt={`${item.name}: мобильная версия`} width="390" height="844" /></div>
+            <span className="phone-controls" aria-hidden="true" />
+          </figure>
+        </div>
+      </div>
+    );
   };
 
   const handleTabsKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -121,7 +208,7 @@ export default function CaseSlider() {
             aria-controls="case-panel"
             tabIndex={index === active ? 0 : -1}
             className={index === active ? "is-active" : ""}
-            onClick={() => setActive(index)}
+            onClick={() => select(index, false)}
           >
             <span aria-hidden="true" />{item.name}
           </button>
@@ -134,40 +221,14 @@ export default function CaseSlider() {
         role="tabpanel"
         aria-labelledby={`case-tab-${active}`}
         aria-live="polite"
-        style={{ "--case-accent": current.accent, "--case-tint": current.tint } as CSSProperties}
       >
         <button className="case-arrow case-arrow-left" type="button" onClick={() => select(active - 1)} aria-label="Предыдущий кейс">
           <ArrowLeft aria-hidden="true" />
         </button>
 
-        <div className="case-copy case-enter-copy" key={`copy-${current.name}`}>
-          <p className="case-type">{current.type}</p>
-          <h3>{current.name}</h3>
-          <p className="case-title">{current.title}</p>
-          <p className="case-description">{current.text}</p>
-          <ul className="case-metrics" aria-label="Показатели проекта">
-            {current.metrics.map((metric) => {
-              const MetricIcon = metric.icon;
-              return (
-                <li key={metric.label}>
-                  <MetricIcon aria-hidden="true" weight="duotone" />
-                  <strong>{metric.value}</strong>
-                  <span>{metric.label}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        <div className="case-media" key={`media-${current.name}`} aria-label={`Скриншоты проекта ${current.name}`}>
-          <RocketLaunch className="case-rocket" aria-hidden="true" weight="duotone" />
-          <figure className="desktop-shot case-enter-desktop">
-            <div className="desktop-screen"><img src={current.desktop} alt={`${current.name}: версия для компьютера`} width="1440" height="900" /></div>
-            <div className="laptop-base" aria-hidden="true" />
-          </figure>
-          <figure className="mobile-shot case-enter-mobile">
-            <div className="phone-screen"><img src={current.mobile} alt={`${current.name}: мобильная версия`} width="390" height="844" /></div>
-          </figure>
+        <div className="case-stage">
+          {previous !== null && renderSlide(previous, "previous")}
+          {renderSlide(active, "current")}
         </div>
 
         <button className="case-arrow case-arrow-right" type="button" onClick={() => select(active + 1)} aria-label="Следующий кейс">

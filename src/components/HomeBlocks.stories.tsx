@@ -72,7 +72,7 @@ function StartCards() {
 }
 
 function Reliability() {
-  const items = [[User, "10+ лет production-разработки", "React, TypeScript, Astro, продуктовый подход и современные практики."], [CalendarBlank, "5 лет в финтехе", "Командная разработка, Contract First, код-ревью и дизайн-система."], [ShieldCheck, "14 дней поддержки", "Помогаю после запуска и не оставляю вас один на один с результатом."]] as const;
+  const items = [[User, "10+ лет production-разработки", "React, TypeScript, Astro, продуктовый подход и современные практики."], [CalendarBlank, "1,5 года в финтехе", "Командная разработка, Contract First, код-ревью и дизайн-система."], [ShieldCheck, "14 дней поддержки", "Помогаю после запуска и не оставляю вас один на один с результатом."]] as const;
   return <section className="section section-tight"><div className="container container-narrow"><div className="reliability"><p className="eyebrow">Доказательства</p><h2>Почему со мной надёжно</h2><div className="reliable-grid">{items.map(([Icon, title, text]) => <article className="reliable-item" key={title}><Icon aria-hidden="true" weight="duotone" /><div><h3>{title}</h3><p>{text}</p></div></article>)}</div></div></div></section>;
 }
 

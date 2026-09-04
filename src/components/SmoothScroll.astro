@@ -1,0 +1,32 @@
+---
+import "lenis/dist/lenis.css";
+---
+
+<script>
+  import Lenis from "lenis";
+
+  type ScrollWindow = Window & { __kryukovsLenis?: Lenis };
+
+  const scrollWindow = window as ScrollWindow;
+  scrollWindow.__kryukovsLenis?.destroy();
+
+  const lenis = new Lenis({
+    autoRaf: true,
+    anchors: { offset: -112 },
+    lerp: 0.09,
+    smoothWheel: true,
+    wheelMultiplier: 0.9,
+    stopInertiaOnNavigate: true,
+    respectReducedMotion: true,
+  });
+
+  const announceScroll = () => window.dispatchEvent(new Event("lenis:scroll"));
+  lenis.on("scroll", announceScroll);
+  scrollWindow.__kryukovsLenis = lenis;
+
+  window.addEventListener("pagehide", () => {
+    lenis.off("scroll", announceScroll);
+    lenis.destroy();
+    if (scrollWindow.__kryukovsLenis === lenis) delete scrollWindow.__kryukovsLenis;
+  }, { once: true });
+</script>
