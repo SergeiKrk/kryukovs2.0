@@ -7,11 +7,22 @@ import QuizShell from "../../components/v3/QuizShell.astro";
 import Footer from "../../components/v3/Footer.astro";
 import { capabilities, faq, pricing, processSteps, projects, proofs, services } from "../../data/v3";
 import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
 import heroHeadLeft from "../../assets/v3/hero-stone-head-left.png";
 import heroLaptop from "../../assets/v3/development-laptop.png";
 import heroHead from "../../assets/v3/hero-stone-head.png";
-const v3AssetModules = import.meta.glob("../../assets/v3/*", { eager: true, import: "default" });
-const v3Asset = (path: string) => v3AssetModules[`../../assets/v3/${path.split("/").pop()}`] ?? path;
+import capabilityRock1 from "../../assets/v3/rock-1.png";
+import capabilityRock2 from "../../assets/v3/rock-2.png";
+import capabilityRock3 from "../../assets/v3/rock-3.png";
+import capabilityRock4 from "../../assets/v3/rock-4.png";
+const v3AssetModules = import.meta.glob("../../assets/v3/*", { eager: true, import: "default" }) as Record<string, ImageMetadata>;
+const v3Asset = (path: string): any => v3AssetModules[`../../assets/v3/${path.split("/").pop()}`] ?? path;
+const capabilityRocks = [
+  capabilityRock1, capabilityRock2, capabilityRock3, capabilityRock4, capabilityRock2,
+  capabilityRock4, capabilityRock1, capabilityRock3, capabilityRock4, capabilityRock2,
+  capabilityRock3, capabilityRock1, capabilityRock4, capabilityRock2, capabilityRock1,
+  capabilityRock4, capabilityRock2, capabilityRock3, capabilityRock1, capabilityRock4,
+];
 import "../../styles/v3.css";
 
 const title = "Создание сайтов под ключ | Сергей Крюков";
@@ -82,7 +93,8 @@ const description = "Дизайн, разработка и SEO сайтов дл
     </div>
   </section>
 
-  <section class="v3-capabilities v3-section" aria-labelledby="v3-capabilities-title" data-v3-capabilities>
+  <section class="v3-capabilities" aria-labelledby="v3-capabilities-title" data-v3-capabilities>
+    <div class="v3-capabilities__pin" data-v3-capabilities-pin>
     <div class="v3-shell">
       <div class="v3-capabilities__grid">
         <div class="v3-capabilities__intro" data-v3-capabilities-copy>
@@ -90,9 +102,24 @@ const description = "Дизайн, разработка и SEO сайтов дл
           <h2 id="v3-capabilities-title">Сайт работает как единое целое</h2>
           <p>Не нужно координировать отдельных дизайнеров, разработчиков и SEO-специалистов.</p>
         </div>
+      <div class="v3-capabilities__stage" data-v3-capabilities-stage>
+      <div class="v3-capabilities__rocks" aria-hidden="true" data-v3-capabilities-rocks>
+        {capabilityRocks.map((rock, index) => (
+          <Picture class={`v3-capabilities__rock v3-capabilities__rock--${(index % 3) + 1}`} data-v3-capabilities-rock data-depth={(index % 3) + 1} src={rock} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+        ))}
+      </div>
+      <Picture class="v3-capabilities__head" data-v3-capabilities-head src={heroHead} formats={["avif", "webp"]} fallbackFormat="png" alt="Каменная голова в центре композиции" width="512" height="512" loading="lazy" decoding="async" />
+      <svg class="v3-capabilities__ring-path" viewBox="0 0 1000 700" aria-hidden="true" focusable="false">
+        <path data-v3-capabilities-ring-path d="M500 40a310 310 0 1 1 0 620a310 310 0 1 1 0-620Z" />
+      </svg>
+      <div class="v3-capabilities__ring-separators" aria-hidden="true">
+        {[capabilityRock1, capabilityRock3, capabilityRock4].map((rock, index) => (
+          <Picture class={`v3-capabilities__ring-separator v3-capabilities__ring-separator--${index + 1}`} data-v3-ring-separator src={rock} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+        ))}
+      </div>
       <div class="v3-capabilities__list">
-        {capabilities.map((capability) => (
-          <article class="v3-capability" data-v3-capability>
+        {capabilities.map((capability, capabilityIndex) => (
+          <article class="v3-capability" data-v3-capability data-capability-index={capabilityIndex}>
             <h3 class="v3-capability__word" aria-label={capability.word}>
               {Array.from(capability.word).map((character, index) => {
                 const glyph = capability.glyphs[index];
@@ -110,6 +137,8 @@ const description = "Дизайн, разработка и SEO сайтов дл
         ))}
       </div>
       </div>
+      </div>
+    </div>
     </div>
   </section>
 

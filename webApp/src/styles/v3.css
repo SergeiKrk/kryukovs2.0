@@ -138,7 +138,7 @@ html[data-design="cinematic"] {
   flex-wrap: wrap;
   gap: 0.75rem 1.5rem;
   padding: 6.5rem clamp(1.25rem, 4.5vw, 5.25rem) 1.25rem;
-  border-bottom: 1px solid var(--v3-line);
+  border-bottom: 0;
   background: var(--v3-panel);
 }
 .v3-nav__nojs a { color: var(--v3-text); font-weight: 700; }
@@ -237,10 +237,12 @@ html[data-design="cinematic"] {
 .v3-proof-strip strong { font-family: "Oswald Variable", Impact, sans-serif; font-size: clamp(1.6rem, 2.6vw, 2.5rem); font-weight: 500; line-height: 1; }
 .v3-proof-strip span { margin-top: 0.35rem; color: var(--v3-muted); font-size: 0.65rem; }
 
-.v3-capabilities { position: relative; overflow: clip; background: var(--v3-panel); isolation: isolate; }
-.v3-capabilities > .v3-shell { position: relative; z-index: 2; }
-.v3-capabilities__grid { min-height: 100vh; display: grid; grid-template-columns: minmax(20rem, 0.72fr) minmax(0, 1.28fr); align-items: center; gap: clamp(3rem, 8vw, 9rem); }
-.v3-capabilities__intro { align-self: center; padding-top: 21rem; }
+.v3-capabilities { position: relative; background: var(--v3-panel); isolation: isolate; }
+.v3-capabilities__pin { position: relative; min-height: 100svh; overflow: clip; }
+.v3-capabilities__pin > .v3-shell { position: relative; z-index: 2; height: 100%; }
+.v3-capabilities__grid { position: relative; min-height: 100svh; display: grid; grid-template-columns: minmax(18rem, 0.78fr) minmax(0, 1.22fr); align-items: center; gap: clamp(2rem, 5vw, 6rem); }
+.v3-capabilities__intro { position: relative; z-index: 5; align-self: center; opacity: 1; visibility: visible; }
+.v3-motion-cinematic .v3-capabilities__intro { opacity: 0; visibility: hidden; }
 .v3-capabilities__intro > .v3-kicker { margin-bottom: 1rem; }
 .v3-capabilities__intro h2 {
   max-width: 10ch;
@@ -249,19 +251,51 @@ html[data-design="cinematic"] {
   -webkit-text-stroke: 1.5px rgb(240 243 238 / 88%);
 }
 .v3-capabilities__intro > p:last-child { max-width: 31rem; margin-top: 2rem; color: var(--v3-muted); }
-.v3-capabilities__list { grid-column: 2; border-top: 1px solid var(--v3-line); }
+.v3-capabilities__list { position: relative; z-index: 2; display: grid; width: 100%; border-top: 0; }
+.v3-capabilities__stage { position: absolute; z-index: 2; inset: 0; display: grid; align-content: center; min-width: 0; will-change: transform; transform-origin: center; }
+.v3-capabilities__head { position: absolute; z-index: 4; width: clamp(22rem, 36vw, 36rem); height: clamp(22rem, 36vw, 36rem); left: 50%; top: 50%; translate: -50% -50%; opacity: 0; pointer-events: none; will-change: transform, opacity; object-fit: contain; object-position: center; }
+.v3-capabilities__head img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; }
+.v3-capabilities__ring-path { position: absolute; z-index: 0; inset: 0; width: 100%; height: 100%; overflow: visible; visibility: hidden; pointer-events: none; }
+.v3-capabilities__ring-path path { fill: none; stroke: none; }
+.v3-capabilities__rocks { position: absolute; z-index: 1; inset: -12% -18%; pointer-events: none; }
+.v3-capabilities__rocks > picture { position: absolute; display: block; width: clamp(3rem, 7vw, 8rem); height: clamp(3rem, 7vw, 8rem); }
+.v3-capabilities__rock { position: relative; display: block; width: 100%; height: 100%; object-fit: contain; opacity: 0; will-change: transform, opacity; }
+.v3-capabilities__rock--1 { filter: blur(6px); }
+.v3-capabilities__rock--2 { filter: blur(2px); }
+.v3-capabilities__rock--3 { filter: none; }
+.v3-capabilities__rocks > picture:nth-child(1) { left: 4%; top: 13%; }
+.v3-capabilities__rocks > picture:nth-child(2) { left: 22%; top: 4%; }
+.v3-capabilities__rocks > picture:nth-child(3) { right: 9%; top: 10%; }
+.v3-capabilities__rocks > picture:nth-child(4) { right: 28%; top: 24%; }
+.v3-capabilities__rocks > picture:nth-child(5) { left: 8%; top: 48%; }
+.v3-capabilities__rocks > picture:nth-child(6) { right: 3%; top: 48%; }
+.v3-capabilities__rocks > picture:nth-child(7) { left: 26%; bottom: 5%; }
+.v3-capabilities__rocks > picture:nth-child(8) { right: 20%; bottom: 4%; }
+.v3-capabilities__rocks > picture:nth-child(9) { left: 45%; top: 3%; }
+.v3-capabilities__rocks > picture:nth-child(10) { left: 47%; bottom: 2%; }
+.v3-capabilities__rocks > picture:nth-child(11) { left: 13%; top: 28%; }
+.v3-capabilities__rocks > picture:nth-child(12) { left: 35%; top: 17%; }
+.v3-capabilities__rocks > picture:nth-child(13) { right: 18%; top: 5%; }
+.v3-capabilities__rocks > picture:nth-child(14) { right: 38%; top: 39%; }
+.v3-capabilities__rocks > picture:nth-child(15) { left: 2%; top: 72%; }
+.v3-capabilities__rocks > picture:nth-child(16) { right: 11%; top: 72%; }
+.v3-capabilities__rocks > picture:nth-child(17) { left: 38%; bottom: 11%; }
+.v3-capabilities__rocks > picture:nth-child(18) { right: 34%; bottom: 18%; }
+.v3-capabilities__rocks > picture:nth-child(19) { left: 58%; top: 28%; }
+.v3-capabilities__rocks > picture:nth-child(20) { right: 2%; bottom: 20%; }
 .v3-capability {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: 2rem;
   padding-block: clamp(1.5rem, 3vw, 3rem);
-  border-bottom: 1px solid var(--v3-line);
+  border-bottom: 0;
 }
 .v3-capability__word {
   min-width: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   white-space: nowrap;
   font: 570 clamp(3.5rem, 8.3vw, 9.1rem)/0.86 "Oswald Variable", Impact, sans-serif;
   letter-spacing: -0.055em;
@@ -272,6 +306,25 @@ html[data-design="cinematic"] {
 .v3-capability:nth-child(2) .v3-capability__glyph { margin-inline: -0.036em; }
 .v3-capability:nth-child(3) .v3-capability__glyph { width: 1.44em; height: 1.56em; flex-basis: 1.44em; }
 .v3-capability > p { display: none; }
+.v3-capabilities.is-ring .v3-capabilities__list { border: 0; }
+.v3-capabilities.is-ring .v3-capability,
+.v3-capabilities.is-ring .v3-capability__word { display: contents; }
+.v3-capabilities.is-ring [data-v3-stone-letter] {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 50%;
+  width: clamp(18rem, 31.5vw, 31.5rem);
+  height: clamp(18.9rem, 35.1vw, 34.2rem);
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+}
+.v3-capabilities.is-ring .v3-capability__glyph { display: block; flex: none; overflow: visible; }
+.v3-capabilities.is-ring .v3-capability__glyph img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.v3-capabilities__ring-separators { position: absolute; z-index: 5; inset: 0; pointer-events: none; }
+.v3-capabilities__ring-separator { position: absolute; left: 50%; top: 50%; width: clamp(2.5rem, 4vw, 4.5rem); height: clamp(2.5rem, 4vw, 4.5rem); will-change: transform, opacity; }
+.v3-capabilities__ring-separator img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.v3-capabilities.is-ring .v3-capabilities__head { opacity: 1; visibility: visible; }
 
 .v3-identity { border-bottom: 1px solid var(--v3-line); }
 .v3-identity__media { display: grid; grid-template-columns: 1.18fr 0.82fr; align-items: end; gap: 1rem; }
@@ -530,8 +583,13 @@ html[data-design="cinematic"] {
   .v3-proof-strip p { border-bottom: 1px solid var(--v3-line); }
   .v3-capability { grid-template-columns: 1fr; }
   .v3-capabilities__grid { min-height: auto; grid-template-columns: 1fr; gap: 3rem; }
+  .v3-capabilities__pin { min-height: auto; overflow: hidden; }
   .v3-capabilities__intro { padding-top: 0; }
+  .v3-motion-cinematic .v3-capabilities__intro { opacity: 1; visibility: visible; }
+  .v3-capabilities__stage { position: relative; inset: auto; grid-column: 1; min-height: 34rem; }
   .v3-capabilities__list { grid-column: 1; }
+  .v3-capabilities__head { width: 7rem; height: 7rem; }
+  .v3-capabilities__rocks > picture:nth-child(n+7) { display: none; }
   .v3-identity__media { grid-template-columns: 1fr; }
   .v3-process__step { grid-template-columns: 4rem 1fr; }
   .v3-process__step figure { grid-column: 2; }

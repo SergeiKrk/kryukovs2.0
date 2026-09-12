@@ -6,6 +6,7 @@ import "lenis/dist/lenis.css";
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { SplitText } from "gsap/SplitText";
+  import { MotionPathPlugin } from "gsap/MotionPathPlugin";
   import Lenis from "lenis";
   import {
     getHorizontalTravel,
@@ -14,7 +15,7 @@ import "lenis/dist/lenis.css";
     resolveMotionEnabled,
   } from "./v3MotionHelpers.mjs";
 
-  gsap.registerPlugin(ScrollTrigger, SplitText);
+  gsap.registerPlugin(ScrollTrigger, SplitText, MotionPathPlugin);
 
   const CINEMATIC_QUERY = "(min-width: 900px) and (min-height: 650px) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
   const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
@@ -74,7 +75,11 @@ import "lenis/dist/lenis.css";
     root.dataset.v3Motion = enabled ? "on" : "off";
 
     const context = gsap.context(() => {
-      if (!enabled) return;
+      if (!enabled) {
+        const copy = root.querySelector<HTMLElement>("[data-v3-capabilities-copy]");
+        if (copy) gsap.set(copy, { autoAlpha: 1, clearProps: "filter,transform" });
+        return;
+      }
 
       media.add(CINEMATIC_QUERY, () => {
         root.classList.add("v3-motion-cinematic");
@@ -170,6 +175,7 @@ import "lenis/dist/lenis.css";
 
         if (hero && heroCopy && heroVisual) {
           gsap.timeline({
+            onReverseComplete: () => gsap.set(heroHead, { autoAlpha: 1, yPercent: 0, scale: 1 }),
             scrollTrigger: {
               trigger: hero,
               start: "top top",
@@ -177,9 +183,15 @@ import "lenis/dist/lenis.css";
               scrub: 0.7,
               invalidateOnRefresh: true,
               onEnter: () => setWillChange(heroAnimated, "transform, opacity"),
-              onEnterBack: () => setWillChange(heroAnimated, "transform, opacity"),
+              onEnterBack: () => {
+                setWillChange(heroAnimated, "transform, opacity");
+                gsap.set(heroHead, { autoAlpha: 1, x: 0, xPercent: 0, y: 0, yPercent: 0, scale: 1, rotation: 0 });
+              },
               onLeave: () => setWillChange(heroAnimated, ""),
-              onLeaveBack: () => setWillChange(heroAnimated, ""),
+              onLeaveBack: () => {
+                setWillChange(heroAnimated, "");
+                gsap.set(heroHead, { autoAlpha: 1, x: 0, xPercent: 0, y: 0, yPercent: 0, scale: 1, rotation: 0 });
+              },
             },
           })
             .to(heroCopy, { yPercent: -26, autoAlpha: 0.28, ease: "none" }, 0)
@@ -188,35 +200,203 @@ import "lenis/dist/lenis.css";
             .to(heroHead, { yPercent: 22, scale: 0.72, autoAlpha: 0, ease: "power1.inOut" }, 0.18);
         }
 
+        const capabilitiesSection = root.querySelector<HTMLElement>("[data-v3-capabilities]");
         const capabilityLetters = Array.from(root.querySelectorAll<HTMLElement>("[data-v3-stone-letter]"));
-        root.querySelectorAll<HTMLElement>("[data-v3-capability]").forEach((capability, capabilityIndex) => {
-          const letters = Array.from(capability.querySelectorAll<HTMLElement>("[data-v3-stone-letter]"));
-          const isSeo = capabilityIndex === 2;
-          letters.forEach((letter, letterIndex) => {
-            const preset = letterPresets[(capabilityIndex * 3 + letterIndex) % letterPresets.length];
-            gsap.fromTo(
-              letter,
-              { ...preset, autoAlpha: 0 },
-              {
-                xPercent: 0,
-                yPercent: 0,
-                rotation: 0,
-                autoAlpha: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                  trigger: capability,
-                  start: "top 82%",
-                  end: isSeo ? "top 62%" : "top 38%",
-                  scrub: isSeo ? 0.28 : 0.55,
-                  onEnter: () => setWillChange([letter], "transform, opacity"),
-                  onEnterBack: () => setWillChange([letter], "transform, opacity"),
-                  onLeave: () => setWillChange([letter], ""),
-                  onLeaveBack: () => setWillChange([letter], ""),
-                },
-              },
-            );
+        const capabilityWords = Array.from(root.querySelectorAll<HTMLElement>("[data-v3-capability]"));
+        const capabilityCopy = root.querySelector<HTMLElement>("[data-v3-capabilities-copy]");
+        const capabilityStage = root.querySelector<HTMLElement>("[data-v3-capabilities-stage]");
+        const capabilityHead = root.querySelector<HTMLElement>("[data-v3-capabilities-head]");
+        const capabilityPin = root.querySelector<HTMLElement>("[data-v3-capabilities-pin]");
+        const capabilityRocks = Array.from(root.querySelectorAll<HTMLElement>("[data-v3-capabilities-rock]"));
+        const ringSeparators = Array.from(root.querySelectorAll<HTMLElement>("[data-v3-ring-separator]"));
+        const ringPath = root.querySelector<SVGPathElement>("[data-v3-capabilities-ring-path]");
+        if (capabilitiesSection && capabilityStage && capabilityPin) {
+          capabilityLetters.forEach((letter, index) => {
+            const preset = letterPresets[index % letterPresets.length];
+            gsap.set(letter, { xPercent: preset.xPercent * 1.65, yPercent: preset.yPercent * 1.65, rotation: preset.rotation * 1.4, autoAlpha: 0, scale: 0.58 + (index % 3) * 0.1 });
           });
-        });
+          gsap.set(capabilityCopy, { autoAlpha: 0, y: 40, filter: "blur(10px)" });
+          gsap.set(capabilityHead, { autoAlpha: 0, scale: 0.7 });
+          gsap.set(ringSeparators, { autoAlpha: 0, scale: 0.6 });
+          gsap.set(capabilityRocks, {
+            autoAlpha: 0,
+            scale: (index) => [0.62, 0.9, 1.18][index % 3],
+          });
+          const headFloat = capabilityHead
+            ? gsap.to(capabilityHead, { y: 9, duration: 2.5, repeat: -1, yoyo: true, ease: "sine.inOut", paused: true })
+            : undefined;
+          let ringActive = false;
+          const ringTweens: gsap.core.Tween[] = [];
+          const ringItems = capabilityWords.flatMap((word, groupIndex) => {
+            const letters = Array.from(word.querySelectorAll<HTMLElement>("[data-v3-stone-letter]"));
+            const separator = ringSeparators[groupIndex];
+            return separator ? [...letters, separator] : letters;
+          });
+          const setRingMode = (active: boolean) => {
+            if (ringActive === active) return;
+            ringActive = active;
+            capabilitiesSection.classList.toggle("is-ring", active);
+            if (!active) {
+              ringTweens.forEach((tween) => tween.kill());
+              ringTweens.length = 0;
+              gsap.set(ringSeparators, { autoAlpha: 0 });
+              return;
+            }
+            ringItems.forEach((item, index) => {
+              const phase = index / Math.max(1, ringItems.length);
+              gsap.set(item, { clearProps: "transform", autoAlpha: 0, x: 0, y: 0, xPercent: -50, yPercent: -50, rotation: phase * 360, scale: 0.25 });
+              const fadeTween = gsap.to(item, { autoAlpha: 1, duration: 0.5, delay: index * 0.015, ease: "power2.out" });
+              ringTweens.push(fadeTween);
+              if (!ringPath) return;
+              const tween = gsap.to(item, {
+                duration: 24,
+                repeat: -1,
+                ease: "none",
+                scale: 0.25,
+                motionPath: {
+                  path: ringPath,
+                  align: ringPath,
+                  alignOrigin: [0.5, 0.5],
+                  start: index / Math.max(1, ringItems.length),
+                  end: 1 + index / Math.max(1, ringItems.length),
+                },
+                onUpdate: function () {
+                  gsap.set(item, { rotation: (phase + this.progress()) * 360, scale: 0.25 });
+                },
+              });
+              ringTweens.push(tween);
+            });
+          };
+          const reverseCapabilities = () => {
+            setRingMode(false);
+            headFloat?.pause();
+            capabilitiesSection.classList.remove("is-ring");
+            gsap.to(capabilityStage, { x: 0, y: 0, xPercent: 0, yPercent: 0, scale: 1, rotation: 0, autoAlpha: 1, duration: 0.58, ease: "power2.out" });
+            gsap.to(capabilityLetters, {
+              x: 0,
+              y: 0,
+              xPercent: 0,
+              yPercent: 0,
+              rotation: 0,
+              scale: 1,
+              autoAlpha: 1,
+              duration: 0.58,
+              stagger: 0.018,
+              ease: "power2.out",
+            });
+            gsap.to(capabilityRocks, {
+              x: 0,
+              y: 0,
+              xPercent: 0,
+              yPercent: 0,
+              autoAlpha: (index) => [0.16, 0.24, 0.34][index % 3],
+              scale: (index) => [0.62, 0.9, 1.18][index % 3],
+              duration: 0.52,
+              stagger: 0.012,
+              ease: "power2.out",
+            });
+            gsap.to(ringSeparators, { x: 0, y: 0, xPercent: 0, yPercent: 0, rotation: 0, scale: 0.6, autoAlpha: 0, duration: 0.4, ease: "power2.out" });
+            gsap.to(capabilityHead, { x: 0, y: 0, rotation: 0, autoAlpha: 0, scale: 0.7, duration: 0.45, ease: "power2.out" });
+            gsap.to(capabilityCopy, { autoAlpha: 0, y: 40, filter: "blur(10px)", duration: 0.4, ease: "power2.out" });
+          };
+          const prepareCapabilitiesEntry = () => {
+            setRingMode(false);
+            headFloat?.pause(0);
+            capabilitiesSection.classList.remove("is-ring");
+            gsap.set(capabilityStage, { x: 0, y: 0, xPercent: 0, yPercent: 0, scale: 1, rotation: 0, autoAlpha: 1 });
+            gsap.set(capabilityLetters, {
+              x: 0,
+              y: 0,
+              xPercent: (index) => letterPresets[index % letterPresets.length].xPercent * 1.65,
+              yPercent: (index) => letterPresets[index % letterPresets.length].yPercent * 1.65,
+              rotation: (index) => letterPresets[index % letterPresets.length].rotation * 1.4,
+              scale: (index) => 0.58 + (index % 3) * 0.1,
+              autoAlpha: 0,
+            });
+            gsap.set(capabilityRocks, { x: 0, y: 0, xPercent: 0, yPercent: 0, autoAlpha: 0, scale: (index) => [0.62, 0.9, 1.18][index % 3] });
+            gsap.set(ringSeparators, { x: 0, y: 0, xPercent: 0, yPercent: 0, rotation: 0, scale: 0.6, autoAlpha: 0 });
+            gsap.set(capabilityHead, { x: 0, y: 0, rotation: 0, autoAlpha: 0, scale: 0.7 });
+            gsap.set(capabilityCopy, { autoAlpha: 0, y: 40, filter: "blur(10px)" });
+          };
+          let suppressReverseScene = false;
+          const scene = gsap.timeline({
+            scrollTrigger: {
+              trigger: capabilitiesSection,
+              start: "top top+=76",
+              end: () => `+=${Math.max(window.innerHeight * 4.8, 3600)}`,
+              scrub: 0.65,
+              pin: capabilityPin,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+              onUpdate: (self) => {
+                if (self.direction === -1 && self.progress < 0.99) {
+                  if (!suppressReverseScene) {
+                    suppressReverseScene = true;
+                    reverseCapabilities();
+                  }
+                  return;
+                }
+                if (self.direction === 1) suppressReverseScene = false;
+                if (suppressReverseScene) return;
+                if (self.progress > 0.91) headFloat?.play();
+                else headFloat?.pause();
+                if (self.progress > 0.78) setRingMode(true);
+                else setRingMode(false);
+              },
+              onEnter: () => {
+                suppressReverseScene = false;
+                prepareCapabilitiesEntry();
+              },
+              onLeaveBack: prepareCapabilitiesEntry,
+            },
+          });
+          scene.addLabel("enter")
+            .to(capabilityRocks, { autoAlpha: (i) => [0.32, 0.52, 0.76][i % 3], duration: 0.65, stagger: 0.025, ease: "power2.out" }, "enter")
+            .to(capabilityRocks, { yPercent: (i) => (i % 2 ? -28 : 24), xPercent: (i) => (i % 3 - 1) * 18, duration: 2.4, ease: "none" }, "enter")
+            .fromTo(capabilityLetters,
+              {
+                xPercent: (index) => letterPresets[index % letterPresets.length].xPercent * 1.65,
+                yPercent: (index) => letterPresets[index % letterPresets.length].yPercent * 1.65,
+                rotation: (index) => letterPresets[index % letterPresets.length].rotation * 1.4,
+                scale: (index) => 0.58 + (index % 3) * 0.1,
+                autoAlpha: 0,
+              },
+              { xPercent: 0, yPercent: 0, rotation: 0, scale: 1, autoAlpha: 1, stagger: { each: 0.04, from: "random" }, ease: "power3.out", duration: 1.8 },
+              "enter+=0.15")
+            .addLabel("words")
+            .to({}, { duration: 0.75 }, "words")
+            .addLabel("flow")
+            .to(capabilityLetters, { x: (i) => Math.sin(i * 1.3) * 150, y: (i) => Math.cos(i * 1.6) * 110, rotation: (i) => (i % 2 ? 42 : -38), scale: 0.22, autoAlpha: 0, duration: 1.15, stagger: { each: 0.018, from: "random" }, ease: "power2.inOut" }, "flow")
+            .to(capabilityRocks, { autoAlpha: 0, scale: (i) => [0.42, 0.58, 0.76][i % 3], duration: 0.8, stagger: 0.012, ease: "power2.in" }, "flow+=0.18")
+            .to(capabilityStage, { xPercent: 23, scale: 0.64, duration: 1.05, ease: "power3.inOut" }, "flow+=0.35")
+            .to(capabilityRocks, { xPercent: -23, duration: 1.05, ease: "power3.inOut" }, "flow+=0.35")
+            .set(capabilityLetters, { x: 0, y: 0, xPercent: 0, yPercent: 0, rotation: 0, scale: 1 }, "flow+=1.48")
+            .to(capabilityHead, { autoAlpha: 1, scale: 1, duration: 0.7, ease: "back.out(1.35)" }, "flow+=1.5")
+            .fromTo(capabilityCopy, { autoAlpha: 0, y: 40, filter: "blur(10px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.65, ease: "power2.out" }, "flow+=1.62")
+            .to({}, { duration: 0.55 });
+
+          if (window.matchMedia("(pointer: fine)").matches) {
+            const strengths = [5, 15, 30];
+            const rockX = capabilityRocks.map((rock) => gsap.quickTo(rock, "x", { duration: 0.75, ease: "power3.out" }));
+            const rockY = capabilityRocks.map((rock) => gsap.quickTo(rock, "y", { duration: 0.75, ease: "power3.out" }));
+            const moveCapabilityRocks = (event: PointerEvent) => {
+              const nx = event.clientX / window.innerWidth - 0.5;
+              const ny = event.clientY / window.innerHeight - 0.5;
+              capabilityRocks.forEach((rock, index) => {
+                const strength = strengths[(Number(rock.dataset.depth) || 1) - 1];
+                rockX[index](nx * strength * (index % 2 ? -1 : 1));
+                rockY[index](ny * strength * (index % 3 ? 1 : -1));
+              });
+            };
+            window.addEventListener("pointermove", moveCapabilityRocks, { passive: true });
+            branchDisposers.push(() => window.removeEventListener("pointermove", moveCapabilityRocks));
+          }
+          branchDisposers.push(() => {
+            headFloat?.kill();
+            ringTweens.forEach((tween) => tween.kill());
+            capabilitiesSection.classList.remove("is-ring");
+          });
+        }
 
         const identityStage = root.querySelector<HTMLElement>("[data-v3-identity-stage]");
         const identityHead = root.querySelector<HTMLImageElement>("[data-v3-identity-head]");
