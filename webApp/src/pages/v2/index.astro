@@ -1,0 +1,87 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navigation from "../../components/immersive/Navigation";
+import Footer from "../../components/immersive/Footer.astro";
+import Motion from "../../components/immersive/Motion.astro";
+import { services } from "../../data/services";
+import "@fontsource-variable/oswald";
+import "../../styles/immersive.css";
+
+const projects = [
+  { name: "Зелёная крона", category: "Сайт услуг · структура · SEO", description: "Уход за городом начинается с понятного сайта. Каталог услуг, продуманная структура и путь от первого знакомства до обращения.", image: "green-crown.jpeg", href: "https://green-crown.ru/", stat: "23 услуги", tone: "sage" },
+  { name: "СЭС МСК", category: "Коммерческий сайт · адаптив", description: "Когда помощь нужна сейчас. Сайт городской службы дезинфекции с разветвлённым каталогом и быстрым сценарием заявки.", image: "ses.jpeg", href: "https://sesmsk.su/", stat: "22 направления", tone: "silver" },
+  { name: "Росснаб73", category: "Лендинг · медицинское оборудование", description: "Сложное оборудование — в ясной подаче. Презентация продуктовой линейки с акцентом на задачи медицинского бизнеса.", image: "medical.jpeg", href: "https://medicaequip.netlify.app/", stat: "16 товаров", tone: "lilac" },
+  { name: "Высотные работы", category: "Сайт услуг · Ульяновск", description: "Доверие на любой высоте. Услуги промышленных альпинистов, понятная мобильная версия и прямой контакт со специалистом.", image: "climbing.jpeg", href: "https://uslugialpinista.ru/", stat: "15+ услуг", tone: "blue" },
+];
+const steps = [
+  { title: "Сначала —\nсмысл.", text: "Разбираемся, кому нужен продукт и какую задачу он решает. Фиксируем цель, ограничения и объём работы.", tag: "Исследование", visual: "ЦЕЛЬ → РЕШЕНИЕ" },
+  { title: "Затем —\nформа.", text: "Собираю структуру и прототип. Вы видите будущий интерфейс и путь пользователя ещё до разработки.", tag: "Проектирование", visual: "СТРУКТУРА / UI" },
+  { title: "Идея\nоживает.", text: "Разрабатываю на React, TypeScript и Astro. Показываю рабочие сценарии, проверяю адаптив, скорость и интеграции.", tag: "Разработка", visual: "<идея />" },
+  { title: "Запуск —\nначало.", text: "Публикую сайт, подключаю аналитику и техническое SEO. Передаю проект и помогаю в течение 14 дней после запуска.", tag: "Запуск и развитие", visual: "В ОТКРЫТЫЙ МИР ↗" },
+];
+---
+<BaseLayout title="Сергей Крюков — сайты с характером и смыслом" description="Создаю сайты, React-приложения и цифровые инструменты. От идеи и дизайна до разработки, SEO и запуска." variant="immersive" canonical="/v2/">
+  <Navigation client:load />
+  <section class="iv-hero" aria-labelledby="iv-title">
+    <div class="iv-hero-stage">
+      <div class="iv-masthead" aria-hidden="true">КРЮКОВ<span>↗</span></div>
+      <div class="iv-hero-meta"><span class="iv-label">Сергей Крюков</span><span>Независимый разработчик<br/>Сайты. Сервисы. Впечатления.</span></div>
+      <div class="iv-portrait" aria-label="Сергей Крюков переводит взгляд на зрителя" role="img">
+        <div class="iv-portrait-halo"></div>
+        <img src="/assets/immersive/look.webp" alt="" width="800" height="900" fetchpriority="high" class="iv-face iv-face-look" />
+        <img src="/assets/immersive/front.webp" alt="" width="800" height="900" class="iv-face iv-face-front" />
+      </div>
+      <h1 id="iv-title">Сайты<br/><span>с характером.</span></h1>
+      <div class="iv-hero-note"><span class="iv-cross" aria-hidden="true">✳</span><p>Дизайн, который чувствуют.<br/>Разработка, которая работает.</p><a class="iv-round-link" href="#work" aria-label="Смотреть проекты"><span aria-hidden="true">↘</span></a></div>
+      <div class="iv-hero-bottom"><span class="iv-label">React / TypeScript / Astro</span><a href="#about" class="iv-scroll-label">Листайте. Дальше интереснее <span aria-hidden="true">↓</span></a><span class="iv-label">Ульяновск · Работаю удалённо</span></div>
+    </div>
+  </section>
+
+  <section id="about" class="iv-about iv-pad">
+    <div class="iv-section-top"><span class="iv-label">Суть подхода</span><span class="iv-label">Один специалист. Весь путь.</span></div>
+    <h2 class="iv-manifesto">{ "Хороший сайт замечают. Удобным пользуются. Продуманный приносит результат.".split(" ").map(word => <span>{word} </span>)}</h2>
+    <div class="iv-about-bottom"><span class="iv-orbit" aria-hidden="true">↗</span><p>Соединяю дизайн, разработку и поисковую стратегию. Чтобы ваш бизнес выглядел убедительно, а каждый экран помогал человеку сделать следующий шаг.</p><a class="iv-text-link" href="#services">Что могу сделать <span aria-hidden="true">↗</span></a></div>
+  </section>
+
+  <section id="work" class="iv-work iv-pad" aria-labelledby="work-title">
+    <div class="iv-section-top"><span class="iv-label">Избранные проекты</span><span class="iv-label">Сделано с вниманием к деталям</span></div>
+    <div class="iv-work-heading"><h2 id="work-title">Говорят<br/><em>за себя.</em></h2><p>Разные задачи.<br/>Одинаковое внимание<br/>к результату.</p></div>
+    <div class="iv-stack">
+      {projects.map((project, index) => <div class="iv-card-slot" style={`--card-index: ${index}`}>
+        <article class={`iv-project iv-project--${project.tone}`}>
+          <div class="iv-project-top"><span class="iv-label">{project.category}</span><span class="iv-label">{String(index + 1).padStart(2, "0")} / 04</span></div>
+          <div class="iv-project-image"><img src={`/assets/immersive/${project.image}`} alt={`Презентация сайта «${project.name}» на экране устройства`} width="1200" height="896" loading="lazy" decoding="async" /></div>
+          <div class="iv-project-bottom"><div><span class="iv-label">{project.stat}</span><h3>{project.name}</h3></div><p>{project.description}</p><a href={project.href} target="_blank" rel="noreferrer" class="iv-project-link" aria-label={`Открыть сайт «${project.name}»`}><span aria-hidden="true">↗</span></a></div>
+        </article>
+      </div>)}
+    </div>
+  </section>
+
+  <section class="iv-lab iv-pad" aria-labelledby="lab-title">
+    <div class="iv-section-top"><span class="iv-label">Собственный продукт</span><span class="iv-label">Идея → инструмент → аудитория</span></div>
+    <div class="iv-lab-grid"><div><h2 id="lab-title">Полезность.<br/><em>В масштабе.</em></h2><p>SamogonCalc — мой полигон продуктового подхода. Калькуляторы, полезный контент и поисковая архитектура в одном сервисе.</p><a class="iv-text-link" href="https://samogoncalc.ru/" target="_blank" rel="noreferrer">Исследовать SamogonCalc ↗</a><div class="iv-lab-stats"><div><strong>12</strong><span>калькуляторов</span></div><div><strong>86</strong><span>страниц контента</span></div></div></div><figure><img src="/assets/samogoncalc-desktop.png" alt="Интерфейс калькуляторов SamogonCalc" width="1440" height="900" loading="lazy" /><figcaption>Astro + React · Разработка и SEO</figcaption></figure></div>
+  </section>
+
+  <section id="services" class="iv-services iv-pad">
+    <div class="iv-section-top"><span class="iv-label">Чем могу помочь</span><span class="iv-label">От первого экрана до сложного сервиса</span></div>
+    <h2>Ваша задача.<br/><em>Моё решение.</em></h2>
+    <div class="iv-service-list">{services.map(service => <a href={`/v2/services/${service.slug}/`} class="iv-service-row"><h3>{service.shortTitle}</h3><p>{service.promise}</p><span class="iv-service-arrow" aria-hidden="true">↗</span></a>)}</div>
+  </section>
+
+  <section id="process" class="iv-process" aria-labelledby="process-title">
+    <div class="iv-process-pin">
+      <div class="iv-section-top iv-pad"><h2 id="process-title" class="iv-label">От разговора до запуска</h2><span class="iv-label">4 этапа / без сюрпризов</span></div>
+      <div class="iv-process-viewport"><div class="iv-process-track">{steps.map((step, i) => <article class="iv-step"><div class="iv-step-top"><span class="iv-label">{step.tag}</span><span class="iv-step-number">0{i + 1}</span></div><h3>{step.title.split("\n").map(line => <span>{line}<br/></span>)}</h3><p>{step.text}</p><div class="iv-step-visual" aria-hidden="true">{step.visual}</div></article>)}</div></div>
+      <div class="iv-process-bottom iv-pad"><span class="iv-label">Каждый этап — видимый результат</span><div><button type="button" data-process-prev aria-label="Предыдущий этап">←</button><button type="button" data-process-next aria-label="Следующий этап">→</button></div></div>
+    </div>
+  </section>
+  <div class="iv-type-band" aria-hidden="true"><div>СМЫСЛ <span>↗</span> ФОРМА <span>↗</span> РЕЗУЛЬТАТ <span>↗</span></div></div>
+  <section class="iv-faq iv-pad"><div><span class="iv-label">До первого сообщения</span><h2>Пара<br/><em>ответов.</em></h2></div><div>{[
+    ["Сколько стоит проект?", "Стоимость зависит от задачи, состава страниц и интеграций. После короткого обсуждения предложу объём работ, этапы и оценку. Можно начать с одного небольшого этапа."],
+    ["Нужно ли готовое техническое задание?", "Нет. Достаточно рассказать о бизнесе, задаче и желаемом результате. Помогу сформулировать требования и собрать структуру."],
+    ["Какие сроки?", "Сайт для бизнеса обычно занимает 5–14 рабочих дней после согласования структуры. Для веб-приложений и сложных инструментов определяем сроки по этапам."],
+    ["Что происходит после запуска?", "Передаю рабочий проект и инструкции. В течение 14 дней помогаю после запуска. Дальнейшую поддержку и развитие можно обсудить отдельно."],
+  ].map(([question, answer]) => <details><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div></section>
+  <Footer />
+  <Motion />
+</BaseLayout>

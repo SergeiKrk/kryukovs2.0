@@ -1,11 +1,15 @@
 node_modules/
+webApp/node_modules/
 dist/
 .astro/
+webApp/dist/
+webApp/.astro/
 .DS_Store
 *.log
 
 # Generated local outputs
 storybook-static/
+webApp/storybook-static/
 .pnpm-store/
 .skill-staging/
 tmp/

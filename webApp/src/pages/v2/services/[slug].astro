@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Navigation from "../../../components/immersive/Navigation";
+import Footer from "../../../components/immersive/Footer.astro";
+import Motion from "../../../components/immersive/Motion.astro";
+import { services, serviceBySlug, type Service } from "../../../data/services";
+import "@fontsource-variable/oswald";
+import "../../../styles/immersive.css";
+export function getStaticPaths() { return services.map(service => ({ params: { slug: service.slug }, props: { service } })); }
+interface Props { service: Service }
+const { service } = Astro.props;
+const canonical = `/v2/services/${service.slug}/`;
+const schema = { "@context": "https://schema.org", "@type": "Service", name: service.title, description: service.promise, url: new URL(canonical, Astro.site).toString(), provider: { "@id": "https://kryukovs.ru/#professional" } };
+---
+<BaseLayout title={`${service.title} — Сергей Крюков`} description={service.promise} variant="immersive" canonical={canonical}>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+  <Navigation client:load />
+  <article class="iv-detail iv-pad">
+    <nav aria-label="Хлебные крошки" class="iv-label"><a href="/v2/">Главная</a> / <a href="/v2/#services">Услуги</a> / {service.shortTitle}</nav>
+    <h1>{service.title}<em>.</em></h1>
+    <div class="iv-detail-lead"><div><p>{service.promise}</p><a href="https://t.me/sergeikrk" class="iv-text-link" target="_blank" rel="noreferrer">Обсудить проект ↗</a></div><aside><strong>Результат</strong>{service.result}<br/><br/><strong>Срок</strong>{service.timeline}<br/><br/>Оценка стоимости — после короткого брифа.</aside></div>
+    <section class="iv-detail-section"><h2>Что изменится <em>для вас.</em></h2><ul>{service.outcomes.map(item => <li>{item}</li>)}</ul></section>
+    <section class="iv-detail-section"><h2>Что входит <em>в работу.</em></h2><ul>{service.includes.map(item => <li>{item}</li>)}</ul></section>
+    <section class="iv-detail-section"><h2>Четыре <em>понятных этапа.</em></h2><div class="iv-detail-stages">{service.stages.map((stage,i) => <div><span class="iv-label">0{i+1}</span><h3>{stage.title}</h3><p>{stage.text}</p></div>)}</div></section>
+    <section class="iv-detail-section"><span class="iv-label">Релевантный опыт</span><h2>{service.proof.title}</h2><p>{service.proof.text}</p>{service.proof.href && <a class="iv-text-link" href={service.proof.href} target="_blank" rel="noreferrer">Открыть проект ↗</a>}</section>
+    <section class="iv-detail-section"><h2>Дополнить <em>решение.</em></h2>{service.related.map(slug => <a class="iv-service-row" href={`/v2/services/${slug}/`}><h3>{serviceBySlug[slug].shortTitle}</h3><p>{serviceBySlug[slug].promise}</p><span aria-hidden="true">↗</span></a>)}</section>
+  </article>
+  <Footer />
+  <Motion />
+</BaseLayout>

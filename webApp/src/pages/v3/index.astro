@@ -1,0 +1,251 @@
+---
+import "@fontsource-variable/oswald";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navigation from "../../components/v3/Navigation";
+import V3Motion from "../../components/v3/V3Motion.astro";
+import QuizShell from "../../components/v3/QuizShell.astro";
+import Footer from "../../components/v3/Footer.astro";
+import { capabilities, faq, pricing, processSteps, projects, proofs, services } from "../../data/v3";
+import { Picture } from "astro:assets";
+import heroHeadLeft from "../../assets/v3/hero-stone-head-left.png";
+import heroLaptop from "../../assets/v3/development-laptop.png";
+import heroHead from "../../assets/v3/hero-stone-head.png";
+const v3AssetModules = import.meta.glob("../../assets/v3/*", { eager: true, import: "default" });
+const v3Asset = (path: string) => v3AssetModules[`../../assets/v3/${path.split("/").pop()}`] ?? path;
+import "../../styles/v3.css";
+
+const title = "Создание сайтов под ключ | Сергей Крюков";
+const description = "Дизайн, разработка и SEO сайтов для бизнеса и брендов у одного специалиста. Прототип коммерческого лендинга Сергея Крюкова.";
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  variant="cinematic"
+  canonical="/v3/"
+  noindex={true}
+  image="/assets/v3/hero-stone-head.png"
+>
+  <Navigation slot="before-main" client:load />
+
+  <section class="v3-hero" aria-labelledby="v3-hero-title">
+    <div class="v3-shell v3-hero__grid">
+      <div class="v3-hero__copy" data-v3-hero-copy>
+        <p class="v3-kicker">Проекты от 45 000 ₽</p>
+        <h1 id="v3-hero-title" data-v3-hero-title>
+          <span class="v3-hero__title-outline"><span>Создание сайтов</span><span>под ключ</span></span>
+        </h1>
+        <p class="v3-hero__support">Для бизнеса и брендов: сильный дизайн, разработка и SEO у одного специалиста.</p>
+        <div class="v3-actions">
+          <a class="v3-button v3-button--primary" href="#calculator">Рассчитать проект</a>
+          <a class="v3-button v3-button--quiet" href="#work">Смотреть работы <span aria-hidden="true">↘</span></a>
+        </div>
+      </div>
+
+      <figure class="v3-hero__visual" data-v3-hero-visual>
+        <div class="v3-hero__rocks" aria-hidden="true">
+          {[1, 2, 3, 4, 1, 3].map((rock, index) => (
+            <span class={`v3-hero__rock v3-hero__rock--${index + 1}`} data-v3-hero-rock data-depth={index + 1}>
+              <Picture src={v3Asset(`/assets/v3/rock-${rock}.png`)} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="280" height="280" loading="eager" decoding="async" />
+            </span>
+          ))}
+        </div>
+        <Picture
+          class="v3-hero__laptop"
+          data-v3-hero-laptop
+          src={heroLaptop}
+          formats={["avif", "webp"]}
+          fallbackFormat="png"
+          alt=""
+          width="1024"
+          height="1024"
+          loading="eager"
+          decoding="async"
+        />
+        <Picture
+          class="v3-hero__head"
+          data-v3-hero-head
+          src={heroHeadLeft}
+          formats={["avif", "webp"]}
+          fallbackFormat="png"
+          alt="Каменная голова как образ цельного цифрового продукта"
+          width="1024"
+          height="1024"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </figure>
+    </div>
+    <div class="v3-shell v3-proof-strip" aria-label="Проверенные факты">
+      {proofs.map(([value, label]) => <p><strong>{value}</strong><span>{label}</span></p>)}
+    </div>
+  </section>
+
+  <section class="v3-capabilities v3-section" aria-labelledby="v3-capabilities-title" data-v3-capabilities>
+    <div class="v3-shell">
+      <div class="v3-capabilities__grid">
+        <div class="v3-capabilities__intro" data-v3-capabilities-copy>
+          <p class="v3-kicker">Три дисциплины, один результат</p>
+          <h2 id="v3-capabilities-title">Сайт работает как единое целое</h2>
+          <p>Не нужно координировать отдельных дизайнеров, разработчиков и SEO-специалистов.</p>
+        </div>
+      <div class="v3-capabilities__list">
+        {capabilities.map((capability) => (
+          <article class="v3-capability" data-v3-capability>
+            <h3 class="v3-capability__word" aria-label={capability.word}>
+              {Array.from(capability.word).map((character, index) => {
+                const glyph = capability.glyphs[index];
+                return glyph ? (
+                  <span class="v3-capability__glyph" aria-hidden="true" data-v3-stone-letter>
+                    <Picture src={v3Asset(glyph.src)} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+                  </span>
+                ) : (
+                  <span aria-hidden="true" data-v3-stone-letter>{character}</span>
+                );
+              })}
+            </h3>
+            <p>{capability.description}</p>
+          </article>
+        ))}
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="v3-identity v3-section" aria-labelledby="v3-identity-title" data-v3-identity>
+    <div class="v3-shell">
+      <div class="v3-section-heading v3-section-heading--split">
+        <div>
+          <p class="v3-kicker">От образа к реализации</p>
+          <h2 id="v3-identity-title">Характер бренда становится работающим кодом</h2>
+        </div>
+        <p>Кинематографичная подача остаётся частью понятного коммерческого сайта, а не заменяет его содержание.</p>
+      </div>
+      <div class="v3-identity__media v3-identity__media--single">
+        <figure class="v3-identity__laptop" data-v3-development-laptop>
+          <Picture src={heroLaptop} formats={["avif", "webp"]} fallbackFormat="png" alt="Ноутбук с редактором кода проекта" width="1024" height="1024" loading="lazy" decoding="async" />
+          <figcaption>React, TypeScript и Astro для производственной разработки</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="process" class="v3-process v3-section" aria-labelledby="v3-process-title">
+    <div class="v3-shell">
+      <div class="v3-personal">
+        <figure class="v3-identity__transform v3-personal__portrait" data-v3-identity-stage>
+          <Picture class="v3-identity__head" data-v3-identity-head src={heroHead} formats={["avif", "webp"]} fallbackFormat="png" alt="Каменная голова до визуального превращения" width="1024" height="1024" loading="lazy" decoding="async" />
+          <video class="v3-identity__video" data-v3-identity-video muted playsinline preload="metadata" poster="/assets/v3/hero-stone-head.png">
+            <source src="/assets/v3/identity-stone-to-human.mp4" type="video/mp4" />
+            Ваш браузер не поддерживает видео. После анимации показан финальный портрет.
+          </video>
+          <img class="v3-identity__final" data-v3-identity-final src="/assets/v3/sergey-kryukov.png" alt="Сергей Крюков после перехода от образа к личному авторству" width="1600" height="900" loading="lazy" decoding="async" />
+          <figcaption>Личное авторство вместо обезличенного агентского процесса</figcaption>
+        </figure>
+        <div class="v3-personal__copy">
+          <p class="v3-kicker">Личная ответственность</p>
+          <h2 id="v3-process-title">От первого разговора до запуска работаю с проектом сам</h2>
+          <p>Соединяю продуктовый взгляд, визуальный дизайн и разработку. Вы всегда понимаете, с кем обсуждать решение и кто отвечает за его качество.</p>
+        </div>
+      </div>
+
+      <ol class="v3-process__steps" data-v3-process-steps>
+        {processSteps.map((step, index) => (
+          <li class="v3-process__step" data-v3-process-card>
+            <div class="v3-process__meta"><span>{String(index + 1).padStart(2, "0")}</span><p>{step.title}</p></div>
+            <figure><Picture src={v3Asset(step.image)} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" /></figure>
+            <div><h3>{step.title}</h3><p>{step.text}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section id="work" class="v3-work v3-section" aria-labelledby="v3-work-title">
+    <div class="v3-shell">
+      <div class="v3-work__pin" data-v3-work-pin>
+        <div class="v3-section-heading v3-section-heading--split">
+          <div>
+            <p class="v3-kicker">Избранные проекты</p>
+            <h2 id="v3-work-title">Пять задач, пять работающих интерфейсов</h2>
+          </div>
+          <p>Только реальные локальные скриншоты. Без оценок трафика и цифр, которые нельзя подтвердить.</p>
+        </div>
+        <div class="v3-work__viewport" data-v3-work-viewport>
+          <div class="v3-work__track" data-v3-work-track>
+            {projects.map((project, index) => (
+              <article class={`v3-project${index === 0 ? " v3-project--lead" : ""}`}>
+                <a href={project.href} target="_blank" rel="noreferrer" aria-labelledby={`v3-project-${index}-title`} aria-describedby={`v3-project-${index}-description`}>
+                  <figure><Picture src={v3Asset(project.image)} formats={["webp"]} fallbackFormat="png" alt={`Скриншот десктопной версии сайта ${project.name}`} width="1440" height="900" loading="lazy" decoding="async" /></figure>
+                  <div class="v3-project__content">
+                    <div><span>{String(index + 1).padStart(2, "0")}</span><p>{project.category}</p></div>
+                    <h3 id={`v3-project-${index}-title`}>{project.name}</h3>
+                    <p id={`v3-project-${index}-description`}>{project.description}</p>
+                    <strong>Открыть сайт <span aria-hidden="true">↗</span></strong>
+                  </div>
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="v3-services v3-section" aria-labelledby="v3-services-title">
+    <div class="v3-shell">
+      <div class="v3-section-heading v3-section-heading--split">
+        <div><p class="v3-kicker">Форматы работы</p><h2 id="v3-services-title">Под задачу, а не под готовый пакет</h2></div>
+        <p>Состав работ фиксируем после короткого знакомства с продуктом и исходными материалами.</p>
+      </div>
+      <div class="v3-services__list">
+        {services.map((service, index) => (
+          <article>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <h3>{service.title}</h3>
+            <p>{service.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="v3-pricing v3-section" aria-labelledby="v3-pricing-title">
+    <div class="v3-shell">
+      <div class="v3-section-heading v3-section-heading--split">
+        <div><p class="v3-kicker">Рабочие ориентиры</p><h2 id="v3-pricing-title">Стоимость зависит от масштаба</h2></div>
+        <p>Это стартовые ориентиры, а не публичная оферта. Финальная оценка появляется после уточнения состава и сроков.</p>
+      </div>
+      <div class="v3-pricing__grid">
+        {pricing.map((tier) => (
+          <article class:list={["v3-price", tier.featured && "v3-price--featured"]}>
+            <div><p>{tier.name}</p>{tier.featured && <span>Частый выбор</span>}</div>
+            <strong>{tier.price}</strong>
+            <p>{tier.text}</p>
+            <ul>{tier.includes.map((item) => <li>{item}</li>)}</ul>
+            <a class="v3-button v3-button--quiet" href="#calculator">Обсудить состав</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="v3-faq v3-section" aria-labelledby="v3-faq-title">
+    <div class="v3-shell v3-faq__grid">
+      <div><p class="v3-kicker">До первого сообщения</p><h2 id="v3-faq-title">Ответы на частые вопросы</h2></div>
+      <div class="v3-faq__list">
+        {faq.map(([question, answer], index) => (
+          <details>
+            <summary><span>{String(index + 1).padStart(2, "0")}</span>{question}<strong aria-hidden="true">+</strong></summary>
+            <p>{answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <QuizShell />
+  <Footer slot="after-main" />
+  <V3Motion slot="after-main" />
+</BaseLayout>

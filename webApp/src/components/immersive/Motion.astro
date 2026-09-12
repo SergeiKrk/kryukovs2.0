@@ -1,0 +1,120 @@
+---
+import "lenis/dist/lenis.css";
+---
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import Lenis from "lenis";
+
+  gsap.registerPlugin(ScrollTrigger);
+  const root = document.querySelector<HTMLElement>(".v2");
+  if (root) {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let cleanup = () => {};
+    let saved: string | null = null;
+    try { saved = sessionStorage.getItem("immersive-motion"); } catch { /* Optional preference storage. */ }
+    let enabled = !preference.matches && saved !== "off";
+    const setup = () => {
+      cleanup();
+      document.documentElement.dataset.motion = enabled ? "on" : "off";
+      const viewport = root.querySelector<HTMLElement>(".iv-process-viewport");
+      const prev = root.querySelector<HTMLButtonElement>("[data-process-prev]");
+      const next = root.querySelector<HTMLButtonElement>("[data-process-next]");
+      let processTrigger: ScrollTrigger | undefined;
+      let lenis: Lenis | undefined;
+      let tick: ((time: number) => void) | undefined;
+      const stepTo = (direction: number) => {
+        if (!viewport) return;
+        if (processTrigger && lenis) {
+          const step = Math.round(processTrigger.progress * 3);
+          const target = Math.max(0, Math.min(3, step + direction));
+          lenis.scrollTo(processTrigger.start + (processTrigger.end - processTrigger.start) * target / 3);
+        } else {
+          const card = viewport.querySelector<HTMLElement>(".iv-step");
+          viewport.scrollBy({ left: direction * ((card?.offsetWidth ?? 400) + 24), behavior: enabled ? "smooth" : "instant" });
+        }
+      };
+      const goPrev = () => stepTo(-1);
+      const goNext = () => stepTo(1);
+      prev?.addEventListener("click", goPrev);
+      next?.addEventListener("click", goNext);
+      const media = gsap.matchMedia();
+      if (enabled) {
+        lenis = new Lenis({ lerp: 0.085, smoothWheel: true, anchors: { offset: -30 }, autoRaf: false });
+        lenis.on("scroll", ScrollTrigger.update);
+        tick = (time) => lenis?.raf(time * 1000);
+        gsap.ticker.add(tick);
+        gsap.ticker.lagSmoothing(0);
+        media.add("(prefers-reduced-motion: no-preference)", () => {
+          const hero = root.querySelector<HTMLElement>(".iv-hero");
+          if (hero) {
+            gsap.to(".iv-face-front", { opacity: 1, ease: "none", scrollTrigger: { trigger: hero, start: "top top", end: "+=260", scrub: .3 } });
+          }
+          const words = root.querySelectorAll(".iv-manifesto span");
+          if (words.length) gsap.fromTo(words, { color: "#555d67" }, { color: "#efefeb", stagger: .13, ease: "none", scrollTrigger: { trigger: ".iv-manifesto", start: "top 78%", end: "bottom 45%", scrub: .6 } });
+          const band = root.querySelector(".iv-type-band > div");
+          if (band) gsap.to(band, { xPercent: -30, ease: "none", scrollTrigger: { trigger: ".iv-type-band", start: "top bottom", end: "bottom top", scrub: 1 } });
+        }, root);
+        media.add("(min-width: 900px) and (min-height: 650px) and (prefers-reduced-motion: no-preference)", () => {
+          const hero = root.querySelector<HTMLElement>(".iv-hero");
+          if (hero) {
+            const timeline = gsap.timeline({ scrollTrigger: { trigger: hero, start: "top top", end: "+=650", pin: ".iv-hero-stage", scrub: 1, invalidateOnRefresh: true } });
+            timeline.to(".iv-masthead", { yPercent: -35, opacity: .15, ease: "none" }, 0)
+              .to(".iv-portrait", { scale: 1.16, yPercent: 4, ease: "none" }, 0)
+              .to(".iv-hero h1", { xPercent: -6, yPercent: 15, ease: "none" }, 0)
+              .to(".iv-hero-meta", { y: -65, opacity: .3, ease: "none" }, 0);
+          }
+          const cards = Array.from(root.querySelectorAll<HTMLElement>(".iv-project"));
+          cards.forEach((card, index) => {
+            if (index === cards.length - 1) return;
+            gsap.to(card, { scale: 1 - (cards.length - 1 - index) * .035, ease: "none", scrollTrigger: { trigger: cards[index + 1].parentElement, start: "top 78%", end: "top 100px", scrub: true, invalidateOnRefresh: true } });
+          });
+          const labImage = root.querySelector(".iv-lab figure");
+          if (labImage) gsap.fromTo(labImage, { y: 70, rotate: -7 }, { y: -25, rotate: 1, ease: "none", scrollTrigger: { trigger: ".iv-lab", start: "top bottom", end: "bottom top", scrub: 1 } });
+          const track = root.querySelector<HTMLElement>(".iv-process-track");
+          const process = root.querySelector<HTMLElement>(".iv-process");
+          if (track && viewport && process) {
+            gsap.set(viewport, { overflowX: "clip" });
+            const travel = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+            const tween = gsap.to(track, { x: () => -travel(), ease: "none", scrollTrigger: { trigger: process, start: "top top", end: () => `+=${travel()}`, pin: ".iv-process-pin", scrub: 1, invalidateOnRefresh: true } });
+            processTrigger = tween.scrollTrigger;
+            return () => { processTrigger = undefined; };
+          }
+        }, root);
+      }
+      const refresh = () => ScrollTrigger.refresh();
+      const pendingImages = Array.from(root.querySelectorAll<HTMLImageElement>("img")).filter(img => !img.complete);
+      pendingImages.forEach(img => img.addEventListener("load", refresh, { once: true }));
+      let disposed = false;
+      void document.fonts.ready.then(() => { if (!disposed) refresh(); });
+      cleanup = () => {
+        disposed = true;
+        media.revert();
+        if (tick) gsap.ticker.remove(tick);
+        lenis?.off("scroll", ScrollTrigger.update);
+        lenis?.destroy();
+        pendingImages.forEach(img => img.removeEventListener("load", refresh));
+        prev?.removeEventListener("click", goPrev);
+        next?.removeEventListener("click", goNext);
+      };
+    };
+    const toggle = (event: Event) => { enabled = (event as CustomEvent<boolean>).detail; setup(); };
+    const systemChange = () => {
+      let choice: string | null = null;
+      try { choice = sessionStorage.getItem("immersive-motion"); } catch { /* Optional preference storage. */ }
+      enabled = !preference.matches && choice !== "off";
+      setup();
+    };
+    setup();
+    window.addEventListener("immersive:motion", toggle);
+    preference.addEventListener("change", systemChange);
+    // A bfcache restore keeps the page scripts: rebuild their disposed scroll controllers.
+    window.addEventListener("pagehide", () => cleanup());
+    window.addEventListener("pageshow", event => { if (event.persisted) setup(); });
+    document.addEventListener("astro:before-swap", () => {
+      cleanup();
+      window.removeEventListener("immersive:motion", toggle);
+      preference.removeEventListener("change", systemChange);
+    }, { once: true });
+  }
+</script>

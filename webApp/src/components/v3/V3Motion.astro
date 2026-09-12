@@ -1,0 +1,452 @@
+---
+import "lenis/dist/lenis.css";
+---
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
+  import Lenis from "lenis";
+  import {
+    getHorizontalTravel,
+    getVideoTime,
+    readMotionEvent,
+    resolveMotionEnabled,
+  } from "./v3MotionHelpers.mjs";
+
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  const CINEMATIC_QUERY = "(min-width: 900px) and (min-height: 650px) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
+  const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
+  const letterPresets = [
+    { xPercent: -148, yPercent: -110, rotation: -24 },
+    { xPercent: 106, yPercent: -138, rotation: 21 },
+    { xPercent: -72, yPercent: 154, rotation: 18 },
+    { xPercent: 158, yPercent: 88, rotation: -20 },
+    { xPercent: 28, yPercent: -168, rotation: 14 },
+    { xPercent: -132, yPercent: 72, rotation: 23 },
+  ] as const;
+
+  type Cleanup = () => void;
+  type NetworkInformation = { saveData?: boolean };
+
+  let motionOverride: boolean | null = null;
+
+  function getSavedPreference() {
+    try {
+      return sessionStorage.getItem("v3-motion");
+    } catch {
+      return null;
+    }
+  }
+
+  function setWillChange(elements: Element[], value: string) {
+    elements.forEach((element) => {
+      if (element instanceof HTMLElement || element instanceof SVGElement) {
+        element.style.willChange = value;
+      }
+    });
+  }
+
+  function waitForImage(image: HTMLImageElement, disposers: Cleanup[]) {
+    if (image.complete) {
+      return typeof image.decode === "function" ? image.decode().catch(() => undefined) : Promise.resolve();
+    }
+    return new Promise<void>((resolve) => {
+      const settle = () => resolve();
+      image.addEventListener("load", settle, { once: true });
+      image.addEventListener("error", settle, { once: true });
+      disposers.push(() => {
+        image.removeEventListener("load", settle);
+        image.removeEventListener("error", settle);
+      });
+    });
+  }
+
+  function initV3Motion(root: HTMLElement): Cleanup {
+    const reducedMotion = window.matchMedia(REDUCED_QUERY).matches;
+    const enabled = motionOverride ?? resolveMotionEnabled(getSavedPreference(), reducedMotion);
+    const disposers: Cleanup[] = [];
+    const media = gsap.matchMedia();
+    let disposed = false;
+    let resizeTimer: number | undefined;
+
+    root.dataset.v3Motion = enabled ? "on" : "off";
+
+    const context = gsap.context(() => {
+      if (!enabled) return;
+
+      media.add(CINEMATIC_QUERY, () => {
+        root.classList.add("v3-motion-cinematic");
+
+        let lenis: Lenis | undefined;
+        let ticker: ((time: number) => void) | undefined;
+        const branchDisposers: Cleanup[] = [];
+
+        lenis = new Lenis({
+          autoRaf: false,
+          lerp: 0.085,
+          smoothWheel: true,
+          anchors: { offset: -84 },
+        });
+        lenis.on("scroll", ScrollTrigger.update);
+        ticker = (time) => lenis?.raf(time * 1000);
+        gsap.ticker.add(ticker);
+
+        const hero = root.querySelector<HTMLElement>(".v3-hero");
+        const heroCopy = root.querySelector<HTMLElement>("[data-v3-hero-copy]");
+        const heroTitle = root.querySelector<HTMLElement>("[data-v3-hero-title]");
+        const titleText = root.querySelector<HTMLElement>(".v3-hero__title-outline");
+        const heroVisual = root.querySelector<HTMLElement>("[data-v3-hero-visual]");
+        const heroLaptop = root.querySelector<HTMLImageElement>("[data-v3-hero-laptop]");
+        const heroHead = root.querySelector<HTMLImageElement>("[data-v3-hero-head]");
+        const heroRocks = Array.from(root.querySelectorAll<HTMLElement>("[data-v3-hero-rock]"));
+        const introElements = [heroTitle, heroLaptop, heroHead].filter(Boolean) as Element[];
+        const heroAnimated = [heroCopy, heroVisual].filter(Boolean) as Element[];
+
+        if (heroTitle && titleText && heroLaptop && heroHead) {
+          const titleSplit = new SplitText(titleText, { type: "lines,words,chars", linesClass: "v3-title-line" });
+          branchDisposers.push(() => titleSplit.revert());
+          setWillChange(introElements, "transform, opacity");
+          gsap.timeline({
+            defaults: { ease: "power3.out" },
+            onComplete: () => setWillChange(introElements, ""),
+          })
+            .fromTo(titleSplit.chars, { autoAlpha: 0, yPercent: 115, rotateX: -75 }, { autoAlpha: 1, yPercent: 0, rotateX: 0, duration: 0.52, stagger: 0.018 }, 0)
+            .fromTo(heroLaptop, { autoAlpha: 0, xPercent: -34 }, { autoAlpha: 1, xPercent: 0, duration: 0.72 }, 0.5)
+            .fromTo(heroHead, { autoAlpha: 0, xPercent: 36 }, { autoAlpha: 1, xPercent: 0, duration: 0.78 }, 0.5);
+
+          gsap.to(heroLaptop, { y: -10, duration: 2.8, ease: "sine.inOut", repeat: -1, yoyo: true, delay: 1.2 });
+          const rotateHead = gsap.quickTo(heroHead, "rotation", { duration: 0.45, ease: "power2.out" });
+          const onPointerMove = (event: PointerEvent) => {
+            const ratio = event.clientX / Math.max(1, window.innerWidth);
+            rotateHead(-10 + ratio * 10);
+          };
+          window.addEventListener("pointermove", onPointerMove, { passive: true });
+          branchDisposers.push(() => window.removeEventListener("pointermove", onPointerMove));
+        }
+
+        if (hero && heroRocks.length) {
+          heroRocks.forEach((rock, index) => {
+            const image = rock.querySelector("img");
+            const depth = (index % 3) + 1;
+            gsap.to(image, {
+              y: index % 2 ? 12 + depth * 3 : -12 - depth * 3,
+              rotation: index % 2 ? 4 : -4,
+              duration: 3.2 + index * 0.38,
+              ease: "sine.inOut",
+              repeat: -1,
+              yoyo: true,
+            });
+            gsap.to(rock, {
+              yPercent: 38 + depth * 22,
+              ease: "none",
+              scrollTrigger: { trigger: hero, start: "top top", end: "bottom top", scrub: 0.8 },
+            });
+          });
+
+          const pointerDepth = [
+            { x: -8, y: -5 },
+            { x: 24, y: 14 },
+            { x: -13, y: 9 },
+            { x: 46, y: 28 },
+            { x: -30, y: -17 },
+            { x: 11, y: -8 },
+          ];
+          const rockX = heroRocks.map((rock, index) => gsap.quickTo(rock, "x", { duration: 0.62 + index * 0.1, ease: "power2.out" }));
+          const rockY = heroRocks.map((rock, index) => gsap.quickTo(rock, "y", { duration: 0.72 + index * 0.1, ease: "power2.out" }));
+          const moveRocks = (event: PointerEvent) => {
+            const x = event.clientX / Math.max(1, window.innerWidth) - 0.5;
+            const y = event.clientY / Math.max(1, window.innerHeight) - 0.5;
+            heroRocks.forEach((_, index) => {
+              const movement = pointerDepth[index] ?? pointerDepth[0];
+              rockX[index](x * movement.x);
+              rockY[index](y * movement.y);
+            });
+          };
+          window.addEventListener("pointermove", moveRocks, { passive: true });
+          branchDisposers.push(() => window.removeEventListener("pointermove", moveRocks));
+        }
+
+        if (hero && heroCopy && heroVisual) {
+          gsap.timeline({
+            scrollTrigger: {
+              trigger: hero,
+              start: "top top",
+              end: () => `+=${Math.max(520, window.innerHeight * 0.82)}`,
+              scrub: 0.7,
+              invalidateOnRefresh: true,
+              onEnter: () => setWillChange(heroAnimated, "transform, opacity"),
+              onEnterBack: () => setWillChange(heroAnimated, "transform, opacity"),
+              onLeave: () => setWillChange(heroAnimated, ""),
+              onLeaveBack: () => setWillChange(heroAnimated, ""),
+            },
+          })
+            .to(heroCopy, { yPercent: -26, autoAlpha: 0.28, ease: "none" }, 0)
+            .to(heroVisual, { yPercent: -9, scale: 1.035, ease: "none" }, 0)
+            .to(heroLaptop, { yPercent: -18, xPercent: -5, ease: "none" }, 0)
+            .to(heroHead, { yPercent: 22, scale: 0.72, autoAlpha: 0, ease: "power1.inOut" }, 0.18);
+        }
+
+        const capabilityLetters = Array.from(root.querySelectorAll<HTMLElement>("[data-v3-stone-letter]"));
+        root.querySelectorAll<HTMLElement>("[data-v3-capability]").forEach((capability, capabilityIndex) => {
+          const letters = Array.from(capability.querySelectorAll<HTMLElement>("[data-v3-stone-letter]"));
+          const isSeo = capabilityIndex === 2;
+          letters.forEach((letter, letterIndex) => {
+            const preset = letterPresets[(capabilityIndex * 3 + letterIndex) % letterPresets.length];
+            gsap.fromTo(
+              letter,
+              { ...preset, autoAlpha: 0 },
+              {
+                xPercent: 0,
+                yPercent: 0,
+                rotation: 0,
+                autoAlpha: 1,
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: capability,
+                  start: "top 82%",
+                  end: isSeo ? "top 62%" : "top 38%",
+                  scrub: isSeo ? 0.28 : 0.55,
+                  onEnter: () => setWillChange([letter], "transform, opacity"),
+                  onEnterBack: () => setWillChange([letter], "transform, opacity"),
+                  onLeave: () => setWillChange([letter], ""),
+                  onLeaveBack: () => setWillChange([letter], ""),
+                },
+              },
+            );
+          });
+        });
+
+        const identityStage = root.querySelector<HTMLElement>("[data-v3-identity-stage]");
+        const identityHead = root.querySelector<HTMLImageElement>("[data-v3-identity-head]");
+        const identityVideo = root.querySelector<HTMLVideoElement>("[data-v3-identity-video]");
+        const identityFinal = root.querySelector<HTMLImageElement>("[data-v3-identity-final]");
+        const saveData = (navigator as Navigator & { connection?: NetworkInformation }).connection?.saveData === true;
+        let identityTimeline: gsap.core.Timeline | undefined;
+        let identityFailed = false;
+
+        const showIdentityFinal = () => {
+          if (!identityStage || !identityVideo || !identityFinal) return;
+          identityFailed = true;
+          identityTimeline?.scrollTrigger?.kill();
+          identityTimeline?.kill();
+          identityVideo.pause();
+          gsap.set(identityVideo, { autoAlpha: 0 });
+          gsap.set(identityHead, { autoAlpha: 0 });
+          gsap.set(identityFinal, { autoAlpha: 1 });
+          identityStage.dataset.v3MediaFallback = "true";
+          setWillChange([identityVideo, identityFinal], "");
+        };
+
+        const createIdentityScrub = () => {
+          if (!identityStage || !identityVideo || !identityFinal || identityFailed || !Number.isFinite(identityVideo.duration)) {
+            showIdentityFinal();
+            return;
+          }
+          const state = { progress: 0 };
+          identityVideo.pause();
+          identityVideo.currentTime = 0;
+          gsap.set(identityHead, { autoAlpha: 0 });
+          gsap.set(identityVideo, { autoAlpha: 1 });
+          gsap.set(identityFinal, { autoAlpha: 0 });
+          identityTimeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: identityStage,
+              start: "top 72%",
+              end: () => `+=${Math.max(1000, window.innerHeight * 1.45)}`,
+              scrub: 0.35,
+              invalidateOnRefresh: true,
+              onEnter: () => setWillChange([identityVideo, identityFinal], "opacity"),
+              onEnterBack: () => setWillChange([identityVideo, identityFinal], "opacity"),
+              onLeave: () => setWillChange([identityVideo, identityFinal], ""),
+              onLeaveBack: () => setWillChange([identityVideo, identityFinal], ""),
+            },
+          });
+          identityTimeline
+            .to(state, {
+              progress: 1,
+              duration: 1,
+              ease: "none",
+              onUpdate: () => {
+                if (!identityFailed) identityVideo.currentTime = getVideoTime(identityVideo.duration, state.progress);
+              },
+            }, 0)
+            .to(identityVideo, { autoAlpha: 0, duration: 0.12, ease: "none" }, 0.88)
+            .to(identityFinal, { autoAlpha: 1, duration: 0.12, ease: "none" }, 0.88);
+        };
+
+        if (identityVideo) {
+          if (saveData) {
+            showIdentityFinal();
+          } else {
+            const onMetadata = () => createIdentityScrub();
+            identityVideo.addEventListener("loadedmetadata", onMetadata, { once: true });
+            identityVideo.addEventListener("error", showIdentityFinal);
+            identityVideo.addEventListener("stalled", showIdentityFinal);
+            branchDisposers.push(() => {
+              identityVideo.removeEventListener("loadedmetadata", onMetadata);
+              identityVideo.removeEventListener("error", showIdentityFinal);
+              identityVideo.removeEventListener("stalled", showIdentityFinal);
+              identityVideo.pause();
+            });
+            if (identityVideo.readyState >= 1) createIdentityScrub();
+          }
+        }
+
+        const processSteps = root.querySelector<HTMLElement>("[data-v3-process-steps]");
+        const processCards = Array.from(root.querySelectorAll<HTMLElement>("[data-v3-process-card]"));
+        processCards.forEach((card, index) => {
+          card.style.setProperty("--v3-process-index", String(index));
+          const nextCard = processCards[index + 1];
+          if (!nextCard) return;
+          gsap.to(card, {
+            scale: 0.965 - index * 0.006,
+            autoAlpha: 0.52,
+            ease: "none",
+            scrollTrigger: {
+              trigger: nextCard,
+              start: "top 78%",
+              end: "top 22%",
+              scrub: true,
+              invalidateOnRefresh: true,
+              onEnter: () => setWillChange([card], "transform, opacity"),
+              onEnterBack: () => setWillChange([card], "transform, opacity"),
+              onLeave: () => setWillChange([card], ""),
+              onLeaveBack: () => setWillChange([card], ""),
+            },
+          });
+        });
+        if (processSteps) {
+          ScrollTrigger.create({
+            trigger: processSteps,
+            start: "top 72%",
+            end: "bottom 24%",
+            invalidateOnRefresh: true,
+          });
+        }
+
+        const workPin = root.querySelector<HTMLElement>("[data-v3-work-pin]");
+        const workViewport = root.querySelector<HTMLElement>("[data-v3-work-viewport]");
+        const workTrack = root.querySelector<HTMLElement>("[data-v3-work-track]");
+        if (workPin && workViewport && workTrack) {
+          const travel = () => getHorizontalTravel(workTrack.scrollWidth, workViewport.clientWidth);
+          gsap.to(workTrack, {
+            x: () => -travel(),
+            ease: "none",
+            scrollTrigger: {
+              trigger: workPin,
+              start: "top top+=84",
+              end: () => `+=${Math.max(1, travel())}`,
+              pin: workPin,
+              scrub: 0.75,
+              invalidateOnRefresh: true,
+              onEnter: () => setWillChange([workTrack], "transform"),
+              onEnterBack: () => setWillChange([workTrack], "transform"),
+              onLeave: () => setWillChange([workTrack], ""),
+              onLeaveBack: () => setWillChange([workTrack], ""),
+            },
+          });
+        }
+
+        const restrainedRevealGroups = [
+          ...root.querySelectorAll<HTMLElement>(".v3-services__list article"),
+          ...root.querySelectorAll<HTMLElement>(".v3-pricing__grid .v3-price"),
+        ];
+        restrainedRevealGroups.forEach((item) => {
+          gsap.fromTo(item, { autoAlpha: 0, y: 28 }, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.48,
+            ease: "power2.out",
+            scrollTrigger: { trigger: item, start: "top 88%", once: true },
+            onStart: () => setWillChange([item], "transform, opacity"),
+            onComplete: () => setWillChange([item], ""),
+          });
+        });
+
+        return () => {
+          branchDisposers.splice(0).forEach((dispose) => dispose());
+          processCards.forEach((card) => card.style.removeProperty("--v3-process-index"));
+          setWillChange([
+            ...introElements,
+            ...heroAnimated,
+            ...capabilityLetters,
+            ...processCards,
+            ...restrainedRevealGroups,
+            ...(workTrack ? [workTrack] : []),
+          ], "");
+          if (ticker) gsap.ticker.remove(ticker);
+          if (lenis) {
+            lenis.off("scroll", ScrollTrigger.update);
+            lenis.destroy();
+          }
+          [identityHead, identityVideo, identityFinal].forEach((element) => {
+            element?.style.removeProperty("opacity");
+            element?.style.removeProperty("visibility");
+          });
+          if (identityStage) delete identityStage.dataset.v3MediaFallback;
+          root.classList.remove("v3-motion-cinematic");
+        };
+      });
+    }, root);
+
+    if (enabled) {
+      const heroImages = Array.from(root.querySelectorAll<HTMLImageElement>(".v3-hero img"));
+      const mediaReady = heroImages.map((image) => waitForImage(image, disposers));
+      mediaReady.push(document.fonts.ready.then(() => undefined));
+      void Promise.allSettled(mediaReady).then(() => {
+        if (!disposed) ScrollTrigger.refresh();
+      });
+
+      const onResize = () => {
+        if (resizeTimer !== undefined) window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+          if (!disposed) ScrollTrigger.refresh();
+        }, 180);
+      };
+      window.addEventListener("resize", onResize, { passive: true });
+      disposers.push(() => window.removeEventListener("resize", onResize));
+    }
+
+    return () => {
+      disposed = true;
+      if (resizeTimer !== undefined) window.clearTimeout(resizeTimer);
+      disposers.splice(0).forEach((dispose) => dispose());
+      media.revert();
+      context.revert();
+      root.classList.remove("v3-motion-cinematic");
+      delete root.dataset.v3Motion;
+    };
+  }
+
+  const root = document.querySelector<HTMLElement>("body.v3");
+  if (root && root.dataset.v3MotionInitialized !== "true") {
+    root.dataset.v3MotionInitialized = "true";
+    let cleanup = initV3Motion(root);
+    const rebuild = () => {
+      cleanup();
+      cleanup = initV3Motion(root);
+    };
+    const onMotion = (event: Event) => {
+      motionOverride = readMotionEvent((event as CustomEvent).detail, motionOverride ?? true);
+      rebuild();
+    };
+    const onPageHide = () => cleanup();
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) rebuild();
+    };
+    const onBeforeSwap = () => {
+      cleanup();
+      delete root.dataset.v3MotionInitialized;
+      window.removeEventListener("v3:motion", onMotion);
+      window.removeEventListener("pagehide", onPageHide);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+
+    window.addEventListener("v3:motion", onMotion);
+    window.addEventListener("pagehide", onPageHide);
+    window.addEventListener("pageshow", onPageShow);
+    document.addEventListener("astro:before-swap", onBeforeSwap, { once: true });
+  }
+</script>
