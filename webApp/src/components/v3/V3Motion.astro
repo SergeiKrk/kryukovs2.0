@@ -10,7 +10,6 @@ import "lenis/dist/lenis.css";
   import Lenis from "lenis";
   import {
     getHorizontalTravel,
-    getVideoTime,
     readMotionEvent,
     resolveMotionEnabled,
   } from "./v3MotionHelpers.mjs";
@@ -400,18 +399,22 @@ import "lenis/dist/lenis.css";
 
         const identityStage = root.querySelector<HTMLElement>("[data-v3-identity-stage]");
         const identityHead = root.querySelector<HTMLImageElement>("[data-v3-identity-head]");
-        const identityVideo = root.querySelector<HTMLVideoElement>("[data-v3-identity-video]");
+        const identityVideo = root.querySelector<HTMLImageElement>("[data-v3-identity-video]");
         const identityFinal = root.querySelector<HTMLImageElement>("[data-v3-identity-final]");
         const saveData = (navigator as Navigator & { connection?: NetworkInformation }).connection?.saveData === true;
         let identityTimeline: gsap.core.Timeline | undefined;
         let identityFailed = false;
+        const identityFrameCount = Number(identityVideo?.dataset.v3IdentityFrameCount ?? 0);
+        const identityFramePath = (index: number) => `/assets/v3/identity-frames/frame-${String(index).padStart(4, "0")}.webp`;
+        const identityFrames = identityVideo && identityFrameCount > 0
+          ? Array.from({ length: identityFrameCount }, (_, index) => identityFramePath(index))
+          : [];
 
         const showIdentityFinal = () => {
           if (!identityStage || !identityVideo || !identityFinal) return;
           identityFailed = true;
           identityTimeline?.scrollTrigger?.kill();
           identityTimeline?.kill();
-          identityVideo.pause();
           gsap.set(identityVideo, { autoAlpha: 0 });
           gsap.set(identityHead, { autoAlpha: 0 });
           gsap.set(identityFinal, { autoAlpha: 1 });
@@ -420,13 +423,28 @@ import "lenis/dist/lenis.css";
         };
 
         const createIdentityScrub = () => {
-          if (!identityStage || !identityVideo || !identityFinal || identityFailed || !Number.isFinite(identityVideo.duration)) {
+          if (!identityStage || !identityVideo || !identityFinal || identityFailed || identityFrames.length === 0) {
             showIdentityFinal();
             return;
           }
-          const state = { progress: 0 };
-          identityVideo.pause();
-          identityVideo.currentTime = 0;
+          const state = { progress: 0, frame: 0 };
+          let displayedFrame = 0;
+          const slowFrame = Math.min(85, identityFrames.length - 1);
+          const slowFrameProgress = slowFrame / Math.max(1, identityFrames.length - 1);
+          const getFrameProgress = (progress: number) => {
+            const bounded = Math.min(1, Math.max(0, progress));
+            if (bounded <= slowFrameProgress) return bounded;
+            const tailProgress = (bounded - slowFrameProgress) / (1 - slowFrameProgress);
+            // Ease the final frames into the end of the scene so 0095–0105
+            // remain visible instead of being compressed into one wheel tick.
+            return slowFrameProgress + (1 - slowFrameProgress) * Math.pow(tailProgress, 0.65);
+          };
+          const syncIdentityFrame = () => {
+            const nextFrame = Math.round(state.frame);
+            if (nextFrame === displayedFrame || !identityFrames[nextFrame]) return;
+            displayedFrame = nextFrame;
+            identityVideo.src = identityFrames[nextFrame];
+          };
           gsap.set(identityHead, { autoAlpha: 0 });
           gsap.set(identityVideo, { autoAlpha: 1 });
           gsap.set(identityFinal, { autoAlpha: 0 });
@@ -434,8 +452,8 @@ import "lenis/dist/lenis.css";
             scrollTrigger: {
               trigger: identityStage,
               start: "top 72%",
-              end: () => `+=${Math.max(1000, window.innerHeight * 1.45)}`,
-              scrub: 0.35,
+              end: () => `+=${Math.max(2600, window.innerHeight * 3.2)}`,
+              scrub: 1.05,
               invalidateOnRefresh: true,
               onEnter: () => setWillChange([identityVideo, identityFinal], "opacity"),
               onEnterBack: () => setWillChange([identityVideo, identityFinal], "opacity"),
@@ -449,28 +467,45 @@ import "lenis/dist/lenis.css";
               duration: 1,
               ease: "none",
               onUpdate: () => {
-                if (!identityFailed) identityVideo.currentTime = getVideoTime(identityVideo.duration, state.progress);
+                if (identityFailed) return;
+                state.frame = (identityFrames.length - 1) * getFrameProgress(state.progress);
+                syncIdentityFrame();
               },
             }, 0)
-            .to(identityVideo, { autoAlpha: 0, duration: 0.12, ease: "none" }, 0.88)
-            .to(identityFinal, { autoAlpha: 1, duration: 0.12, ease: "none" }, 0.88);
+            .set(identityVideo, { autoAlpha: 1 }, 1);
         };
 
         if (identityVideo) {
-          if (saveData) {
+          if (saveData || identityFrames.length === 0) {
             showIdentityFinal();
           } else {
-            const onMetadata = () => createIdentityScrub();
-            identityVideo.addEventListener("loadedmetadata", onMetadata, { once: true });
-            identityVideo.addEventListener("error", showIdentityFinal);
-            identityVideo.addEventListener("stalled", showIdentityFinal);
-            branchDisposers.push(() => {
-              identityVideo.removeEventListener("loadedmetadata", onMetadata);
-              identityVideo.removeEventListener("error", showIdentityFinal);
-              identityVideo.removeEventListener("stalled", showIdentityFinal);
-              identityVideo.pause();
+            const preloadFrames = identityFrames.map((src) => {
+              const frame = new Image();
+              frame.src = src;
+              return frame;
             });
-            if (identityVideo.readyState >= 1) createIdentityScrub();
+            const onError = () => showIdentityFinal();
+            identityVideo.addEventListener("error", onError, { once: true });
+            const framesReady = Promise.all(preloadFrames.map((frame) => {
+              if (frame.complete && frame.naturalWidth > 0) return Promise.resolve();
+              return new Promise<void>((resolve) => {
+                const settle = () => resolve();
+                frame.addEventListener("load", settle, { once: true });
+                frame.addEventListener("error", settle, { once: true });
+                if (typeof frame.decode === "function") {
+                  frame.decode().then(settle).catch(() => undefined);
+                }
+              });
+            }));
+            branchDisposers.push(() => {
+              identityVideo.removeEventListener("error", onError);
+              preloadFrames.forEach((frame) => { frame.src = ""; });
+            });
+            framesReady.then(() => {
+              if (identityFailed || disposed) return;
+              createIdentityScrub();
+              ScrollTrigger.refresh();
+            });
           }
         }
 

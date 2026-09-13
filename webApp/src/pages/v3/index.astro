@@ -142,33 +142,23 @@ const description = "Дизайн, разработка и SEO сайтов дл
     </div>
   </section>
 
-  <section class="v3-identity v3-section" aria-labelledby="v3-identity-title" data-v3-identity>
-    <div class="v3-shell">
-      <div class="v3-section-heading v3-section-heading--split">
-        <div>
-          <p class="v3-kicker">От образа к реализации</p>
-          <h2 id="v3-identity-title">Характер бренда становится работающим кодом</h2>
-        </div>
-        <p>Кинематографичная подача остаётся частью понятного коммерческого сайта, а не заменяет его содержание.</p>
-      </div>
-      <div class="v3-identity__media v3-identity__media--single">
-        <figure class="v3-identity__laptop" data-v3-development-laptop>
-          <Picture src={heroLaptop} formats={["avif", "webp"]} fallbackFormat="png" alt="Ноутбук с редактором кода проекта" width="1024" height="1024" loading="lazy" decoding="async" />
-          <figcaption>React, TypeScript и Astro для производственной разработки</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
   <section id="process" class="v3-process v3-section" aria-labelledby="v3-process-title">
     <div class="v3-shell">
       <div class="v3-personal">
         <figure class="v3-identity__transform v3-personal__portrait" data-v3-identity-stage>
           <Picture class="v3-identity__head" data-v3-identity-head src={heroHead} formats={["avif", "webp"]} fallbackFormat="png" alt="Каменная голова до визуального превращения" width="1024" height="1024" loading="lazy" decoding="async" />
-          <video class="v3-identity__video" data-v3-identity-video muted playsinline preload="metadata" poster="/assets/v3/hero-stone-head.png">
-            <source src="/assets/v3/identity-stone-to-human.mp4" type="video/mp4" />
-            Ваш браузер не поддерживает видео. После анимации показан финальный портрет.
-          </video>
+          <img
+            class="v3-identity__video"
+            data-v3-identity-video
+            data-v3-identity-frame-count="107"
+            src="/assets/v3/identity-frames/frame-0000.webp"
+            alt=""
+            width="1280"
+            height="720"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
           <img class="v3-identity__final" data-v3-identity-final src="/assets/v3/sergey-kryukov.png" alt="Сергей Крюков после перехода от образа к личному авторству" width="1600" height="900" loading="lazy" decoding="async" />
           <figcaption>Личное авторство вместо обезличенного агентского процесса</figcaption>
         </figure>
@@ -188,6 +178,24 @@ const description = "Дизайн, разработка и SEO сайтов дл
           </li>
         ))}
       </ol>
+    </div>
+  </section>
+
+  <section class="v3-identity v3-section" aria-labelledby="v3-identity-title" data-v3-identity>
+    <div class="v3-shell">
+      <div class="v3-section-heading v3-section-heading--split">
+        <div>
+          <p class="v3-kicker">От образа к реализации</p>
+          <h2 id="v3-identity-title">Характер бренда становится работающим кодом</h2>
+        </div>
+        <p>Кинематографичная подача остаётся частью понятного коммерческого сайта, а не заменяет его содержание.</p>
+      </div>
+      <div class="v3-identity__media v3-identity__media--single">
+        <figure class="v3-identity__laptop" data-v3-development-laptop>
+          <Picture src={heroLaptop} formats={["avif", "webp"]} fallbackFormat="png" alt="Ноутбук с редактором кода проекта" width="1024" height="1024" loading="lazy" decoding="async" />
+          <figcaption>React, TypeScript и Astro для производственной разработки</figcaption>
+        </figure>
+      </div>
     </div>
   </section>
 

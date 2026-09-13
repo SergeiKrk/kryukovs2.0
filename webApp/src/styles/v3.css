@@ -205,7 +205,7 @@ html[data-design="cinematic"] {
   -webkit-text-stroke: 2px rgb(240 243 238 / 88%);
 }
 .v3-title-line { overflow: hidden; }
-.v3-hero__support { max-width: 38rem; color: #c4cac6; font-size: clamp(1rem, 1.6vw, 1.35rem); }
+.v3-hero__support { position: relative; z-index: 6; max-width: 38rem; color: #c4cac6; font-size: clamp(1rem, 1.6vw, 1.35rem); }
 .v3-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2.5rem; }
 .v3-hero__visual {
   position: relative;
@@ -334,16 +334,27 @@ html[data-design="cinematic"] {
 .v3-identity__transform > img,
 .v3-identity__transform > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .v3-identity__head,
-.v3-identity__video { opacity: 0; }
+.v3-identity__video,
+.v3-identity__final { opacity: 0; }
 .v3-identity__transform > .v3-identity__final { z-index: 2; object-fit: cover; }
 .v3-identity__laptop img { width: 100%; height: 100%; object-fit: contain; }
 .v3-identity__transform figcaption,
 .v3-identity__laptop figcaption { position: absolute; z-index: 3; inset: auto 0 0; padding: 0.9rem 1rem; background: rgb(0 0 0 / 76%); color: var(--v3-muted); font-size: 0.64rem; }
 
-.v3-process { border-bottom: 1px solid var(--v3-line); }
+.v3-process {
+  background: #000000;
+  border: 0;
+}
 .v3-personal { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; gap: clamp(2rem, 7vw, 7rem); margin-bottom: clamp(5rem, 10vw, 10rem); }
 .v3-personal__portrait { aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--v3-line); background: #000000; }
 .v3-personal__portrait img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Identity stage is a frameless, transparent animation surface. */
+[data-v3-identity-stage],
+[data-v3-identity-stage] * {
+  border: 0;
+  background: transparent;
+}
 .v3-personal__copy { align-self: center; }
 .v3-personal__copy h2 { max-width: 13ch; font-size: clamp(3rem, 5.2vw, 5.8rem); }
 .v3-personal__copy > p:last-child { max-width: 40rem; margin-top: 2rem; color: var(--v3-muted); }
