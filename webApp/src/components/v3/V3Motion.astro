@@ -401,6 +401,8 @@ import "lenis/dist/lenis.css";
         const identityHead = root.querySelector<HTMLImageElement>("[data-v3-identity-head]");
         const identityVideo = root.querySelector<HTMLImageElement>("[data-v3-identity-video]");
         const identityFinal = root.querySelector<HTMLImageElement>("[data-v3-identity-final]");
+        const identityCopy = root.querySelector<HTMLElement>(".v3-personal__copy");
+        const identitySignature = root.querySelector<HTMLElement>("[data-v3-personal-signature]");
         const saveData = (navigator as Navigator & { connection?: NetworkInformation }).connection?.saveData === true;
         let identityTimeline: gsap.core.Timeline | undefined;
         let identityFailed = false;
@@ -418,6 +420,8 @@ import "lenis/dist/lenis.css";
           gsap.set(identityVideo, { autoAlpha: 0 });
           gsap.set(identityHead, { autoAlpha: 0 });
           gsap.set(identityFinal, { autoAlpha: 1 });
+          if (identityCopy) gsap.set(identityCopy, { autoAlpha: 1, clearProps: "filter,transform" });
+          if (identitySignature) gsap.set(identitySignature, { autoAlpha: 1, clearProps: "filter,transform" });
           identityStage.dataset.v3MediaFallback = "true";
           setWillChange([identityVideo, identityFinal], "");
         };
@@ -448,6 +452,8 @@ import "lenis/dist/lenis.css";
           gsap.set(identityHead, { autoAlpha: 0 });
           gsap.set(identityVideo, { autoAlpha: 1 });
           gsap.set(identityFinal, { autoAlpha: 0 });
+          if (identityCopy) gsap.set(identityCopy, { autoAlpha: 0, y: 24, filter: "blur(10px)" });
+          if (identitySignature) gsap.set(identitySignature, { autoAlpha: 0, y: 18, filter: "blur(8px)" });
           identityTimeline = gsap.timeline({
             scrollTrigger: {
               trigger: identityStage,
@@ -461,18 +467,31 @@ import "lenis/dist/lenis.css";
               onLeaveBack: () => setWillChange([identityVideo, identityFinal], ""),
             },
           });
-          identityTimeline
-            .to(state, {
-              progress: 1,
-              duration: 1,
-              ease: "none",
-              onUpdate: () => {
-                if (identityFailed) return;
-                state.frame = (identityFrames.length - 1) * getFrameProgress(state.progress);
-                syncIdentityFrame();
-              },
-            }, 0)
-            .set(identityVideo, { autoAlpha: 1 }, 1);
+          identityTimeline.to(state, {
+            progress: 1,
+            duration: 1,
+            ease: "none",
+            onUpdate: () => {
+              if (identityFailed) return;
+              state.frame = (identityFrames.length - 1) * getFrameProgress(state.progress);
+              syncIdentityFrame();
+            },
+          }, 0);
+          if (identityCopy) {
+            identityTimeline.fromTo(identityCopy,
+              { autoAlpha: 0, y: 24, filter: "blur(10px)" },
+              { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out" },
+              0.42,
+            );
+          }
+          identityTimeline.set(identityVideo, { autoAlpha: 1 }, 1);
+          if (identitySignature) {
+            identityTimeline.fromTo(identitySignature,
+              { autoAlpha: 0, y: 18, filter: "blur(8px)" },
+              { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power2.out" },
+              0.72,
+            );
+          }
         };
 
         if (identityVideo) {

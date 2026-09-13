@@ -345,9 +345,17 @@ html[data-design="cinematic"] {
   background: #000000;
   border: 0;
 }
-.v3-personal { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; gap: clamp(2rem, 7vw, 7rem); margin-bottom: clamp(5rem, 10vw, 10rem); }
-.v3-personal__portrait { aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--v3-line); background: #000000; }
+.v3-personal { position: relative; display: block; margin-bottom: clamp(5rem, 10vw, 10rem); }
+.v3-personal__portrait { width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--v3-line); background: #000000; }
 .v3-personal__portrait img { width: 100%; height: 100%; object-fit: cover; }
+.v3-personal__portrait::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(0 0 0 / 72%) 0%, rgb(0 0 0 / 34%) 42%, transparent 78%);
+  content: "";
+  pointer-events: none;
+}
 
 /* Identity stage is a frameless, transparent animation surface. */
 [data-v3-identity-stage],
@@ -355,9 +363,45 @@ html[data-design="cinematic"] {
   border: 0;
   background: transparent;
 }
-.v3-personal__copy { align-self: center; }
-.v3-personal__copy h2 { max-width: 13ch; font-size: clamp(3rem, 5.2vw, 5.8rem); }
-.v3-personal__copy > p:last-child { max-width: 40rem; margin-top: 2rem; color: var(--v3-muted); }
+.v3-personal__copy {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(1.25rem, 3vw, 3rem);
+  pointer-events: none;
+}
+.v3-personal__copy h2 {
+  max-width: 11ch;
+  font-size: clamp(2.7rem, 5vw, 5.8rem);
+  text-shadow: 0 0.12em 0.7em rgb(0 0 0 / 38%);
+}
+.v3-personal__description { max-width: 40rem; margin-top: 1.5rem; color: rgb(240 243 238 / 78%); text-shadow: 0 0.12em 0.7em rgb(0 0 0 / 38%); }
+.v3-personal__signature {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  margin-top: 1rem;
+  color: var(--v3-muted);
+  text-align: right;
+}
+.v3-personal__signature-name {
+  font-size: 3rem;
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+.v3-personal__signature-roles {
+  font-size: clamp(0.72rem, 0.85vw, 0.9rem);
+  line-height: 1.45;
+  letter-spacing: 0.02em;
+}
+.v3-personal__signature strong { color: var(--v3-accent-bright); font-weight: 700; }
 .v3-process__steps { margin: 0; padding: 0; border-top: 1px solid var(--v3-line); list-style: none; }
 .v3-process__step {
   display: grid;
@@ -525,21 +569,19 @@ html[data-design="cinematic"] {
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(24rem, 1.1fr);
     align-items: start;
-    gap: clamp(2rem, 6vw, 7rem);
+    gap: clamp(2rem, 3vw, 7rem);
   }
   .v3-motion-cinematic .v3-personal {
     position: sticky;
-    top: 7.25rem;
+    top: 30%;
+    translate: 0 -10%;
     grid-column: 2;
     grid-row: 1;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
     margin-bottom: 0;
   }
   .v3-motion-cinematic .v3-personal__portrait { width: 100%; }
-  .v3-motion-cinematic .v3-personal__copy { display: block; }
-  .v3-motion-cinematic .v3-personal__copy h2 { font-size: clamp(2.7rem, 4.2vw, 4.8rem); }
+  .v3-motion-cinematic .v3-personal__copy h2 { max-width: 11ch; font-size: clamp(2.3rem, 3.4vw, 4rem); }
+  .v3-motion-cinematic .v3-personal__description { width: 50%; max-width: none; margin-top: 1rem; }
   .v3-motion-cinematic .v3-process__steps {
     grid-column: 1;
     grid-row: 1;
@@ -574,9 +616,6 @@ html[data-design="cinematic"] {
   .v3-hero__copy h1 { font-size: clamp(4.5rem, 12vw, 7.5rem); }
   .v3-hero__visual { width: min(100%, 54rem); }
   .v3-proof-strip { margin-top: 2rem; }
-  .v3-personal { grid-template-columns: 1fr; }
-  .v3-personal__copy { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 3rem; }
-  .v3-personal__copy .v3-kicker { grid-column: 1 / -1; }
   .v3-process__step { grid-template-columns: 7rem minmax(16rem, 0.75fr) 1fr; }
   .v3-project:not(.v3-project--lead) .v3-project__content > div { display: grid; }
 }
@@ -602,6 +641,7 @@ html[data-design="cinematic"] {
   .v3-capabilities__head { width: 7rem; height: 7rem; }
   .v3-capabilities__rocks > picture:nth-child(n+7) { display: none; }
   .v3-identity__media { grid-template-columns: 1fr; }
+  .v3-personal__copy { padding: 1.5rem; }
   .v3-process__step { grid-template-columns: 4rem 1fr; }
   .v3-process__step figure { grid-column: 2; }
   .v3-process__step > div:last-child { grid-column: 2; }
@@ -630,12 +670,13 @@ html[data-design="cinematic"] {
   .v3-proof-strip { grid-template-columns: 1fr; }
   .v3-proof-strip p { border-right: 1px solid var(--v3-line); }
   .v3-section-heading h2,
-  .v3-personal h2,
   .v3-faq h2,
   .v3-quiz h2 { font-size: clamp(3rem, 17vw, 5rem); }
   .v3-capability__word { font-size: clamp(2.7rem, 13vw, 4.2rem); }
-  .v3-personal__copy { grid-template-columns: 1fr; }
-  .v3-personal__copy .v3-kicker { grid-column: auto; }
+  .v3-personal__copy { padding: 1.25rem; }
+  .v3-personal__copy h2 { font-size: clamp(2.35rem, 13vw, 4rem); }
+  .v3-personal__description { margin-top: 1rem; }
+  .v3-personal__signature-name { font-size: clamp(2rem, 10vw, 3rem); }
   .v3-process__step { grid-template-columns: 1fr; gap: 1rem; }
   .v3-process__meta,
   .v3-process__step figure,
