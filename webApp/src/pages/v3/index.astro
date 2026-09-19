@@ -89,7 +89,19 @@ const description = "Дизайн, разработка и SEO сайтов дл
       </figure>
     </div>
     <div class="v3-shell v3-proof-strip" aria-label="Проверенные факты">
-      {proofs.map(([value, label]) => <p><strong>{value}</strong><span>{label}</span></p>)}
+      <div class="v3-proof-strip__grid">
+        {proofs.map(([value, label], index) => index === 2 ? (
+          <a class="v3-proof-strip__item v3-proof-strip__item--featured" href="#calculator" aria-label={`${value}, ${label}`}>
+            <strong>{value}</strong>
+            <span>{label}</span>
+          </a>
+        ) : (
+          <p class="v3-proof-strip__item">
+            <strong>{value}</strong>
+            <span>{label}</span>
+          </p>
+        ))}
+      </div>
     </div>
   </section>
 
