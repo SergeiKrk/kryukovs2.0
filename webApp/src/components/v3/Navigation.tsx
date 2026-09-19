@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
 
 const links = [
   ["Работы", "#work"],
@@ -7,6 +8,8 @@ const links = [
   ["Стоимость", "#pricing"],
   ["Ответы", "#faq"],
 ] as const;
+
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 export default function Navigation() {
   const [open, setOpen] = useState(false);
@@ -77,6 +80,72 @@ export default function Navigation() {
     };
   }, [open]);
 
+  useIsomorphicLayoutEffect(() => {
+    const panel = panelRef.current;
+    if (!panel || !open) return;
+
+    const menuLinks = Array.from(panel.querySelectorAll<HTMLElement>(".v3-nav__links a"));
+    const panelBottom = panel.querySelector<HTMLElement>(".v3-nav__panel-bottom");
+    let removeHoverListeners = () => {};
+    const context = gsap.context(() => {
+      if (reducedMotion || !motionEnabled) {
+        const animatedTargets = [panel, ...menuLinks, panelBottom].filter(
+          (target): target is HTMLElement => Boolean(target),
+        );
+        gsap.set(animatedTargets, {
+          autoAlpha: 1,
+          clearProps: "transform,clipPath,opacity,visibility",
+        });
+        return;
+      }
+
+      const entrance = gsap.timeline({ defaults: { ease: "power3.out" } });
+      entrance.fromTo(
+        panel,
+        { autoAlpha: 0, yPercent: -3, clipPath: "inset(0 0 100% 0)" },
+        { autoAlpha: 1, yPercent: 0, clipPath: "inset(0 0 0% 0)", duration: 0.68 },
+      );
+      entrance.fromTo(
+        menuLinks,
+        { autoAlpha: 0, y: 28 },
+        { autoAlpha: 1, y: 0, duration: 0.52, stagger: 0.065 },
+        "-=0.38",
+      );
+      if (panelBottom) {
+        entrance.fromTo(panelBottom, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.42 }, "-=0.28");
+      }
+
+      const animateLink = (target: EventTarget | null, y: number, duration: number) => {
+        if (target instanceof HTMLElement) {
+          gsap.to(target, { y, duration, ease: "power2.out", overwrite: "auto" });
+        }
+      };
+      const enter = (event: Event) => animateLink(event.currentTarget, -5, 0.24);
+      const leave = (event: Event) => animateLink(event.currentTarget, 0, 0.32);
+
+      menuLinks.forEach((link) => {
+        link.addEventListener("mouseenter", enter);
+        link.addEventListener("mouseleave", leave);
+        link.addEventListener("focus", enter);
+        link.addEventListener("blur", leave);
+      });
+
+      removeHoverListeners = () => {
+        menuLinks.forEach((link) => {
+          link.removeEventListener("mouseenter", enter);
+          link.removeEventListener("mouseleave", leave);
+          link.removeEventListener("focus", enter);
+          link.removeEventListener("blur", leave);
+        });
+      };
+    }, panel);
+
+    return () => {
+      removeHoverListeners();
+      context.revert();
+    };
+  }, [open, reducedMotion, motionEnabled]);
+
   const closeMenu = () => setOpen(false);
   const toggleMotion = () => {
     const next = !motionEnabled;
@@ -96,18 +165,26 @@ export default function Navigation() {
         <a className="v3-nav__brand" href="/v3/" aria-label="Сергей Крюков, главная третьей версии">
           KSV<span>•</span>
         </a>
+        <a className="v3-nav__cta" href="#calculator" onClick={closeMenu}>Рассчитать проект</a>
         <button
           ref={menuButtonRef}
           className="v3-nav__menu-button"
           type="button"
+          aria-label={open ? "Закрыть меню" : "Открыть меню"}
           aria-expanded={open}
           aria-controls="v3-menu"
           onClick={() => setOpen((value) => !value)}
         >
-          <span>{open ? "Закрыть" : "Меню"}</span>
-          <span className="v3-nav__menu-mark" aria-hidden="true">{open ? "×" : "+"}</span>
+          <span className="v3-nav__menu-mark" aria-hidden="true">
+            <svg className="v3-nav__menu-ring" viewBox="0 0 68 68" focusable="false">
+              <circle className="v3-nav__menu-ring-base" cx="34" cy="34" r="31" />
+              <path className="v3-nav__menu-ring-path" d="M34 3C16.88 3 3 16.88 3 34s13.88 31 31 31 31-13.88 31-31S51.12 3 34 3Z" />
+            </svg>
+            <span className="v3-nav__menu-line v3-nav__menu-line--top" />
+            <span className="v3-nav__menu-line v3-nav__menu-line--middle" />
+            <span className="v3-nav__menu-line v3-nav__menu-line--bottom" />
+          </span>
         </button>
-        <a className="v3-nav__cta" href="#calculator" onClick={closeMenu}>Рассчитать проект</a>
       </div>
 
       <div ref={panelRef} className="v3-nav__panel" id="v3-menu" hidden={!open}>

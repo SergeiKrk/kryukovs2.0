@@ -185,9 +185,8 @@ const description = "Дизайн, разработка и SEO сайтов дл
       </div>
 
       <ol class="v3-process__steps" data-v3-process-steps>
-        {processSteps.map((step, index) => (
+        {processSteps.map((step) => (
           <li class="v3-process__step" data-v3-process-card>
-            <div class="v3-process__meta"><span>{String(index + 1).padStart(2, "0")}</span><p>{step.title}</p></div>
             <figure><Picture src={v3Asset(step.image)} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" /></figure>
             <div><h3>{step.title}</h3><p>{step.text}</p></div>
           </li>
