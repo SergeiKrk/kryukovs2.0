@@ -83,9 +83,9 @@ function CapabilitiesSection() {
         <div className="v3-shell">
           <div className="v3-capabilities__grid">
             <div className="v3-capabilities__intro">
-              <p className="v3-kicker">Три направления, единый результат</p>
-              <h2 id="storybook-v3-capabilities-title">Сайт работает как единое целое</h2>
-              <p>Не нужно координировать отдельных дизайнеров, разработчиков и SEO-специалистов.</p>
+              <p className="v3-kicker">Космически-фундаментальная разработка</p>
+              <h2 id="storybook-v3-capabilities-title">Дизайн, функциональность и SEO работают как одна система</h2>
+              <p>Проектирую структуру и визуальную систему, разрабатываю удобный интерфейс и адаптирую сайт под поисковики. План работ фиксируем заранее — вы понимаете, что входит в проект и кто за это отвечает.</p>
             </div>
             <div className="v3-capabilities__stage">
               <div className="v3-capabilities__rocks" aria-hidden="true">
