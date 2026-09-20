@@ -257,10 +257,10 @@ import "lenis/dist/lenis.css";
                   align: ringPath,
                   alignOrigin: [0.5, 0.5],
                   start: index / Math.max(1, ringItems.length),
-                  end: 1 + index / Math.max(1, ringItems.length),
+                  end: -1 + index / Math.max(1, ringItems.length),
                 },
                 onUpdate: function () {
-                  gsap.set(item, { rotation: (phase + this.progress()) * 360, scale: 0.25 });
+                  gsap.set(item, { rotation: (phase - this.progress()) * 360, scale: 0.25 });
                 },
               });
               ringTweens.push(tween);
