@@ -1,0 +1,5 @@
+/* Static states used by the V3 section stories. The production page reveals these layers through V3Motion. */
+.v3-storybook-static .v3-capabilities__head { opacity: 0.72; }
+.v3-storybook-static .v3-capabilities__rock { opacity: 0.42; }
+.v3-storybook-static .v3-identity__final { opacity: 1; }
+.v3-storybook-static .v3-quiz__summary { position: static; }

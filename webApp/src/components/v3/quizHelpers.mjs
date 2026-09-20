@@ -13,7 +13,7 @@ const UTM_KEYS = [
 const projectTypeLabels = {
   "new-site": "Новый сайт",
   redesign: "Редизайн",
-  promo: "Промо-страница",
+  promo: "Лендинг / Промо",
   other: "Другая задача",
 };
 

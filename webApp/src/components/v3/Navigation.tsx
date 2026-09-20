@@ -1,5 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { PaperPlaneTilt } from "@phosphor-icons/react";
 import { gsap } from "gsap";
+
+const maxHref = "https://max.ru/u/f9LHodD0cOJnvKBT3lzI_frHwvBIZXJVtfvP_VynzhsCBdFg_ZGlsLzi1Gw";
 
 const links = [
   ["Работы", "#work"],
@@ -165,6 +168,34 @@ export default function Navigation() {
         <a className="v3-nav__brand" href="/v3/" aria-label="Сергей Крюков, главная третьей версии">
           KSV<span>•</span>
         </a>
+        <div className="v3-nav__contact" aria-label="Контакты">
+          <div className="v3-nav__contact-copy">
+            <strong><span>Напишите мне</span></strong>
+            <span>Обсудим проект</span>
+          </div>
+          <div className="v3-nav__contact-links">
+            <a
+              className="v3-nav__contact-button v3-nav__contact-button--telegram"
+              href="https://t.me/sergeikrk"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Написать Сергею в Telegram"
+              title="Telegram"
+            >
+              <PaperPlaneTilt aria-hidden="true" weight="fill" />
+            </a>
+            <a
+              className="v3-nav__contact-button v3-nav__contact-button--max"
+              href={maxHref}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Написать Сергею в MAX"
+              title="MAX"
+            >
+              <img src="/assets/max-logo-wikimedia.svg" alt="" width="1000" height="1000" />
+            </a>
+          </div>
+        </div>
         <a className="v3-nav__cta" href="#calculator" onClick={closeMenu}>Рассчитать проект</a>
         <button
           ref={menuButtonRef}
