@@ -130,14 +130,19 @@ function ProcessSection() {
             <img className="v3-identity__final" src="/assets/v3/sergey-kryukov.png" alt="Сергей Крюков после перехода от образа к личному авторству" width="1600" height="900" />
             <div className="v3-personal__copy">
               <p className="v3-kicker">Личная ответственность</p>
-              <h2 id="storybook-v3-process-title">От обсуждения до запуска - работаю с проектом сам</h2>
+            <h2 id="storybook-v3-process-title">От обсуждения до запуска работаю с проектом сам</h2>
               <p className="v3-personal__description">Соединяю продуктовый взгляд, визуальный дизайн и разработку. Вы всегда понимаете, с кем обсуждать решение и кто отвечает за его качество.</p>
             </div>
           </figure>
-          <p className="v3-personal__signature">
-            <span className="v3-personal__signature-name">Крюков Сергей</span>
-            <span className="v3-personal__signature-roles"><strong>Fullstack-разработка</strong> <span aria-hidden="true">·</span> Маркетинг <span aria-hidden="true">·</span> SEO</span>
-          </p>
+          <div className="v3-personal__signature-row" aria-label="Автор проекта">
+            <div className="v3-personal__signature-column" aria-hidden="true"></div>
+            <div className="v3-personal__signature-column v3-personal__signature-column--right" data-v3-personal-signature-column>
+              <p className="v3-personal__signature">
+                <span className="v3-personal__signature-name">Крюков Сергей</span>
+                <span className="v3-personal__signature-roles"><strong>Fullstack-разработка</strong> <span aria-hidden="true">·</span> Маркетинг <span aria-hidden="true">·</span> SEO</span>
+              </p>
+            </div>
+          </div>
         </div>
 
         <ol className="v3-process__steps">

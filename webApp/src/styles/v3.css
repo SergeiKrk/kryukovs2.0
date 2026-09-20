@@ -605,6 +605,22 @@ html[data-design="cinematic"] {
   content: "";
   pointer-events: none;
 }
+.v3-personal__signature-row {
+  display: flex;
+  width: 100%;
+  min-height: 7rem;
+}
+.v3-personal__signature-column {
+  width: 50%;
+  flex: 0 0 50%;
+}
+.v3-personal__signature-column--right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 30%);
+  translate: 0 -4rem;
+}
 
 /* Identity stage is a frameless, transparent animation surface. */
 [data-v3-identity-stage],
@@ -624,31 +640,36 @@ html[data-design="cinematic"] {
   pointer-events: none;
 }
 .v3-personal__copy h2 {
-  max-width: 11ch;
-  font-size: clamp(2.7rem, 5vw, 5.8rem);
-  text-shadow: 0 0.12em 0.7em rgb(0 0 0 / 38%);
+  max-width: 14ch;
+  font: 400 clamp(3rem, 5vw, 4rem) / 0.96 "Serati", "Oswald Variable", Impact, sans-serif;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(240 243 238 / 88%);
 }
 .v3-personal__description { max-width: 40rem; margin-top: 1.5rem; color: rgb(240 243 238 / 78%); text-shadow: 0 0.12em 0.7em rgb(0 0 0 / 38%); }
 .v3-personal__signature {
   display: flex;
-  width: 100%;
+  width: max-content;
+  max-width: 100%;
   flex-direction: column;
   align-items: flex-end;
   gap: 0.2rem;
-  margin-top: 1rem;
-  color: var(--v3-muted);
+  margin: 0;
   text-align: right;
 }
 .v3-personal__signature-name {
+  width: 100%;
   font-size: 3rem;
   font-weight: 500;
   line-height: 0.95;
   letter-spacing: -0.045em;
 }
 .v3-personal__signature-roles {
+  width: 100%;
   font-size: clamp(0.72rem, 0.85vw, 0.9rem);
   line-height: 1.45;
   letter-spacing: 0.02em;
+  text-align: justify;
+  text-align-last: justify;
 }
 .v3-personal__signature strong { color: var(--v3-accent-bright); font-weight: 700; }
 .v3-process__steps { margin: 0; padding: 0; border-top: 1px solid var(--v3-line); list-style: none; }
@@ -827,7 +848,6 @@ html[data-design="cinematic"] {
     margin-bottom: 0;
   }
   .v3-motion-cinematic .v3-personal__portrait { width: 100%; }
-  .v3-motion-cinematic .v3-personal__copy h2 { max-width: 11ch; font-size: clamp(2.3rem, 3.4vw, 4rem); }
   .v3-motion-cinematic .v3-personal__description { width: 50%; max-width: none; margin-top: 1rem; }
   .v3-motion-cinematic .v3-process__steps {
     grid-column: 1;
@@ -915,6 +935,9 @@ html[data-design="cinematic"] {
   .v3-capabilities__head { width: 7rem; height: 7rem; }
   .v3-capabilities__rocks > picture:nth-child(n+7) { display: none; }
   .v3-identity__media { grid-template-columns: 1fr; }
+  .v3-personal__signature-row { flex-direction: column; }
+  .v3-personal__signature-column { width: 100%; flex-basis: 100%; }
+  .v3-personal__signature-column--right { justify-content: flex-end; }
   .v3-personal__copy { padding: 1.5rem; }
   .v3-process__step { grid-template-columns: 1fr; }
   .v3-process__step figure { grid-column: 1; }
@@ -954,7 +977,6 @@ html[data-design="cinematic"] {
   .v3-quiz h2 { font-size: clamp(3rem, 17vw, 5rem); }
   .v3-capability__word { font-size: clamp(2.7rem, 13vw, 4.2rem); }
   .v3-personal__copy { padding: 1.25rem; }
-  .v3-personal__copy h2 { font-size: clamp(2.35rem, 13vw, 4rem); }
   .v3-personal__description { margin-top: 1rem; }
   .v3-personal__signature-name { font-size: clamp(2rem, 10vw, 3rem); }
   .v3-process__step { grid-template-columns: 1fr; gap: 1rem; }
