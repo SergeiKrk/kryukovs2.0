@@ -3,9 +3,9 @@ import { useEffect, type ReactNode } from "react";
 import "@fontsource-variable/oswald";
 import "../../styles/v3.css";
 import "./v3-storybook.css";
-import ProjectQuiz from "./ProjectQuiz";
+import ProjectCalculator from "./ProjectCalculator";
 import Navigation from "./Navigation";
-import { capabilities, faq, pricing, processSteps, projects, proofs, services } from "../../data/v3";
+import { capabilities, faq, pricingGroups, processSteps, projects, proofs, services } from "../../data/v3";
 
 const rockFiles = ["rock-1.png", "rock-2.png", "rock-3.png", "rock-4.png", "rock-2.png", "rock-4.png"];
 
@@ -27,7 +27,7 @@ function HeroSection() {
     <section className="v3-hero" aria-labelledby="storybook-v3-hero-title">
       <div className="v3-shell v3-hero__grid">
         <div className="v3-hero__copy">
-          <p className="v3-kicker">Проекты от 45 000 ₽</p>
+          <p className="v3-kicker">Посадочная + Яндекс.Директ от 35 000 ₽</p>
           <h1 id="storybook-v3-hero-title">
             <span className="v3-hero__title-outline"><span>Создание сайтов</span><span>под ключ</span></span>
           </h1>
@@ -158,25 +158,6 @@ function ProcessSection() {
   );
 }
 
-function IdentitySection() {
-  return (
-    <section className="v3-identity v3-section" aria-labelledby="storybook-v3-identity-title">
-      <div className="v3-shell">
-        <div className="v3-section-heading v3-section-heading--split">
-          <div><p className="v3-kicker">От образа к реализации</p><h2 id="storybook-v3-identity-title">Характер бренда становится работающим кодом</h2></div>
-          <p>Кинематографичная подача остаётся частью понятного коммерческого сайта, а не заменяет его содержание.</p>
-        </div>
-        <div className="v3-identity__media v3-identity__media--single">
-          <figure className="v3-identity__laptop">
-            <img src="/assets/v3/development-laptop.png" alt="Ноутбук с редактором кода проекта" width="1024" height="1024" />
-            <figcaption>React, TypeScript и Astro для производственной разработки</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function WorkSection() {
   return (
     <section id="storybook-work" className="v3-work v3-section" aria-labelledby="storybook-v3-work-title">
@@ -219,7 +200,7 @@ function ServicesSection() {
         </div>
         <div className="v3-services__list">
           {services.map((service, index) => (
-            <article key={service.title}>
+            <article key={service.id} data-service-id={service.id}>
               <span>{String(index + 1).padStart(2, "0")}</span>
               <h3>{service.title}</h3>
               <p>{service.text}</p>
@@ -239,15 +220,23 @@ function PricingSection() {
           <div><p className="v3-kicker">Рабочие ориентиры</p><h2 id="storybook-v3-pricing-title">Стоимость зависит от масштаба</h2></div>
           <p>Это стартовые ориентиры, а не публичная оферта. Финальная оценка появляется после уточнения состава и сроков.</p>
         </div>
-        <div className="v3-pricing__grid">
-          {pricing.map((tier) => (
-            <article className={`v3-price${tier.featured ? " v3-price--featured" : ""}`} key={tier.name}>
-              <div><p>{tier.name}</p>{tier.featured && <span>Частый выбор</span>}</div>
-              <strong>{tier.price}</strong>
-              <p>{tier.text}</p>
-              <ul>{tier.includes.map((item) => <li key={item}>{item}</li>)}</ul>
-              <a className="v3-button v3-button--quiet" href="#storybook-calculator">Обсудить состав</a>
-            </article>
+        <div className="v3-pricing__groups">
+          {pricingGroups.map((group) => (
+            <section className="v3-pricing__group" aria-labelledby={`storybook-v3-pricing-${group.id}-title`} key={group.id}>
+              <h3 id={`storybook-v3-pricing-${group.id}-title`}>{group.title}</h3>
+              <div className="v3-pricing__grid">
+                {group.offers.map((offer) => (
+                  <article className={`v3-price${offer.featured ? " v3-price--featured" : ""}`} key={offer.id} data-offer-id={offer.id}>
+                    <div><p>{offer.title}</p>{offer.featured && <span>Частый выбор</span>}</div>
+                    <strong>{offer.priceLabel}</strong>
+                    <p>{offer.summary}</p>
+                    <ul>{offer.includes.map((item) => <li key={item}>{item}</li>)}</ul>
+                    <p className="v3-price__boundary">{offer.boundary}</p>
+                    <a className="v3-button v3-button--quiet" href="#storybook-calculator">Обсудить состав</a>
+                  </article>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       </div>
@@ -278,10 +267,10 @@ function CalculatorSection() {
     <section id="storybook-calculator" className="v3-quiz v3-section" aria-labelledby="storybook-v3-quiz-title">
       <div className="v3-shell">
         <div className="v3-section-heading v3-section-heading--split">
-          <div><p className="v3-kicker">Калькулятор проекта</p><h2 id="storybook-v3-quiz-title">Соберём контекст за пять шагов</h2></div>
-          <p>Ответы помогут подготовить первый ориентир по формату, составу работ и следующему шагу.</p>
+          <div><p className="v3-kicker">Калькулятор проекта</p><h2 id="storybook-v3-quiz-title">Сначала определим задачу</h2></div>
+          <p>Для типовых задач покажем стартовый ориентир, для сложных соберём список неизвестных и следующий шаг.</p>
         </div>
-        <ProjectQuiz />
+        <ProjectCalculator />
       </div>
     </section>
   );
@@ -307,13 +296,51 @@ function FooterSection() {
   );
 }
 
+function TypographySection() {
+  return (
+    <section className="v3-section" aria-labelledby="storybook-v3-typography-title">
+      <div className="v3-shell">
+        <div className="v3-section-heading">
+          <p className="v3-kicker">V3 typography</p>
+          <h2 id="storybook-v3-typography-title">Типографика удерживает иерархию даже в длинном русском тексте</h2>
+        </div>
+        <div className="v3-type-specimen">
+          <div className="v3-type-specimen__row">
+            <p className="v3-type-specimen__label">Контурный H2 · тёмный фон</p>
+            <h2 className="v3-type-specimen__outline">Дизайн, функциональность и SEO работают как одна система</h2>
+          </div>
+          <div className="v3-type-specimen__row" style={{ background: "var(--v3-accent)", color: "var(--v3-title-stroke-dark)", padding: "1.5rem" }}>
+            <p className="v3-type-specimen__label" style={{ color: "inherit" }}>Контурный H2 · footer</p>
+            <h2 className="v3-type-specimen__outline v3-type-specimen__outline--accent">Свяжитесь со мной, чтобы обсудить задачу</h2>
+          </div>
+          <div className="v3-type-specimen__row">
+            <p className="v3-type-specimen__label">Подзаголовок и lead</p>
+            <p className="v3-type-specimen__lead">Точная типографика помогает быстро увидеть главное, а затем спокойно разобраться в составе работ и следующем шаге.</p>
+          </div>
+          <div className="v3-type-specimen__row">
+            <h3 className="v3-type-specimen__card-title">Сложный калькулятор или веб-интерфейс</h3>
+            <p className="v3-type-specimen__body">Карточный заголовок заметен в сетке, но остаётся вторым уровнем после главной темы секции. Описание сохраняет комфортную длину строки и не конкурирует с ним по весу.</p>
+          </div>
+          <div className="v3-type-specimen__row">
+            <p className="v3-type-specimen__price">от 80 000 ₽</p>
+            <p className="v3-type-specimen__caption">Стартовая стоимость зависит от деталей задачи, готовности материалов, интеграций и согласованного результата.</p>
+          </div>
+          <label className="v3-type-specimen__row">
+            <span className="v3-type-specimen__label">Контакт для ответа</span>
+            <input className="v3-type-specimen__control" type="text" placeholder="Telegram, телефон или email" />
+          </label>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FullPage() {
   return (
     <StorybookPage withNavigation>
       <HeroSection />
       <CapabilitiesSection />
       <ProcessSection />
-      <IdentitySection />
       <WorkSection />
       <ServicesSection />
       <PricingSection />
@@ -339,10 +366,10 @@ export const FullPageV3: Story = { name: "Full page", render: () => <FullPage />
 export const Hero: Story = { render: () => <StorybookPage withNavigation><HeroSection /></StorybookPage> };
 export const Capabilities: Story = { render: () => <StorybookPage><CapabilitiesSection /></StorybookPage> };
 export const Process: Story = { render: () => <StorybookPage><ProcessSection /></StorybookPage> };
-export const Identity: Story = { render: () => <StorybookPage><IdentitySection /></StorybookPage> };
 export const Work: Story = { render: () => <StorybookPage><WorkSection /></StorybookPage> };
 export const Services: Story = { render: () => <StorybookPage><ServicesSection /></StorybookPage> };
 export const Pricing: Story = { render: () => <StorybookPage><PricingSection /></StorybookPage> };
 export const FAQ: Story = { render: () => <StorybookPage><FaqSection /></StorybookPage> };
 export const Calculator: Story = { render: () => <StorybookPage><CalculatorSection /></StorybookPage> };
 export const Footer: Story = { render: () => <StorybookPage><FooterSection /></StorybookPage> };
+export const Typography: Story = { render: () => <StorybookPage><TypographySection /></StorybookPage> };

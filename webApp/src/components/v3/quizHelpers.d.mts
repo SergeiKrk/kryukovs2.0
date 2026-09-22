@@ -14,6 +14,7 @@ export interface QuizAnswers {
   timing: Timing | "";
   comment: string;
   consent: boolean;
+  calculatorSummary?: CalculatorSummary | null;
 }
 
 export interface LeadPayload {
@@ -29,6 +30,7 @@ export interface LeadPayload {
   consent: true;
   utm?: Record<string, string>;
   pageUrl: string;
+  calculatorSummary?: CalculatorSummary;
 }
 
 export type ValidationResult =
@@ -43,3 +45,4 @@ export function getStepProgress(stepIndex: number): {
 };
 export function shapeLeadPayload(answers: QuizAnswers, pageUrl: string): LeadPayload;
 export function buildTelegramUrl(payload: LeadPayload): string;
+import type { CalculatorSummary } from "./calculatorHelpers.mjs";

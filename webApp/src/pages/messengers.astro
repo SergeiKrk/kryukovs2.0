@@ -1,0 +1,31 @@
+---
+import "@fontsource-variable/oswald";
+import { PaperPlaneTilt } from "@phosphor-icons/react";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { MAX_HREF, TELEGRAM_HREF } from "../components/v3/messengerLinks";
+import "../styles/v3.css";
+---
+
+<BaseLayout
+  title="Выберите мессенджер — Сергей Крюков"
+  description="Выберите удобный мессенджер, чтобы обсудить задачу с Сергеем Крюковым."
+  noindex={true}
+>
+  <section class="v3-messengers" aria-labelledby="v3-messengers-title">
+    <div class="v3-messengers__inner">
+      <p class="v3-kicker">Прямой контакт</p>
+      <h1 id="v3-messengers-title">Выберите мессенджер</h1>
+      <p class="v3-messengers__description">Откройте удобный канал, чтобы сразу обсудить задачу.</p>
+      <div class="v3-messengers__actions">
+        <a class="v3-button v3-button--primary v3-button--icon" href={TELEGRAM_HREF} target="_blank" rel="noreferrer">
+          <PaperPlaneTilt aria-hidden="true" weight="duotone" />
+          Телеграм
+        </a>
+        <a class="v3-button v3-button--quiet v3-button--icon" href={MAX_HREF} target="_blank" rel="noreferrer">
+          <img src="/assets/max-logo-colored.svg" alt="" width="80" height="32" />
+          MAX
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

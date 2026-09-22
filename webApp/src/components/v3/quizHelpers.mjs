@@ -108,6 +108,7 @@ export function shapeLeadPayload(answers, pageUrl) {
   const comment = answers.comment?.trim();
   if (siteUrl) payload.siteUrl = siteUrl;
   if (comment) payload.comment = comment;
+  if (answers.calculatorSummary) payload.calculatorSummary = answers.calculatorSummary;
 
   try {
     const url = new URL(pageUrl);
@@ -136,6 +137,12 @@ export function buildTelegramUrl(payload) {
 
   if (payload.siteUrl) lines.push(`Текущий сайт: ${payload.siteUrl}`);
   if (payload.comment) lines.push(`Комментарий: ${payload.comment}`);
+  if (payload.calculatorSummary) {
+    const summary = payload.calculatorSummary;
+    const estimate = summary.estimate?.kind === "from" ? summary.estimate.priceLabel : "Нужен discovery";
+    lines.push(`Предварительный маршрут: ${summary.taskType}`, `Предварительный ориентир: ${estimate}`);
+    if (summary.unknowns?.length) lines.push(`Нужно уточнить: ${summary.unknowns.join("; ")}`);
+  }
   lines.push(`Имя: ${payload.name}`, `Контакт: ${payload.contact}`);
 
   const url = new URL("https://t.me/sergeikrk");

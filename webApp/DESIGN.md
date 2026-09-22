@@ -1,166 +1,73 @@
-# Design System: Kryukovs Services — Immersive v2
+# Design System: Kryukovs Services — V3
 
-> Единая визуальная система новой версии сайта услуг Сергея Крюкова. Документ предназначен для Google Stitch и одновременно служит арт-дирекцией для Astro + React + TypeScript.
+> Visual contract for the noindex V3 root page of kryukovs.ru. V3 is the only active visual system and presents Sergey Kryukov as one accountable partner for a business website, tool, or product: dark, material, editorial and direct.
 
-## 1. Visual Theme & Atmosphere
+## Visual direction
 
-Сайт — не безликое digital-агентство, а личная инженерная мастерская. Визуальный образ: ночная студия, реальные интерфейсы, портрет автора и собранные в архив проекты. Атмосфера кинематографичная, уверенная и редакционная: много воздуха, крупная кириллица, точные подписи, реальные изображения.
+V3 uses an off-black stone environment with real project interfaces, a portrait of the author and restrained teal interaction states. The large display type has the role of a carved title; the rest of the page stays quiet enough for verified facts, prices and project context.
 
-- **Density:** Art Gallery Airy, 4/10.
-- **Variance:** Offset Asymmetric, 8/10.
-- **Motion:** Cinematic Choreography, 8/10.
-- **Hero scale:** Giant Statement Hero.
-- **Narrative spine:** Archive / dossier — каждый кейс выглядит как отдельный доказательный артефакт.
-- **Primary conversion:** заявка на разработку сайта, веб-приложения или доработку существующего проекта.
-- **Audience:** предприниматели и небольшие команды, которым нужен один ответственный frontend-разработчик от задачи до запуска.
-- **Language:** русский, прямые и проверяемые формулировки, без рекламных клише.
+- **Audience:** founders and small teams looking for a responsible technical partner.
+- **Primary action:** begin a project estimate or open a direct conversation.
+- **Signature:** outlined Serati display titles in the Hero and capability scene, carried through all primary H2 headings.
+- **Motion:** cinematic desktop scenes are additive. Content, hierarchy and controls must remain complete without JavaScript and under reduced motion.
 
-Главная история страницы: кто делает → какие задачи решает → какие реальные проекты уже собраны → как проходит работа → как начать разговор.
+## Palette and surfaces
 
-## 2. Color Palette & Roles
+| Role | Token | Value |
+|---|---|---|
+| Canvas | `--v3-bg` | `#0c0e0f` |
+| Panel | `--v3-panel` | `#151819` |
+| Raised panel | `--v3-panel-light` | `#1d2121` |
+| Main text | `--v3-text` | `#f0f3ee` |
+| Secondary text | `--v3-muted` | `#9ea7a2` |
+| Structural line | `--v3-line` | `#343a38` |
+| Functional accent | `--v3-accent` | `#079c8c` |
+| Focus and active accent | `--v3-accent-bright` | `#20b9a8` |
+| Ambient color | `--v3-ambient` | `#7047eb` |
 
-Использовать одну холодную графитовую палитру на всех экранах. Акцент один, умеренно насыщенный. Не использовать чистый чёрный и не менять температуру серых между секциями.
+Teal communicates action, selection and focus. Purple belongs only to ambient artwork. Large text remains light or outlined; do not use gradients as text fill.
 
-- **Graphite Canvas** `#111315` — основной фон и глубокие провалы.
-- **Carbon Panel** `#1B1E22` — панели, блоки кейсов и интерактивные поверхности.
-- **Warm White** `#EFEFEB` — основной текст, крупные заголовки и важные ссылки.
-- **Muted Silver** `#AAAEB4` — описания, метаданные и вторичная иерархия.
-- **Structural Divider** `#3D4248` — тонкие линии, рамки и разделители.
-- **Soft Blue Accent** `#A9C9FA` — единственный акцент: CTA, активные состояния, фокус и ключевые маркеры.
-- **Image Silver** `#DCE1E4` — нейтральная обработка светлых изображений.
+## Typography
 
-Правила: не использовать `#000000`, фиолетовые или кислотные свечения, градиентный текст и акцентную заливку всей страницы. Фото портрета и кейсов должны иметь согласованную холодную цветокоррекцию.
+The runtime tokens live in `src/styles/v3.css`. This table is the source of visual intent; new V3 components must consume the tokens instead of adding one-off font declarations.
 
-## 3. Typography Rules
+| Role | Family | Runtime token | Rule |
+|---|---|---|---|
+| Hero H1 | Serati | `--v3-type-hero` | Keep the existing outlined composition and responsive scale. |
+| Main H2 | Serati | `--v3-type-section` | Use for section themes, FAQ, calculator and footer. The footer may increase its size for the final CTA. H2 uses transparent fill with a `1.5px` outline: `--v3-title-stroke-light` on dark surfaces and `--v3-title-stroke-dark` in the footer. |
+| Card H3 | Oswald Variable | `--v3-type-card` | Use for process, services, projects and quiz headings. It must stay visually below H2. |
+| Prices and proof values | Oswald Variable | `--v3-type-price` | Use for numbers and compact proof statements. |
+| Lead | Manrope Variable | `--v3-type-lead` | Use for explanatory text paired with a section title. |
+| Body and controls | Manrope Variable | `--v3-type-body` | Minimum 16 CSS px on mobile. |
+| Labels and captions | Manrope Variable | `--v3-type-label`, `--v3-type-caption` | Minimum 14 CSS px in normal reading contexts. |
 
-- **Display:** `Oswald Variable`, fallback `Arial Narrow, sans-serif` — крупные заголовки, фамилия, горизонтальные текстовые полосы и номера секций.
-- **Body:** `Manrope Variable`, fallback `system-ui, sans-serif` — русский текст, навигация, описания и CTA.
-- **Mono:** `JetBrains Mono`, fallback `ui-monospace` — технические метки, стек и даты.
+Sergey’s signature is the only decorative exception. It may use Serati without becoming a reusable body or UI style.
 
-H1 — короткое заявление, обычно 1–3 строки. Основной текст ограничивать примерно 60–68 символами в строке. Капслок допустим только для коротких меток. Не использовать `Inter`, generic serif, искусственные переносы и чрезмерно жирные заголовки.
+The Hero H1 keeps its stronger `2px` outline. All primary V3 H2 elements inherit the capabilities-scene outline treatment. Card H3, prices, labels, lead copy, body copy and controls remain filled text without an outline. Browsers without `text-stroke` receive a filled-color fallback; forced-colors mode disables transparent fill and uses `CanvasText`.
 
-## 4. Hero & Signature Motif
+All headline blocks use `text-wrap: balance`; prose uses `text-wrap: pretty`. Prefer semantic containers and a sensible `max-width` over manual `<br>` elements. Body copy should normally stay within 60–68 characters per line. Use uppercase only for short labels, card headings, prices and intentional display scenes; do not uppercase paragraphs, form instructions or answers.
 
-Hero — первый кинематографичный кадр, а не набор виджетов. Использовать асимметричную композицию с портретом Сергея и крупным русским заявлением о разработке сайтов и интерактивных сервисов.
+## Layout and responsive rules
 
-- Портрет начинается крупным планом, затем возвращается к рабочему масштабу.
-- Переход «взгляд в сторону → взгляд прямо» выполняется мягким crossfade.
-- Текст и изображение занимают разные зоны; текст не перекрывает лицо.
-- Один главный CTA: «Обсудить проект».
-- Не использовать «Scroll to explore», стрелки и bouncing chevrons.
-- Hero должен работать без JavaScript: статичный финальный кадр и видимый текст обязательны.
+- The shared V3 shell is `min(100% - responsive gutters, 96rem)`.
+- Multi-column scenes collapse to a single readable flow below 52rem.
+- Hero H1 retains its existing breakpoint-specific scale. Main H2 has a 3rem minimum. Card H3 begins at 2rem. Prices begin at 2.8rem.
+- No section may introduce horizontal scrolling through text. Long Russian labels, prices and form values need natural wrapping and `overflow-wrap` where values can be user-entered.
+- Text and form inputs use at least 16 CSS px on mobile. Supporting captions and labels use 14 CSS px or larger.
+- Interactive controls keep a visible focus ring and a minimum comfortable touch target. Typography must not rely on color alone to convey importance or errors.
 
-## 5. Section System
+## Component use
 
-Страница строится как последовательность разных по ритму сцен:
+- `v3-section-heading` pairs a main H2 with one lead; its typography establishes section hierarchy.
+- Project, service and process cards use the shared Oswald card level, then Manrope body copy.
+- Pricing groups use Manrope labels, Oswald numbers and Manrope boundaries.
+- Quiz forms use Manrope for questions, labels, values, hints and errors. The H3 titles remain card-level headings.
+- Storybook includes `V3 / Sections / Typography` as the visual regression specimen for long Russian headings, lead/body copy, captions, price and an input.
 
-1. **Hero / Positioning** — кто я и какие задачи решаю.
-2. **Services** — сайты, SPA, интерактивные инструменты, SEO и доработки.
-3. **Portfolio stack** — вертикальные карточки кейсов, которые складываются в стопку.
-4. **Process** — горизонтальная последовательность: задача → структура → интерфейс → запуск.
-5. **Proof** — реальные ссылки, технологии и проверяемые результаты.
-6. **Final CTA** — спокойное завершение с одной точкой контакта.
+## Accessibility and review
 
-Композиции должны чередоваться: полноэкранное изображение, крупный текстовый кадр, editorial split, стек карточек, горизонтальный трек и минималистичный CTA.
-
-## 6. Portfolio Stack
-
-Портфолио — вертикальная сцена, где карточки ощущаются как архивные листы.
-
-- Один кейс — одна крупная карточка с названием, задачей, стеком и проверяемым результатом.
-- Карточки занимают большую часть viewport и показывают скриншот или фотографию проекта.
-- При прокрутке текущая карточка уходит назад, следующие уменьшаются ступенчато, а верхние края образуют видимую стопку.
-- Глубина создаётся через `transform`, `scale`, небольшие смещения и тональные слои, не через тяжёлые тени.
-- На мобильном карточки идут последовательно, без горизонтального overflow.
-- Публичные кейсы: SamogonCalc, услуги альпиниста, Green Crown, СЭС МСК и другие подтверждённые проекты.
-- NDA-кейсы и проекты без аналитики описываются честно: без выдуманных лидов, позиций и полного личного вклада.
-
-## 7. Components
-
-### Navigation
-
-Компактная фиксированная навигация с текстовыми ссылками и одним CTA. На мобильном — доступная панель без декоративного хаоса. Фокус всегда видим.
-
-### Buttons
-
-- Primary: `#A9C9FA` на графитовой поверхности, контрастный тёмный текст.
-- Secondary: прозрачная поверхность с рамкой `#3D4248`.
-- Active: tactile push через `transform: translateY(1px)`.
-- Минимальная touch-зона — `44×44px`.
-- Никаких внешних neon glow и custom cursor.
-
-### Cards
-
-Карточка используется только для иерархии кейса или этапа. Радиус умеренный: `1rem–1.5rem`. Статические карточки почти плоские; глубина появляется только в portfolio stack.
-
-### Images
-
-Использовать реальные изображения из портфолио и `public/assets/immersive`. Не использовать случайные стоковые фото, broken links или изображения без структурной роли.
-
-## 8. Layout & Responsive Rules
-
-- Основной контейнер: `max-width: 1440px`, горизонтальные поля через `clamp()`.
-- Сетка — CSS Grid; не использовать процентные hacks с `calc()`.
-- Полноэкранные сцены — `min-height: 100dvh`.
-- Ниже `768px` все многоколоночные композиции складываются в один поток.
-- На мобильном не должно быть непреднамеренного горизонтального overflow.
-- Горизонтальный process-scroll на мобильном остаётся нативным.
-- Заголовки масштабируются через `clamp()` и сохраняют читаемое число строк.
-- Изображения не перекрывают текст и не обрезают лицо или ключевой интерфейсный контент.
-- Touch targets — минимум `44px`.
-
-## 9. Motion Philosophy
-
-Motion — часть повествования, а не украшение.
-
-- Lenis отвечает за плавную прокрутку на desktop и подключается к GSAP ticker.
-- GSAP ScrollTrigger управляет portrait scale/crossfade, изменением цвета слов, стеком кейсов, горизонтальным process-track и moving typography band.
-- Предпочитать scrubbed timeline и физически убедительные переходы; не использовать линейное движение по умолчанию.
-- Анимировать только `transform` и `opacity`, не `top`, `left`, `width`, `height`.
-- Списки появляются каскадно, но не мешают быстрому пониманию услуги.
-- Секция имеет статичный meaningful state до загрузки JavaScript.
-- `prefers-reduced-motion` и явный переключатель анимаций отключают Lenis, scrub и декоративные перемещения.
-- Никаких бесконечных marquee без смысловой функции.
-
-## 10. Content & Evidence Rules
-
-Голос сайта — прямой, спокойный и конкретный: задача → решение → результат. Использовать реальные данные из базы знаний:
-
-- React, TypeScript, Astro, Next.js, SEO и интерактивные сервисы;
-- SamogonCalc: 12 калькуляторов, 86 страниц, подтверждённый исторический трафик;
-- опыт Product Engineer в AWX и командный NDA-опыт описывать честно;
-- ссылки на публичные проекты показывать только там, где они доступны;
-- приблизительные показатели помечать как приблизительные;
-- не заявлять неподтверждённые продажи, лиды, позиции, конверсии или полный личный вклад в командных проектах.
-
-## 11. Accessibility & Performance
-
-- Семантические заголовки и landmarks обязательны.
-- Все изображения получают осмысленный `alt`; декоративные — пустой alt.
-- Контраст текста проверяется на графитовых поверхностях.
-- Portfolio stack доступен кнопками Previous/Next и клавиатурой.
-- Анимации не блокируют контент, формы или контактные действия.
-- Изображения оптимизируются и лениво загружаются ниже первого экрана.
-- Lenis и тяжёлые React-интеракции загружаются только там, где нужны.
-
-## 12. Anti-Patterns — NEVER DO
-
-- Не использовать эмодзи, `Inter`, generic serif, чистый чёрный и неоновые свечения.
-- Не строить сайт из одинаковых трёх карточек в ряд.
-- Не делать каждый экран центрированным и симметричным.
-- Не использовать стеклянные панели, blobs, случайные 3D-объекты и фальшивые dashboard-графики.
-- Не превращать сайт в набор огромных заголовков без доказательств.
-- Не добавлять клише «новый уровень», «бесшовный», «революционный», «next-gen».
-- Не использовать фальшивые отзывы, выдуманные бренды и круглые метрики.
-- Не скрывать важную информацию только в hover.
-- Не перекрывать лицо, заголовки и CTA друг другом.
-- Не добавлять cursor-following эффекты, которые мешают навигации.
-- Не нарушать `prefers-reduced-motion`.
-
-## 13. Runtime Mapping
-
-- Визуальные токены принадлежат `src/styles/immersive.css` и области `html[data-design="immersive"]`, `.v2`.
-- Логика motion находится в `src/components/immersive/Motion.astro`.
-- Навигация и accessibility-интеракции — в `src/components/immersive/Navigation.tsx`.
-- Все публичные страницы используют `BaseLayout.astro` и не дублируют базовый JSON-LD.
-- Визуальная система `/v2/` не должна непреднамеренно менять старую главную страницу `/`.
+- Preserve document heading order independently of visual size.
+- Check 360, 390, 768 and 1440 px widths plus 200% browser zoom after changes.
+- Confirm that Hero H1 and the capabilities H2 preserve their established composition before approving a typography change.
+- Verify keyboard focus, readable line lengths, no clipped text and no unintended horizontal overflow.
+- Keep the V3 root page `noindex` until the release gates in the project knowledge base are closed; this design document does not change public-release readiness.

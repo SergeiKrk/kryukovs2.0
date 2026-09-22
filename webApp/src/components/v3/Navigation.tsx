@@ -1,8 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { PaperPlaneTilt } from "@phosphor-icons/react";
 import { gsap } from "gsap";
-
-const maxHref = "https://max.ru/u/f9LHodD0cOJnvKBT3lzI_frHwvBIZXJVtfvP_VynzhsCBdFg_ZGlsLzi1Gw";
+import { MAX_HREF, TELEGRAM_HREF } from "./messengerLinks";
 
 const links = [
   ["Работы", "#work"],
@@ -165,7 +164,7 @@ export default function Navigation() {
   return (
     <header className={`v3-nav${open ? " is-open" : ""}`}>
       <div className="v3-nav__bar">
-        <a className="v3-nav__brand" href="/v3/" aria-label="Сергей Крюков, главная третьей версии">
+        <a className="v3-nav__brand" href="/" aria-label="Сергей Крюков, главная">
           KSV<span>•</span>
         </a>
         <div className="v3-nav__contact" aria-label="Контакты">
@@ -176,7 +175,7 @@ export default function Navigation() {
           <div className="v3-nav__contact-links">
             <a
               className="v3-nav__contact-button v3-nav__contact-button--telegram"
-              href="https://t.me/sergeikrk"
+              href={TELEGRAM_HREF}
               target="_blank"
               rel="noreferrer"
               aria-label="Написать Сергею в Telegram"
@@ -186,7 +185,7 @@ export default function Navigation() {
             </a>
             <a
               className="v3-nav__contact-button v3-nav__contact-button--max"
-              href={maxHref}
+              href={MAX_HREF}
               target="_blank"
               rel="noreferrer"
               aria-label="Написать Сергею в MAX"

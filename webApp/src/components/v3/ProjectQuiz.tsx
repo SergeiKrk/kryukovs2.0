@@ -10,6 +10,12 @@ import {
   type QuizAnswers,
   type Timing,
 } from "./quizHelpers.mjs";
+import {
+  CALCULATOR_SUMMARY_EVENT,
+  clearPendingCalculatorSummary,
+  readPendingCalculatorSummary,
+} from "./calculatorBridge.mjs";
+import type { CalculatorSummary, TaskType } from "./calculatorHelpers.mjs";
 
 declare global {
   interface Window {
@@ -78,6 +84,7 @@ const initialAnswers: QuizAnswers = {
   timing: "",
   comment: "",
   consent: false,
+  calculatorSummary: null,
 };
 
 const allowedProjectTypes = new Set(projectTypeOptions.map(([value]) => value));
@@ -108,6 +115,25 @@ function optionLabel<T extends string>(options: Array<[T, string, ...string[]]>,
   return options.find(([optionValue]) => optionValue === value)?.[1] ?? "Не выбрано";
 }
 
+function mapCalculatorTaskType(taskType: TaskType): ProjectType {
+  if (taskType === "site") return "new-site";
+  if (taskType === "support") return "redesign";
+  return "other";
+}
+
+function mapCalculatorOfferToPackage(offerId: string | null): ProjectPackage {
+  if (offerId === "animated-landing-direct") return "cinematic";
+  if (offerId === "corporate-site") return "brand";
+  if (offerId) return "start";
+  return "unsure";
+}
+
+function calculatorSummaryToGoal(summary: CalculatorSummary) {
+  const estimate = summary.estimate.kind === "from" ? summary.estimate.priceLabel : "нужен discovery";
+  const unknowns = summary.unknowns.length > 0 ? ` Нужно уточнить: ${summary.unknowns.join("; ")}.` : "";
+  return `Предварительный маршрут: ${summary.taskType}. Ориентир: ${estimate}.${unknowns}`;
+}
+
 export default function ProjectQuiz() {
   const [answers, setAnswers] = useState<QuizAnswers>(initialAnswers);
   const [stepIndex, setStepIndex] = useState(0);
@@ -115,6 +141,7 @@ export default function ProjectQuiz() {
   const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState("");
   const [submission, setSubmission] = useState<SubmissionResult | null>(null);
+  const [calculatorSummary, setCalculatorSummary] = useState<CalculatorSummary | null>(null);
   const [storageReady, setStorageReady] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -158,6 +185,37 @@ export default function ProjectQuiz() {
     } finally {
       setStorageReady(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const applyCalculatorSummary = (summary: CalculatorSummary) => {
+      setCalculatorSummary(summary);
+      setAnswers((current) => ({
+        ...current,
+        calculatorSummary: summary,
+        projectType: mapCalculatorTaskType(summary.taskType),
+        goal: current.goal.trim() || calculatorSummaryToGoal(summary),
+        package: mapCalculatorOfferToPackage(summary.selectedOfferId),
+      }));
+      setStepIndex(4);
+      setInvalidField(null);
+      setStatus("");
+      shouldFocusHeadingRef.current = true;
+    };
+
+    const pending = readPendingCalculatorSummary();
+    if (pending && pending.schemaVersion === 1 && pending.taskType) {
+      applyCalculatorSummary(pending as CalculatorSummary);
+      clearPendingCalculatorSummary();
+    }
+
+    const onCalculatorSummary = (event: Event) => {
+      const summary = (event as CustomEvent<CalculatorSummary>).detail;
+      if (summary?.schemaVersion === 1 && summary.taskType) applyCalculatorSummary(summary);
+    };
+
+    window.addEventListener(CALCULATOR_SUMMARY_EVENT, onCalculatorSummary);
+    return () => window.removeEventListener(CALCULATOR_SUMMARY_EVENT, onCalculatorSummary);
   }, []);
 
   useEffect(() => {
@@ -546,6 +604,13 @@ export default function ProjectQuiz() {
       <aside className="v3-quiz__summary" aria-labelledby="v3-quiz-summary-title">
         <p className="v3-kicker">Сводка</p>
         <h3 id="v3-quiz-summary-title">Контекст проекта</h3>
+        {calculatorSummary && (
+          <div className="v3-quiz__calculator-context" aria-live="polite">
+            <strong>Ориентир из калькулятора</strong>
+            <p>{calculatorSummary.estimate.kind === "from" ? calculatorSummary.estimate.priceLabel : "Нужен discovery"}</p>
+            <small>Ответы из калькулятора уже переданы в этот бриф.</small>
+          </div>
+        )}
         <dl>
           <div><dt>Тип</dt><dd>{optionLabel(projectTypeOptions, answers.projectType)}</dd></div>
           <div><dt>Цель и аудитория</dt><dd>{answers.goal.trim() || "Пока не описаны"}</dd></div>

@@ -1,320 +1,300 @@
 ---
+import "@fontsource-variable/oswald";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import CaseSlider from "../components/CaseSlider";
-import {
-  ArrowRight,
-  Article,
-  Bell,
-  Browser,
-  Browsers,
-  CalendarBlank,
-  ChartLineUp,
-  CheckCircle,
-  Code,
-  CursorClick,
-  DeviceMobile,
-  Eye,
-  Gauge,
-  Headset,
-  MagnifyingGlass,
-  Megaphone,
-  PaperPlaneTilt,
-  PencilSimple,
-  RocketLaunch,
-  ShieldCheck,
-  StackSimple,
-  SquaresFour,
-  User,
-} from "@phosphor-icons/react";
+import Navigation from "../components/v3/Navigation";
+import V3Motion from "../components/v3/V3Motion.astro";
+import CalculatorShell from "../components/v3/CalculatorShell.astro";
+import QuizShell from "../components/v3/QuizShell.astro";
+import Footer from "../components/v3/Footer.astro";
+import { capabilities, faq, pricingGroups, processSteps, projects, proofs, services } from "../data/v3";
+import { Picture } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import heroHeadLeft from "../assets/v3/hero-stone-head-left.png";
+import heroLaptop from "../assets/v3/development-laptop.png";
+import heroHead from "../assets/v3/hero-stone-head.png";
+import capabilityRock1 from "../assets/v3/rock-1.png";
+import capabilityRock2 from "../assets/v3/rock-2.png";
+import capabilityRock3 from "../assets/v3/rock-3.png";
+import capabilityRock4 from "../assets/v3/rock-4.png";
+const v3AssetModules = import.meta.glob("../assets/v3/*", { eager: true, import: "default" }) as Record<string, ImageMetadata>;
+const v3Asset = (path: string): any => v3AssetModules[`../assets/v3/${path.split("/").pop()}`] ?? path;
+const capabilityRocks = [
+  capabilityRock1, capabilityRock2, capabilityRock3, capabilityRock4, capabilityRock2,
+  capabilityRock4, capabilityRock1, capabilityRock3, capabilityRock4, capabilityRock2,
+  capabilityRock3, capabilityRock1, capabilityRock4, capabilityRock2, capabilityRock1,
+  capabilityRock4, capabilityRock2, capabilityRock3, capabilityRock1, capabilityRock4,
+];
+import "../styles/v3.css";
 
-const title = "Разработка сайтов и веб-сервисов — Сергей Крюков";
-const description = "Проектирую и разрабатываю сайты, React-приложения, калькуляторы и Telegram Mini Apps. Подключаю SEO и аналитику — от задачи до запуска.";
-const workshopStages = ["Задача", "Структура", "Интерфейс", "Разработка", "Запуск"];
+const title = "Создание сайтов под ключ | Сергей Крюков";
+const description = "Дизайн, разработка и SEO сайтов для бизнеса и брендов у одного специалиста. Прототип коммерческого лендинга Сергея Крюкова.";
 ---
 
-<BaseLayout title={title} description={description}>
-  <div class="hero-workshop-track" data-workshop-track>
-    <section class="hero-workshop hero-workshop--primary" aria-label="Hero — цифровая мастерская" data-workshop-hero data-workshop-stage="0">
-    <div class="hero-workshop__sticky">
-      <div class="container hero-workshop__layout">
-        <div class="hero-copy">
-          <h1 class="eyebrow hero-service-title">Разработка сайтов и веб-сервисов</h1>
-          <p class="hero-promise" aria-label="Создаю удобные сайты, которые превращают посетителей в покупателей">
-            <span class="hero-promise__line hero-promise__line--opening">
-              <span class="hero-promise__muted" aria-hidden="true">Создаю <span class="accent-primary hero-gradient-teal">удобные</span> сайты,</span>
-              <span class="hero-promise__sharp" aria-hidden="true">Создаю <span class="accent-primary hero-gradient-teal">удобные</span> сайты,</span>
-            </span>
-            <span class="hero-promise__line">
-              <span class="hero-promise__muted" aria-hidden="true">которые превращают</span>
-              <span class="hero-promise__sharp" aria-hidden="true">которые превращают</span>
-            </span>
-            <span class="hero-promise__line">
-              <span class="hero-promise__muted" aria-hidden="true">посетителей</span>
-              <span class="hero-promise__sharp" aria-hidden="true">посетителей</span>
-            </span>
-            <span class="hero-promise__line">
-              <span class="hero-promise__muted" aria-hidden="true">в <span class="accent-violet hero-gradient-violet">покупателей</span></span>
-              <span class="hero-promise__sharp" aria-hidden="true">в <span class="accent-violet hero-gradient-violet">покупателей</span></span>
-            </span>
-          </p>
-          <p class="lead">Делаю быстрые и понятные сайты и веб-сервисы на React и Astro. Подключаю SEO, аналитику и помогаю привлекать трафик. После запуска — 14 дней поддержки.</p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer"><PaperPlaneTilt aria-hidden="true" weight="duotone" /> Обсудить проект</a>
-            <a class="button button-link" href="#cases">Смотреть кейсы <ArrowRight aria-hidden="true" /></a>
-          </div>
-          <div class="hero-metric" aria-label="До 98,6 тысяч посетителей в месяц"><strong>до 98,6 <span>тыс.</span></strong><small>посетителей в месяц</small></div>
+<BaseLayout
+  title={title}
+  description={description}
+  variant="cinematic"
+  canonical="/"
+  noindex={true}
+  image="/assets/v3/hero-stone-head.png"
+>
+  <Navigation slot="before-main" client:load />
+
+  <section class="v3-hero" aria-labelledby="v3-hero-title">
+    <div class="v3-shell v3-hero__grid">
+      <div class="v3-hero__copy" data-v3-hero-copy>
+        <p class="v3-kicker">Посадочная + Яндекс.Директ от 35 000 ₽</p>
+        <h1 id="v3-hero-title" data-v3-hero-title>
+          <span class="v3-hero__title-outline"><span>Создание сайтов</span><span>под ключ</span></span>
+        </h1>
+        <p class="v3-hero__support">Для бизнеса и брендов: сильный дизайн, разработка и SEO у одного специалиста.</p>
+        <div class="v3-actions">
+          <a class="v3-button v3-button--primary v3-button--hero" href="#calculator">Рассчитать проект</a>
+          <a class="v3-button v3-button--quiet" href="#work">Смотреть работы <span aria-hidden="true">↘</span></a>
         </div>
-
-        <figure class="workshop-scene" aria-labelledby="workshop-scene-caption">
-          <div class="workshop-scene__board" aria-hidden="true">
-            <div class="workshop-stage-rail">{workshopStages.map((stage, index) => <span data-stage-index={index}><i>{index + 1}</i>{stage}</span>)}</div>
-            <div class="workshop-module workshop-module--brief"><Article weight="duotone" /><div><strong>Бриф проекта</strong><span>Цель и задачи</span><span>Целевая аудитория</span><span>Ключевое действие</span></div></div>
-            <div class="workshop-module workshop-module--prototype"><StackSimple weight="duotone" /><div><strong>Прототип</strong><span>Логика экранов</span><span>Путь пользователя</span><span>Ключевые состояния</span></div></div>
-            <div class="workshop-module workshop-module--navigation"><Browsers weight="duotone" /><strong>Навигация сайта</strong><span>Главная</span><span>Услуги</span><span>Контакты</span></div>
-            <div class="workshop-module workshop-module--form"><RocketLaunch weight="duotone" /><strong>Форма заявки</strong><span class="workshop-field">Имя</span><span class="workshop-field">Телефон</span><span class="workshop-submit">Отправить</span></div>
-            <div class="workshop-module workshop-module--analytics"><ChartLineUp weight="duotone" /><div><strong>Аналитика</strong><span>События подключены</span></div></div>
-
-            <div class="workshop-browser">
-              <div class="workshop-browser__chrome"><span></span><span></span><span></span><small>demo-service.ru</small></div>
-              <div class="workshop-browser__wireframe"><span class="workshop-wire workshop-wire--headline"></span><span class="workshop-wire workshop-wire--copy"></span><span class="workshop-wire workshop-wire--button"></span><span class="workshop-wire workshop-wire--media"></span></div>
-              <div class="workshop-browser__surface">
-                <header><strong>Демо-проект</strong><nav><span>Главная</span><span>Решения</span><span>Контакты</span></nav><span class="workshop-browser__action">Связаться</span></header>
-                <main><div><span class="workshop-browser__eyebrow">Сервис для бизнеса</span><h2>Решения для роста вашего бизнеса</h2><p>Понятный сайт, личный кабинет и автоматизация обращений.</p><span class="workshop-browser__action">Оставить заявку</span></div><aside><Gauge weight="duotone" /><strong>Всё измеримо</strong><span>Цели и события настроены</span></aside></main>
-                <footer><span><CheckCircle weight="fill" /> Быстрый запуск</span><span><CheckCircle weight="fill" /> Адаптивный интерфейс</span><span><CheckCircle weight="fill" /> Поддержка после релиза</span></footer>
-              </div>
-            </div>
-
-            <div class="workshop-code"><div><Code weight="duotone" /> React / TypeScript / Astro</div><code><span>&lt;section</span> className="service"&gt;</code><code>&nbsp;&nbsp;&lt;LeadForm analytics="connected" /&gt;</code><code><span>&lt;/section&gt;</span></code></div>
-            <div class="workshop-phone"><div class="workshop-phone__speaker"></div><div class="workshop-phone__header"><strong>Демо</strong><span>•••</span></div><DeviceMobile weight="duotone" /><strong>Mini App</strong><span>Заявка в два шага</span><span class="workshop-phone__action">Продолжить</span></div>
-            <div class="workshop-integrations"><span><MagnifyingGlass weight="duotone" /><strong>SEO</strong><small>Готово</small></span><span><ChartLineUp weight="duotone" /><strong>Аналитика</strong><small>Подключена</small></span><span><Bell weight="duotone" /><strong>Уведомления</strong><small>Работают</small></span><span class="workshop-integration--ads"><Megaphone weight="duotone" /><strong>Реклама</strong><small>Маркетинг</small></span></div>
-            <CursorClick className="workshop-cursor" weight="fill" />
-            <div class="workshop-launch-status"><CheckCircle weight="fill" /><div><strong>Проект запущен</strong><span>Все системы работают</span></div></div>
-          </div>
-          <img class="workshop-scene__portrait" src="/assets/sergey-front.webp" alt="Сергей Крюков, разработчик проекта" width="832" height="900" />
-          <div class="hero-metric workshop-portrait__metric" aria-label="Сергей Крюков — Full-stack разработчик, маркетинг и SEO"><strong>Сергей Крюков</strong><small>Full-stack разработчик · маркетинг и SEO</small></div>
-          <figcaption id="workshop-scene-caption" class="workshop-visually-hidden">Демонстрационная сцена: из брифа и прототипа собираются сайт, мобильное приложение и подключения SEO, аналитики, уведомлений и рекламы.</figcaption>
-        </figure>
       </div>
-    </div>
-    </section>
-  </div>
 
-  <script>
-    const hero = document.querySelector<HTMLElement>("[data-workshop-hero]");
-    const track = document.querySelector<HTMLElement>("[data-workshop-track]");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const compactLayout = window.matchMedia("(max-width: 46rem)");
-    const clampProgress = (value: number) => Math.max(0, Math.min(1, value));
-    const easeProgress = (value: number) => {
-      const progress = clampProgress(value);
-      return progress * progress * (3 - (2 * progress));
-    };
-    const addStops = (rawProgress: number) => {
-      const progress = clampProgress(rawProgress);
-      if (progress === 1) return 1;
-      const scaled = progress * 4;
-      const segment = Math.min(3, Math.floor(scaled));
-      const localProgress = scaled - segment;
-      const movingProgress = clampProgress((localProgress - 0.32) / 0.36);
-      return (segment + easeProgress(movingProgress)) / 4;
-    };
-
-    if (hero && track) {
-      let frame = 0;
-      const renderProgress = () => {
-        frame = 0;
-        if (reducedMotion.matches || compactLayout.matches) {
-          hero.style.setProperty("--hero-scroll-progress", "1");
-          hero.style.setProperty("--workshop-progress", "1");
-          hero.dataset.workshopStage = "4";
-          return;
-        }
-        const bounds = track.getBoundingClientRect();
-        const scrollDistance = Math.max(1, track.offsetHeight - window.innerHeight);
-        const rawProgress = clampProgress(-bounds.top / scrollDistance);
-        const stagedProgress = addStops(rawProgress);
-        hero.style.setProperty("--hero-scroll-progress", rawProgress.toFixed(4));
-        hero.style.setProperty("--workshop-progress", stagedProgress.toFixed(4));
-        hero.dataset.workshopStage = String(Math.min(4, Math.round(stagedProgress * 4)));
-      };
-      const queueProgress = () => { if (!frame) frame = window.requestAnimationFrame(renderProgress); };
-      renderProgress();
-      window.addEventListener("lenis:scroll", queueProgress);
-      window.addEventListener("scroll", queueProgress, { passive: true });
-      window.addEventListener("resize", queueProgress, { passive: true });
-      reducedMotion.addEventListener("change", queueProgress);
-      compactLayout.addEventListener("change", queueProgress);
-      document.addEventListener("astro:before-swap", () => {
-        window.removeEventListener("lenis:scroll", queueProgress);
-        window.removeEventListener("scroll", queueProgress);
-        window.removeEventListener("resize", queueProgress);
-        reducedMotion.removeEventListener("change", queueProgress);
-        compactLayout.removeEventListener("change", queueProgress);
-        if (frame) window.cancelAnimationFrame(frame);
-      }, { once: true });
-    }
-  </script>
-
-  <section class="hero hero-hybrid hero-hybrid--mobile" aria-label="Hero с 3D-аналитикой">
-    <div class="container hero-hybrid__layout">
-      <div class="hero-copy">
-        <h1 class="eyebrow hero-service-title">Разработка сайтов и веб-сервисов</h1>
-        <p class="hero-promise">
-          <span class="hero-promise__line hero-promise__line--opening">Создаю <span class="accent-primary hero-gradient-teal">удобные</span> сайты,</span>
-          <span class="hero-promise__line">которые превращают</span>
-          <span class="hero-promise__line">посетителей</span>
-          <span class="hero-promise__line">в <span class="accent-violet hero-gradient-violet">покупателей</span></span>
-        </p>
-        <p class="lead">Делаю быстрые и понятные сайты и веб-сервисы на React и Astro. Подключаю SEO, аналитику и помогаю привлекать трафик. После запуска — 14 дней поддержки.</p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer"><PaperPlaneTilt aria-hidden="true" weight="duotone" /> Обсудить проект</a>
-          <a class="button button-link" href="#cases">Смотреть кейсы <ArrowRight aria-hidden="true" /></a>
+      <figure class="v3-hero__visual" data-v3-hero-visual>
+        <div class="v3-hero__rocks" aria-hidden="true">
+          {[1, 2, 3, 4, 1, 3].map((rock, index) => (
+            <span class={`v3-hero__rock v3-hero__rock--${index + 1}`} data-v3-hero-rock data-depth={index + 1}>
+              <Picture src={v3Asset(`/assets/v3/rock-${rock}.png`)} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="280" height="280" loading="eager" decoding="async" />
+            </span>
+          ))}
         </div>
-        <div class="hero-metric" aria-label="До 98,6 тысяч посетителей в месяц"><strong>до 98,6 <span>тыс.</span></strong><small>посетителей в месяц</small></div>
-      </div>
-      <figure class="hero-hybrid__scene">
-        <div class="hero-hybrid__tilt">
-          <div class="hero-workbench__screen hero-hybrid__screen">
-            <div class="hero-hybrid__parallax-layer">
-              <img src="/assets/analytics.jpg" alt="Рост трафика проекта в аналитике" width="1785" height="1110" loading="lazy" decoding="async" fetchpriority="low" />
-              <figcaption>Аналитика проекта · поисковый трафик растёт</figcaption>
-            </div>
-          </div>
-        </div>
-        <img class="hero-workbench__portrait hero-hybrid__portrait" src="/assets/sergey-front.webp" alt="Сергей Крюков представляет результат проекта" width="832" height="900" loading="lazy" decoding="async" fetchpriority="low" />
-        <div class="hero-metric hero-hybrid__identity" aria-label="Сергей Крюков — Full-stack разработчик, маркетинг и SEO"><strong>Сергей Крюков</strong><small>Full-stack разработчик · маркетинг и SEO</small></div>
+        <Picture
+          class="v3-hero__laptop"
+          data-v3-hero-laptop
+          src={heroLaptop}
+          formats={["avif", "webp"]}
+          fallbackFormat="png"
+          alt=""
+          width="1024"
+          height="1024"
+          loading="eager"
+          decoding="async"
+        />
+        <Picture
+          class="v3-hero__head"
+          data-v3-hero-head
+          src={heroHeadLeft}
+          formats={["avif", "webp"]}
+          fallbackFormat="png"
+          alt="Каменная голова как образ цельного цифрового продукта"
+          width="1024"
+          height="1024"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        />
       </figure>
     </div>
+    <div class="v3-shell v3-proof-strip" aria-label="Проверенные факты">
+      <div class="v3-proof-strip__grid">
+        {proofs.map(([value, label], index) => index === 2 ? (
+          <a class="v3-proof-strip__item v3-proof-strip__item--featured" href="#calculator" aria-label={`${value}, ${label}`}>
+            <strong>{value}</strong>
+            <span>{label}</span>
+          </a>
+        ) : (
+          <p class="v3-proof-strip__item">
+            <strong>{value}</strong>
+            <span>{label}</span>
+          </p>
+        ))}
+      </div>
+    </div>
   </section>
 
-  <section class="journey" aria-labelledby="journey-title">
-    <div class="container container-narrow">
-      <div class="journey-board">
-        <div class="journey-heading">
+  <section class="v3-capabilities" aria-labelledby="v3-capabilities-title" data-v3-capabilities>
+    <div class="v3-capabilities__pin" data-v3-capabilities-pin>
+    <div class="v3-shell">
+      <div class="v3-capabilities__grid">
+        <div class="v3-capabilities__intro" data-v3-capabilities-copy>
+          <p class="v3-kicker">Космически-фундаментальная разработка</p>
+          <h2 id="v3-capabilities-title">Функциональность, дизайн и SEO работают как одна система</h2>
+          <p>Проектирую структуру и визуальную систему, разрабатываю удобный интерфейс и адаптирую сайт под поисковики. План работ фиксируем заранее — вы понимаете, что входит в проект и кто за это отвечает.</p>
+        </div>
+      <div class="v3-capabilities__stage" data-v3-capabilities-stage>
+      <div class="v3-capabilities__rocks" aria-hidden="true" data-v3-capabilities-rocks>
+        {capabilityRocks.map((rock, index) => (
+          <Picture class={`v3-capabilities__rock v3-capabilities__rock--${(index % 3) + 1}`} data-v3-capabilities-rock data-depth={(index % 3) + 1} src={rock} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+        ))}
+      </div>
+      <Picture class="v3-capabilities__head" data-v3-capabilities-head src={heroHead} formats={["avif", "webp"]} fallbackFormat="png" alt="Каменная голова в центре композиции" width="512" height="512" loading="lazy" decoding="async" />
+      <svg class="v3-capabilities__ring-path" viewBox="0 0 1000 700" aria-hidden="true" focusable="false">
+        <path data-v3-capabilities-ring-path d="M500 40a310 310 0 1 1 0 620a310 310 0 1 1 0-620Z" />
+      </svg>
+      <div class="v3-capabilities__ring-separators" aria-hidden="true">
+        {[capabilityRock1, capabilityRock3, capabilityRock4].map((rock, index) => (
+          <Picture class={`v3-capabilities__ring-separator v3-capabilities__ring-separator--${index + 1}`} data-v3-ring-separator src={rock} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+        ))}
+      </div>
+      <div class="v3-capabilities__list">
+        {capabilities.map((capability, capabilityIndex) => (
+          <article class="v3-capability" data-v3-capability data-capability-index={capabilityIndex}>
+            <h3 class="v3-capability__word" aria-label={capability.word}>
+              {Array.from(capability.word).map((character, index) => {
+                const glyph = capability.glyphs[index];
+                return glyph ? (
+                  <span class="v3-capability__glyph" aria-hidden="true" data-v3-stone-letter>
+                    <Picture src={v3Asset(glyph.src)} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+                  </span>
+                ) : (
+                  <span aria-hidden="true" data-v3-stone-letter>{character}</span>
+                );
+              })}
+            </h3>
+            <p>{capability.description}</p>
+          </article>
+        ))}
+      </div>
+      </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section id="process" class="v3-process v3-section" aria-labelledby="v3-process-title">
+    <div class="v3-shell">
+      <div class="v3-personal">
+        <figure class="v3-identity__transform v3-personal__portrait" data-v3-identity-stage>
+          <Picture class="v3-identity__head" data-v3-identity-head src={heroHead} formats={["avif", "webp"]} fallbackFormat="png" alt="Каменная голова до визуального превращения" width="1024" height="1024" loading="lazy" decoding="async" />
+          <img
+            class="v3-identity__video"
+            data-v3-identity-video
+            data-v3-identity-frame-count="107"
+            src="/assets/v3/identity-frames/frame-0000.webp"
+            alt=""
+            width="1280"
+            height="720"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <img class="v3-identity__final" data-v3-identity-final src="/assets/v3/sergey-kryukov.png" alt="Сергей Крюков после перехода от образа к личному авторству" width="1600" height="900" loading="lazy" decoding="async" />
+          <div class="v3-personal__copy">
+            <p class="v3-kicker">Личная ответственность</p>
+            <h2 id="v3-process-title">От обсуждения до запуска работаю с проектом сам</h2>
+            <p class="v3-personal__description">Соединяю продуктовый взгляд, визуальный дизайн и разработку. Вы всегда понимаете, с кем обсуждать решение и кто отвечает за его качество.</p>
+          </div>
+        </figure>
+        <div class="v3-personal__signature-row" aria-label="Автор проекта">
+          <div class="v3-personal__signature-column" aria-hidden="true"></div>
+          <div class="v3-personal__signature-column v3-personal__signature-column--right" data-v3-personal-signature-column>
+            <p class="v3-personal__signature" data-v3-personal-signature>
+              <span class="v3-personal__signature-name">Крюков Сергей</span>
+              <span class="v3-personal__signature-roles"><strong>Fullstack-разработка</strong> <span aria-hidden="true">·</span> Маркетинг <span aria-hidden="true">·</span> SEO</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <ol class="v3-process__steps" data-v3-process-steps>
+        {processSteps.map((step) => (
+          <li class="v3-process__step" data-v3-process-card>
+            <figure><Picture src={v3Asset(step.image)} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" /></figure>
+            <div><h3>{step.title}</h3><p>{step.text}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <CalculatorShell />
+
+  <section id="work" class="v3-work v3-section" aria-labelledby="v3-work-title">
+    <div class="v3-shell">
+      <div class="v3-work__pin" data-v3-work-pin>
+        <div class="v3-section-heading v3-section-heading--split">
           <div>
-            <p class="eyebrow">Один специалист — весь путь</p>
-            <h2 id="journey-title">Как задача превращается в работающий продукт</h2>
+            <p class="v3-kicker">Избранные проекты</p>
+            <h2 id="v3-work-title">Пять задач, пять работающих интерфейсов</h2>
           </div>
-          <div class="availability">
-            <span class="availability-indicator relative inline-flex" aria-hidden="true">
-              <span class="availability-ping-wave absolute inline-flex h-full w-full animate-ping rounded-full bg-green-700 opacity-75"></span>
-              <span class="availability-ping-core relative inline-flex rounded-full bg-green-700"></span>
-            </span>
-            Свободен для проекта в сентябре 2026
+          <p>Только реальные локальные скриншоты. Без оценок трафика и цифр, которые нельзя подтвердить.</p>
+        </div>
+        <div class="v3-work__viewport" data-v3-work-viewport>
+          <div class="v3-work__track" data-v3-work-track>
+            {projects.map((project, index) => (
+              <article class={`v3-project${index === 0 ? " v3-project--lead" : ""}`}>
+                <a href={project.href} target="_blank" rel="noreferrer" aria-labelledby={`v3-project-${index}-title`} aria-describedby={`v3-project-${index}-description`}>
+                  <figure><Picture src={v3Asset(project.image)} formats={["webp"]} fallbackFormat="png" alt={`Скриншот десктопной версии сайта ${project.name}`} width="1440" height="900" loading="lazy" decoding="async" /></figure>
+                  <div class="v3-project__content">
+                    <div><span>{String(index + 1).padStart(2, "0")}</span><p>{project.category}</p></div>
+                    <h3 id={`v3-project-${index}-title`}>{project.name}</h3>
+                    <p id={`v3-project-${index}-description`}>{project.description}</p>
+                    <strong>Открыть сайт <span aria-hidden="true">↗</span></strong>
+                  </div>
+                </a>
+              </article>
+            ))}
           </div>
         </div>
-        <div class="journey-steps">
-          <article class="journey-step">
-            <div class="journey-icon"><Article aria-hidden="true" weight="duotone" /></div>
-            <div><h3>Задача</h3><p>Упорядочиваю цель, рисую карту решения и расставляю приоритеты.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="v3-services v3-section" aria-labelledby="v3-services-title">
+    <div class="v3-shell">
+      <div class="v3-section-heading v3-section-heading--split">
+        <div><p class="v3-kicker">Форматы работы</p><h2 id="v3-services-title">Под задачу, а не под готовый пакет</h2></div>
+        <p>Состав работ фиксируем после короткого знакомства с продуктом и исходными материалами.</p>
+      </div>
+      <div class="v3-services__list">
+        {services.map((service, index) => (
+          <article data-service-id={service.id}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <h3>{service.title}</h3>
+            <p>{service.text}</p>
           </article>
-          <span class="journey-curve journey-curve-green" aria-hidden="true"></span>
-          <article class="journey-step journey-step-violet">
-            <div class="journey-icon"><Browsers aria-hidden="true" weight="duotone" /></div>
-            <div><h3>Прототип</h3><p>Показываю структуру и сценарии, согласуем интерфейс и логику.</p></div>
-          </article>
-          <span class="journey-curve journey-curve-violet" aria-hidden="true"></span>
-          <article class="journey-step journey-step-violet">
-            <div class="journey-icon"><Code aria-hidden="true" weight="duotone" /></div>
-            <div><h3>Разработка</h3><p>Пишу чистый код, тестирую и подключаю необходимые сервисы.</p></div>
-          </article>
-          <span class="journey-curve journey-curve-green" aria-hidden="true"></span>
-          <article class="journey-step">
-            <div class="journey-icon"><ChartLineUp aria-hidden="true" weight="duotone" /></div>
-            <div><h3>Трафик</h3><p>Подключаю аналитику, запускаю SEO и улучшаю метрики.</p></div>
-          </article>
-        </div>
+        ))}
       </div>
     </div>
   </section>
 
-  <section id="cases" class="section section-soft" aria-labelledby="cases-title">
-    <div class="container container-narrow">
-      <div class="section-heading">
-        <div><p class="eyebrow">Кейсы</p><h2 id="cases-title">Работающие сайты, а не обещания</h2></div>
+  <section id="pricing" class="v3-pricing v3-section" aria-labelledby="v3-pricing-title">
+    <div class="v3-shell">
+      <div class="v3-section-heading v3-section-heading--split">
+        <div><p class="v3-kicker">Рабочие ориентиры</p><h2 id="v3-pricing-title">Стоимость зависит от масштаба</h2></div>
+        <p>Это стартовые ориентиры, а не публичная оферта. Финальная оценка появляется после уточнения состава и сроков.</p>
       </div>
-      <CaseSlider client:visible={{ rootMargin: "500px" }} />
-    </div>
-  </section>
-
-  <section id="process" class="section section-tight" aria-labelledby="process-title">
-    <div class="container container-narrow">
-      <div class="section-heading">
-        <div><p class="eyebrow">Как я работаю</p><h2 id="process-title">Короткими понятными циклами</h2></div>
-        <p>Вы видите промежуточный результат и понимаете, что происходит с задачей — без сюрприза в самом конце.</p>
-      </div>
-      <div class="work-grid">
-        <article class="work-item" data-step="1"><MagnifyingGlass aria-hidden="true" weight="duotone" /><h3>Разбираюсь в задаче</h3><p>Задаю вопросы, изучаю нишу и предлагаю лучшее решение.</p></article>
-        <article class="work-item" data-step="2"><PencilSimple aria-hidden="true" weight="duotone" /><h3>Проектирую</h3><p>Согласовываем прототип, структуру и UI/UX-подход.</p></article>
-        <article class="work-item" data-step="3"><Eye aria-hidden="true" weight="duotone" /><h3>Показываю результат</h3><p>Делаю итерации, учитываю обратную связь и фиксирую договорённости.</p></article>
-        <article class="work-item" data-step="4"><RocketLaunch aria-hidden="true" weight="duotone" /><h3>Запускаю и поддерживаю</h3><p>Публикую, настраиваю аналитику и поддерживаю 14 дней.</p></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-soft" aria-labelledby="start-title">
-    <div class="container">
-      <div class="start-panel">
-        <p class="eyebrow">С чего начнём</p>
-        <h2 id="start-title">Выберите ближайшую задачу</h2>
-        <div class="start-grid">
-          <a class="start-card" href="/services/web-development/"><Browser className="start-icon" aria-hidden="true" weight="duotone" /><strong>Новый сайт</strong><span>Маркетинговый сайт, лендинг или корпоративный проект.</span><ArrowRight className="start-arrow" aria-hidden="true" /></a>
-          <a class="start-card" href="/services/react-apps/"><SquaresFour className="start-icon" aria-hidden="true" weight="duotone" /><strong>Веб-приложение</strong><span>Сервис, личный кабинет, калькулятор или сложный инструмент.</span><ArrowRight className="start-arrow" aria-hidden="true" /></a>
-          <a class="start-card" href="/services/site-support/"><ChartLineUp className="start-icon" aria-hidden="true" weight="duotone" /><strong>Доработка и SEO</strong><span>Улучшение существующего сайта, скорость, трафик и конверсия.</span><ArrowRight className="start-arrow" aria-hidden="true" /></a>
-        </div>
+      <div class="v3-pricing__groups">
+        {pricingGroups.map((group) => (
+          <section class="v3-pricing__group" aria-labelledby={`v3-pricing-${group.id}-title`}>
+            <h3 id={`v3-pricing-${group.id}-title`}>{group.title}</h3>
+            <div class="v3-pricing__grid">
+              {group.offers.map((offer) => (
+                <article class:list={["v3-price", offer.featured && "v3-price--featured"]} data-offer-id={offer.id}>
+                  <div><p>{offer.title}</p>{offer.featured && <span>Частый выбор</span>}</div>
+                  <strong>{offer.priceLabel}</strong>
+                  <p>{offer.summary}</p>
+                  <ul>{offer.includes.map((item) => <li>{item}</li>)}</ul>
+                  <p class="v3-price__boundary">{offer.boundary}</p>
+                  <a class="v3-button v3-button--quiet" href="#calculator">Обсудить состав</a>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   </section>
 
-  <section id="reliable" class="section section-tight" aria-labelledby="reliable-title">
-    <div class="container container-narrow">
-      <div class="reliability">
-        <p class="eyebrow">Доказательства</p>
-        <h2 id="reliable-title">Почему со мной надёжно</h2>
-        <div class="reliable-grid">
-          <article class="reliable-item"><User aria-hidden="true" weight="duotone" /><div><h3>10+ лет production-разработки</h3><p>React, TypeScript, Astro, продуктовый подход и современные практики.</p></div></article>
-          <article class="reliable-item"><CalendarBlank aria-hidden="true" weight="duotone" /><div><h3>1,5 года в финтехе</h3><p>Командная разработка, Contract First, код-ревью и дизайн-система.</p></div></article>
-          <article class="reliable-item"><ShieldCheck aria-hidden="true" weight="duotone" /><div><h3>14 дней поддержки</h3><p>Помогаю после запуска и не оставляю вас один на один с результатом.</p></div></article>
-        </div>
+  <section id="faq" class="v3-faq v3-section" aria-labelledby="v3-faq-title">
+    <div class="v3-shell v3-faq__grid">
+      <div><p class="v3-kicker">До первого сообщения</p><h2 id="v3-faq-title">Ответы на частые вопросы</h2></div>
+      <div class="v3-faq__list">
+        {faq.map(([question, answer], index) => (
+          <details>
+            <summary><span>{String(index + 1).padStart(2, "0")}</span>{question}<strong aria-hidden="true">+</strong></summary>
+            <p>{answer}</p>
+          </details>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="cta-title">
-    <div class="container cta-panel">
-      <div><h2 id="cta-title">Покажите задачу — предложу вариант решения</h2><p>Обсудим цели, сроки и подход. Отвечаю в течение дня.</p></div>
-      <div class="cta-actions">
-        <a class="button button-primary" href="https://t.me/sergeikrk" target="_blank" rel="noreferrer"><PaperPlaneTilt aria-hidden="true" weight="duotone" />Написать в Telegram</a>
-        <a class="button button-secondary button-max" href="https://max.ru/u/f9LHodD0cOJnvKBT3lzI_frHwvBIZXJVtfvP_VynzhsCBdFg_ZGlsLzi1Gw" target="_blank" rel="noreferrer"><img src="/assets/max-logo-colored.svg" alt="" width="80" height="32" />Написать в MAX</a>
-        <a class="button button-secondary" href="/contacts/"><Headset aria-hidden="true" weight="duotone" />Отправить бриф</a>
-      </div>
-      <img class="cta-photo" src="/assets/sergey-look.webp" alt="Сергей Крюков" width="832" height="900" loading="lazy" decoding="async" />
-    </div>
-  </section>
-
-  <script>
-  const prepareJourneyMotion = () => {
-    const board = document.querySelector<HTMLElement>(".journey-board");
-    if (!board || board.dataset.motionReady === "true") return;
-
-    board.dataset.motionReady = "true";
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
-      board.classList.add("is-visible");
-      return;
-    }
-
-    board.classList.add("journey-motion");
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry?.isIntersecting) return;
-      board.classList.add("is-visible");
-      window.setTimeout(() => board.classList.add("journey-settled"), 1550);
-      observer.disconnect();
-    }, { threshold: 0.2 });
-
-    observer.observe(board);
-  };
-
-  prepareJourneyMotion();
-  document.addEventListener("astro:page-load", prepareJourneyMotion);
-  </script>
+  <QuizShell />
+  <Footer slot="after-main" />
+  <V3Motion slot="after-main" />
 </BaseLayout>

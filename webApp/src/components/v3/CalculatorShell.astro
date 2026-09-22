@@ -1,0 +1,26 @@
+---
+import ProjectCalculator from "./ProjectCalculator";
+import { TELEGRAM_HREF } from "./messengerLinks";
+---
+
+<section id="calculator" class="v3-calculator-section v3-section" aria-labelledby="v3-calculator-title">
+  <div class="v3-shell">
+    <div class="v3-section-heading v3-section-heading--split">
+      <div>
+        <p class="v3-kicker">Калькулятор проекта</p>
+        <h2 id="v3-calculator-title">Сначала определим задачу</h2>
+      </div>
+      <p>Выберите формат и ответьте на несколько вопросов. Для типовых задач покажу стартовый ориентир, для сложных соберу список неизвестных.</p>
+    </div>
+
+    <div id="v3-calculator-root" class="v3-calculator__mount" data-v3-calculator-root>
+      <ProjectCalculator client:load />
+      <noscript>
+        <div class="v3-quiz__fallback">
+          <p>Для интерактивного калькулятора нужен JavaScript. Можно сразу описать задачу Сергею в Telegram.</p>
+          <a class="v3-button v3-button--primary" href={TELEGRAM_HREF} target="_blank" rel="noreferrer">Сразу обсудить задачу <span aria-hidden="true">↗</span></a>
+        </div>
+      </noscript>
+    </div>
+  </div>
+</section>

@@ -79,7 +79,7 @@ test("видимый прогресс ограничен пятью шагами
 
 test("payload обрезает строки, удаляет пустые optional-поля и включает только разрешённые UTM", () => {
   const pageUrl =
-    "https://kryukovs.ru/v3/?utm_source=profi&utm_medium=cpc&utm_campaign=autumn&utm_content=hero&utm_term=site&utm_private=secret";
+    "https://kryukovs.ru/?utm_source=profi&utm_medium=cpc&utm_campaign=autumn&utm_content=hero&utm_term=site&utm_private=secret";
   const payload = call(
     "shapeLeadPayload",
     {
@@ -118,7 +118,7 @@ test("payload обрезает строки, удаляет пустые optiona
 test("Telegram URL содержит читаемую русскую сводку без consent и внутренних значений", () => {
   const payload = {
     ...completeAnswers,
-    pageUrl: "https://kryukovs.ru/v3/",
+    pageUrl: "https://kryukovs.ru/",
     utm: { utm_source: "profi" },
   };
   const telegramUrl = call("buildTelegramUrl", payload);

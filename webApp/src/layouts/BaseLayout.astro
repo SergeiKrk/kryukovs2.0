@@ -1,11 +1,8 @@
 ---
 import "@fontsource-variable/manrope";
-import "../styles/global.css";
+import "../styles/base.css";
 import manropeCyrillic from "@fontsource-variable/manrope/files/manrope-cyrillic-wght-normal.woff2?url";
 import manropeLatin from "@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import SmoothScroll from "../components/SmoothScroll.astro";
 
 interface Props {
   title: string;
@@ -13,21 +10,23 @@ interface Props {
   canonical?: string;
   image?: string;
   noindex?: boolean;
-  variant?: "classic" | "immersive" | "cinematic";
+  variant?: "cinematic";
 }
 
 const {
   title,
   description,
   canonical = Astro.url.pathname,
-  image = "/assets/analytics.jpg",
+  image = "/assets/v3/hero-stone-head.png",
   noindex = false,
-  variant = "classic",
+  variant = "cinematic",
 } = Astro.props;
 
 const canonicalUrl = new URL(canonical, Astro.site ?? Astro.url.origin);
 const imageUrl = new URL(image, Astro.site ?? Astro.url.origin);
 const siteUrl = new URL("/", Astro.site ?? Astro.url.origin).toString();
+// Change this single value to "legacy" if the previous Oswald/Manrope/Serati type system is preferred.
+const fontTheme: "montserrat-alternates" | "legacy" = "montserrat-alternates";
 const pageSchema = {
   "@context": "https://schema.org",
   "@graph": [
@@ -54,7 +53,7 @@ const pageSchema = {
       "@id": `${siteUrl}#professional`,
       name: "Сергей Крюков — разработка сайтов и веб-сервисов",
       url: siteUrl,
-      image: new URL("/assets/sergey-front.webp", Astro.site ?? Astro.url.origin).toString(),
+      image: new URL("/assets/v3/sergey-kryukov.png", Astro.site ?? Astro.url.origin).toString(),
       email: "ksv.progect@gmail.com",
       telephone: "+79176103476",
       areaServed: { "@type": "Country", name: "Россия" },
@@ -65,13 +64,19 @@ const pageSchema = {
 ---
 
 <!doctype html>
-<html lang="ru" data-design={variant}>
+<html lang="ru" data-design="cinematic" data-font-theme={fontTheme}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="preload" href={manropeCyrillic} as="font" type="font/woff2" crossorigin="anonymous" />
-    <link rel="preload" href={manropeLatin} as="font" type="font/woff2" crossorigin="anonymous" />
+    {fontTheme === "montserrat-alternates" ? (
+      <link rel="preload" href="/assets/fonts/MontserratAlternates-Medium.ttf" as="font" type="font/ttf" crossorigin="anonymous" />
+    ) : (
+      <>
+        <link rel="preload" href={manropeCyrillic} as="font" type="font/woff2" crossorigin="anonymous" />
+        <link rel="preload" href={manropeLatin} as="font" type="font/woff2" crossorigin="anonymous" />
+      </>
+    )}
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
@@ -85,15 +90,12 @@ const pageSchema = {
     <meta name="twitter:card" content="summary_large_image" />
     {!noindex && <script type="application/ld+json" is:inline set:html={JSON.stringify(pageSchema)} />}
   </head>
-  <body class:list={[variant === "immersive" && "v2", variant === "cinematic" && "v3"]}>
+  <body class="v3">
     <noscript><div><img src="https://mc.yandex.ru/watch/112080682" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <a class="skip-link" href="#main-content">Перейти к содержанию</a>
-    {variant === "classic" && <Header />}
     <slot name="before-main" />
     <main id="main-content"><slot /></main>
     <slot name="after-main" />
-    {variant === "classic" && <Footer />}
-    {variant === "classic" && <SmoothScroll />}
     <script is:inline>
       (() => {
         let loaded = false;
