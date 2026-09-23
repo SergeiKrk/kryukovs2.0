@@ -7,7 +7,7 @@
 V3 uses an off-black stone environment with real project interfaces, a portrait of the author and restrained teal interaction states. The large display type has the role of a carved title; the rest of the page stays quiet enough for verified facts, prices and project context.
 
 - **Audience:** founders and small teams looking for a responsible technical partner.
-- **Primary action:** begin a project estimate or open a direct conversation.
+- **Primary action:** open the project calculator in a modal or open a direct conversation.
 - **Signature:** outlined Serati display titles in the Hero and capability scene, carried through all primary H2 headings.
 - **Motion:** cinematic desktop scenes are additive. Content, hierarchy and controls must remain complete without JavaScript and under reduced motion.
 

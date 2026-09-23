@@ -93,6 +93,17 @@ import "lenis/dist/lenis.css";
           smoothWheel: true,
           anchors: { offset: -84 },
         });
+        const pauseLenisForModal = () => lenis?.stop();
+        const resumeLenisAfterModal = () => {
+          if (!document.querySelector("dialog[open]")) lenis?.start();
+        };
+        window.addEventListener("v3:modal-open", pauseLenisForModal);
+        window.addEventListener("v3:modal-close", resumeLenisAfterModal);
+        branchDisposers.push(() => {
+          window.removeEventListener("v3:modal-open", pauseLenisForModal);
+          window.removeEventListener("v3:modal-close", resumeLenisAfterModal);
+        });
+        if (document.querySelector("dialog[open]")) lenis.stop();
         lenis.on("scroll", ScrollTrigger.update);
         ticker = (time) => lenis?.raf(time * 1000);
         gsap.ticker.add(ticker);

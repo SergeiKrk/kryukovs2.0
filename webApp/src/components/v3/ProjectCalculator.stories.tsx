@@ -25,12 +25,23 @@ type Story = StoryObj<typeof meta>;
 const siteAnswers: CalculatorAnswers = {
   ...createInitialCalculatorAnswers(),
   taskType: "site",
-  siteFormat: "corporate-site",
-  sitePages: "multi",
+  siteFormat: "corporate",
+  sitePageCount: 14,
+  siteArticleCount: 2,
+  promotionDirect: true,
+  promotionDirectCount: 2,
+  promotionSemantic: true,
+  promotionSeo: true,
+  promotionSeoBudget: 20000,
+  siteDesign: "animated",
+  siteIntegrations: ["crm", "analytics"],
+};
+
+const landingDirectAnswers: CalculatorAnswers = {
+  ...createInitialCalculatorAnswers(),
+  taskType: "site",
+  siteFormat: "landing-direct",
   siteDesign: "individual",
-  siteEditor: "need",
-  siteIntegrations: "complex",
-  siteMaterials: "partial",
 };
 
 const complexToolAnswers: CalculatorAnswers = {
@@ -70,6 +81,11 @@ export const ComplexProject: Story = {
 export const ResultWithPrice: Story = {
   name: "Результат с ценой",
   render: () => <ProjectCalculator initialAnswers={siteAnswers} initialSummary={buildCalculatorSummary(siteAnswers, offerCatalog)} />,
+};
+
+export const LandingDirectPackage: Story = {
+  name: "Лендинг с Директом",
+  render: () => <ProjectCalculator initialAnswers={landingDirectAnswers} initialSummary={buildCalculatorSummary(landingDirectAnswers, offerCatalog)} />,
 };
 
 export const ResultDiscovery: Story = {

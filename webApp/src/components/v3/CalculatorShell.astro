@@ -1,26 +1,39 @@
 ---
 import ProjectCalculator from "./ProjectCalculator";
-import { TELEGRAM_HREF } from "./messengerLinks";
 ---
 
-<section id="calculator" class="v3-calculator-section v3-section" aria-labelledby="v3-calculator-title">
-  <div class="v3-shell">
-    <div class="v3-section-heading v3-section-heading--split">
-      <div>
-        <p class="v3-kicker">Калькулятор проекта</p>
-        <h2 id="v3-calculator-title">Сначала определим задачу</h2>
-      </div>
-      <p>Выберите формат и ответьте на несколько вопросов. Для типовых задач покажу стартовый ориентир, для сложных соберу список неизвестных.</p>
-    </div>
+<dialog id="calculator" class="v3-calculator-dialog" aria-label="Калькулятор проекта" data-lenis-prevent>
+  <ProjectCalculator client:load />
+</dialog>
 
-    <div id="v3-calculator-root" class="v3-calculator__mount" data-v3-calculator-root>
-      <ProjectCalculator client:load />
-      <noscript>
-        <div class="v3-quiz__fallback">
-          <p>Для интерактивного калькулятора нужен JavaScript. Можно сразу описать задачу Сергею в Telegram.</p>
-          <a class="v3-button v3-button--primary" href={TELEGRAM_HREF} target="_blank" rel="noreferrer">Сразу обсудить задачу <span aria-hidden="true">↗</span></a>
-        </div>
-      </noscript>
-    </div>
-  </div>
-</section>
+<script>
+  const calculatorDialog = document.querySelector<HTMLDialogElement>("#calculator");
+  let previousHtmlOverflow = "";
+  let previousBodyOverflow = "";
+  const openCalculator = (event: Event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const trigger = target.closest("[data-v3-open-calculator]");
+    if (!trigger || !calculatorDialog || calculatorDialog.open) return;
+    event.preventDefault();
+    previousHtmlOverflow = document.documentElement.style.overflow;
+    previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    calculatorDialog.showModal();
+    window.dispatchEvent(new Event("v3:modal-open"));
+    calculatorDialog.scrollTop = 0;
+    requestAnimationFrame(() => calculatorDialog.querySelector<HTMLElement>(".v3-calculator")?.focus({ preventScroll: true }));
+  };
+  const restorePageScroll = () => {
+    document.documentElement.style.overflow = previousHtmlOverflow;
+    document.body.style.overflow = previousBodyOverflow;
+    window.dispatchEvent(new Event("v3:modal-close"));
+  };
+
+  document.addEventListener("click", openCalculator);
+  calculatorDialog?.addEventListener("click", (event) => {
+    if (event.target === calculatorDialog) calculatorDialog.close();
+  });
+  calculatorDialog?.addEventListener("close", restorePageScroll);
+</script>

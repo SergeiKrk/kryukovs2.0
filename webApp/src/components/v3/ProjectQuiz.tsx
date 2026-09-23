@@ -121,9 +121,9 @@ function mapCalculatorTaskType(taskType: TaskType): ProjectType {
   return "other";
 }
 
-function mapCalculatorOfferToPackage(offerId: string | null): ProjectPackage {
-  if (offerId === "animated-landing-direct") return "cinematic";
-  if (offerId === "corporate-site") return "brand";
+function mapCalculatorOfferToPackage(offerId: string | null, summary?: CalculatorSummary): ProjectPackage {
+  if (summary?.answers?.siteDesign === "animated" || offerId === "landing-direct") return "cinematic";
+  if (offerId === "corporate" || offerId === "catalog") return "brand";
   if (offerId) return "start";
   return "unsure";
 }
@@ -132,6 +132,11 @@ function calculatorSummaryToGoal(summary: CalculatorSummary) {
   const estimate = summary.estimate.kind === "from" ? summary.estimate.priceLabel : "нужен discovery";
   const unknowns = summary.unknowns.length > 0 ? ` Нужно уточнить: ${summary.unknowns.join("; ")}.` : "";
   return `Предварительный маршрут: ${summary.taskType}. Ориентир: ${estimate}.${unknowns}`;
+}
+
+function isCalculatorSummary(summary: unknown): summary is CalculatorSummary {
+  const value = summary as { schemaVersion?: unknown; taskType?: unknown } | null;
+  return Boolean(value && (value.schemaVersion === 1 || value.schemaVersion === 2) && typeof value.taskType === "string");
 }
 
 export default function ProjectQuiz() {
@@ -195,7 +200,7 @@ export default function ProjectQuiz() {
         calculatorSummary: summary,
         projectType: mapCalculatorTaskType(summary.taskType),
         goal: current.goal.trim() || calculatorSummaryToGoal(summary),
-        package: mapCalculatorOfferToPackage(summary.selectedOfferId),
+        package: mapCalculatorOfferToPackage(summary.selectedOfferId, summary),
       }));
       setStepIndex(4);
       setInvalidField(null);
@@ -204,14 +209,14 @@ export default function ProjectQuiz() {
     };
 
     const pending = readPendingCalculatorSummary();
-    if (pending && pending.schemaVersion === 1 && pending.taskType) {
+    if (isCalculatorSummary(pending)) {
       applyCalculatorSummary(pending as CalculatorSummary);
       clearPendingCalculatorSummary();
     }
 
     const onCalculatorSummary = (event: Event) => {
       const summary = (event as CustomEvent<CalculatorSummary>).detail;
-      if (summary?.schemaVersion === 1 && summary.taskType) applyCalculatorSummary(summary);
+      if (isCalculatorSummary(summary)) applyCalculatorSummary(summary);
     };
 
     window.addEventListener(CALCULATOR_SUMMARY_EVENT, onCalculatorSummary);

@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { PaperPlaneTilt } from "@phosphor-icons/react";
 import { gsap } from "gsap";
 import { MAX_HREF, TELEGRAM_HREF } from "./messengerLinks";
 
@@ -181,7 +180,7 @@ export default function Navigation() {
               aria-label="Написать Сергею в Telegram"
               title="Telegram"
             >
-              <PaperPlaneTilt aria-hidden="true" weight="fill" />
+              <img src="/assets/telegram-new.svg" alt="" width="32" height="32" />
             </a>
             <a
               className="v3-nav__contact-button v3-nav__contact-button--max"
@@ -191,11 +190,11 @@ export default function Navigation() {
               aria-label="Написать Сергею в MAX"
               title="MAX"
             >
-              <img src="/assets/max-logo-wikimedia.svg" alt="" width="1000" height="1000" />
+              <img src="/assets/max-logo-colored.svg" alt="" width="32" height="32" />
             </a>
           </div>
         </div>
-        <a className="v3-nav__cta" href="#calculator" onClick={closeMenu}>Рассчитать проект</a>
+        <a className="v3-nav__cta" href="/messengers/" data-v3-open-calculator onClick={closeMenu}>Рассчитать проект</a>
         <button
           ref={menuButtonRef}
           className="v3-nav__menu-button"
@@ -236,7 +235,7 @@ export default function Navigation() {
           >
             {reducedMotion ? "Анимация: ограничена системой" : `Анимация: ${motionEnabled ? "включена" : "выключена"}`}
           </button>
-          <a className="v3-nav__panel-cta" href="#calculator" onClick={closeMenu}>
+          <a className="v3-nav__panel-cta" href="/messengers/" data-v3-open-calculator onClick={closeMenu}>
             Рассчитать проект <span aria-hidden="true">↗</span>
           </a>
           <p>Сергей Крюков<br />Независимый дизайнер и разработчик</p>
@@ -245,7 +244,7 @@ export default function Navigation() {
       <noscript>
         <nav className="v3-nav__nojs" aria-label="Навигация без JavaScript">
           {links.map(([label, href]) => <a href={href} key={href}>{label}</a>)}
-          <a href="#calculator">Рассчитать проект</a>
+          <a href="/messengers/">Рассчитать проект</a>
         </nav>
       </noscript>
     </header>

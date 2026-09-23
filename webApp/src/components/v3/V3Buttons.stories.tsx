@@ -15,10 +15,10 @@ function CompactContacts() {
       </div>
       <div className="v3-nav__contact-links">
         <a className="v3-nav__contact-button v3-nav__contact-button--telegram" href={TELEGRAM_HREF} aria-label="Написать Сергею в Telegram" title="Telegram">
-          <PaperPlaneTilt aria-hidden="true" weight="fill" />
+          <img src="/assets/telegram-new.svg" alt="" width="32" height="32" />
         </a>
         <a className="v3-nav__contact-button v3-nav__contact-button--max" href={MAX_HREF} aria-label="Написать Сергею в MAX" title="MAX">
-          <img src="/assets/max-logo-wikimedia.svg" alt="" width="1000" height="1000" />
+          <img src="/assets/max-logo-colored.svg" alt="" width="32" height="32" />
         </a>
       </div>
     </div>
@@ -76,7 +76,7 @@ function MessengerLanding() {
         <p className="v3-messengers__description">Откройте удобный канал, чтобы сразу обсудить задачу.</p>
         <div className="v3-messengers__actions">
           <a className="v3-button v3-button--primary v3-button--icon" href={TELEGRAM_HREF} target="_blank" rel="noreferrer">
-            <PaperPlaneTilt aria-hidden="true" weight="duotone" />
+            <img src="/assets/telegram-new.svg" alt="" width="32" height="32" />
             Телеграм
           </a>
           <a className="v3-button v3-button--quiet v3-button--icon" href={MAX_HREF} target="_blank" rel="noreferrer">
