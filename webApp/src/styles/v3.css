@@ -264,6 +264,7 @@ html[data-design="cinematic"][data-font-theme="legacy"] {
 .v3-nav__menu-ring-base { stroke: var(--v3-line); }
 .v3-nav__menu-ring-path {
   stroke: var(--v3-accent-bright);
+  stroke-width: 2px;
   stroke-linecap: round;
   stroke-dasharray: 234;
   stroke-dashoffset: 234;
@@ -373,6 +374,34 @@ html[data-design="cinematic"][data-font-theme="legacy"] {
 }
 .v3-nav__cta { justify-self: end; padding: 0.8rem 1.15rem; border: 1px solid var(--v3-accent); border-radius: 0.25rem; color: var(--v3-text); font-size: var(--v3-type-label); font-weight: 700; }
 .v3-nav__cta:hover { background: var(--v3-accent); color: #06110f; }
+.v3-nav__cta--featured {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--v3-line);
+  color: var(--v3-text);
+  background-color: transparent;
+}
+.v3-nav__cta--featured:hover { color: var(--v3-text); }
+.v3-nav__cta--featured:focus-visible { outline: 2px solid var(--v3-accent-bright); outline-offset: -3px; }
+.v3-nav__cta--featured > span { position: relative; z-index: 1; }
+.v3-nav__cta--featured::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0 auto 0 -18%;
+  width: clamp(4rem, 9vw, 8rem);
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 0%, rgb(32 185 168 / 8%) 28%, rgb(240 243 238 / 48%) 50%, rgb(32 185 168 / 8%) 72%, transparent 100%);
+  transform: translateX(calc(-100% - 100vw)) skewX(-18deg);
+  animation: v3-nav-cta-sheen 2000ms ease-in-out infinite;
+}
+@keyframes v3-nav-cta-sheen {
+  0%, 20% { opacity: 0; transform: translateX(calc(-100% - 100vw)) skewX(-18deg); }
+  24% { opacity: 1; transform: translateX(calc(-100% - 100vw)) skewX(-18deg); }
+  92% { opacity: 1; transform: translateX(calc(100% + 100vw)) skewX(-18deg); }
+  100% { opacity: 0; transform: translateX(calc(100% + 100vw)) skewX(-18deg); }
+}
 .v3-nav__panel {
   position: fixed;
   z-index: 101;
@@ -1402,6 +1431,8 @@ html[data-design="cinematic"][data-font-theme="legacy"] {
   .v3-button--hero,
   .v3-button--hero::after,
   .v3-calculator__contact,
+  .v3-nav__cta--featured,
+  .v3-nav__cta--featured::after,
   .v3-nav__contact-copy strong::before,
   .v3-contact-dialog { animation: none; }
   .v3-identity__head,
@@ -1415,6 +1446,8 @@ html[data-motion="off"] .v3-proof-strip__item--featured::after { animation: none
 .v3[data-v3-motion="off"] .v3-button--hero::after,
 .v3[data-v3-motion="off"] .v3-calculator__contact { animation: none; }
 html[data-motion="off"] .v3-nav__contact-copy strong::before { animation: none; }
+html[data-motion="off"] .v3-nav__cta--featured { animation: none; }
+html[data-motion="off"] .v3-nav__cta--featured::after { animation: none; display: none; }
 html[data-motion="off"] .v3-nav__menu-ring-path,
 html[data-motion="off"] .v3-nav__menu-line { transition: none; }
 

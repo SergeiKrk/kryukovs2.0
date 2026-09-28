@@ -194,7 +194,9 @@ export default function Navigation() {
             </a>
           </div>
         </div>
-        <a className="v3-nav__cta" href="/messengers/" data-v3-open-calculator onClick={closeMenu}>Рассчитать проект</a>
+        <a className="v3-nav__cta v3-nav__cta--featured" href="/messengers/" data-v3-open-calculator onClick={closeMenu}>
+          <span>Рассчитать проект</span>
+        </a>
         <button
           ref={menuButtonRef}
           className="v3-nav__menu-button"
