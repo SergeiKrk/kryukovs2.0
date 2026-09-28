@@ -3,11 +3,11 @@ import { gsap } from "gsap";
 import { MAX_HREF, TELEGRAM_HREF } from "./messengerLinks";
 
 const links = [
-  ["Работы", "#work"],
-  ["Подход", "#process"],
-  ["Услуги", "#services"],
-  ["Стоимость", "#pricing"],
-  ["Ответы", "#faq"],
+  ["Работы", "/#work"],
+  ["Подход", "/#process"],
+  ["Услуги", "/#services"],
+  ["Услуги и цены", "/services/"],
+  ["Ответы", "/#faq"],
 ] as const;
 
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
@@ -206,8 +206,8 @@ export default function Navigation() {
         >
           <span className="v3-nav__menu-mark" aria-hidden="true">
             <svg className="v3-nav__menu-ring" viewBox="0 0 68 68" focusable="false">
-              <circle className="v3-nav__menu-ring-base" cx="34" cy="34" r="31" />
-              <path className="v3-nav__menu-ring-path" d="M34 3C16.88 3 3 16.88 3 34s13.88 31 31 31 31-13.88 31-31S51.12 3 34 3Z" />
+              <rect className="v3-nav__menu-ring-base" x="3" y="3" width="62" height="62" rx="9" />
+              <path className="v3-nav__menu-ring-path" d="M34 3h22a9 9 0 0 1 9 9v44a9 9 0 0 1-9 9H12a9 9 0 0 1-9-9V12a9 9 0 0 1 9-9h22Z" />
             </svg>
             <span className="v3-nav__menu-line v3-nav__menu-line--top" />
             <span className="v3-nav__menu-line v3-nav__menu-line--middle" />

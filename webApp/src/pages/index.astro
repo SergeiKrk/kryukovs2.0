@@ -5,8 +5,9 @@ import Navigation from "../components/v3/Navigation";
 import V3Motion from "../components/v3/V3Motion.astro";
 import CalculatorShell from "../components/v3/CalculatorShell.astro";
 import QuizShell from "../components/v3/QuizShell.astro";
+import ServiceLeadDialog from "../components/v3/ServiceLeadDialog.astro";
 import Footer from "../components/v3/Footer.astro";
-import { capabilities, faq, pricingGroups, processSteps, projects, proofs, services } from "../data/v3";
+import { capabilities, faq, processSteps, projects, proofs, services } from "../data/v3";
 import { Picture } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import heroHeadLeft from "../assets/v3/hero-stone-head-left.png";
@@ -217,12 +218,19 @@ const description = "Дизайн, разработка и SEO сайтов дл
           <div class="v3-work__track" data-v3-work-track>
             {projects.map((project, index) => (
               <article class={`v3-project${index === 0 ? " v3-project--lead" : ""}`}>
-                <a href={project.href} target="_blank" rel="noreferrer" aria-labelledby={`v3-project-${index}-title`} aria-describedby={`v3-project-${index}-description`}>
-                  <figure><Picture src={v3Asset(project.image)} formats={["webp"]} fallbackFormat="png" alt={`Скриншот десктопной версии сайта ${project.name}`} width="1440" height="900" loading="lazy" decoding="async" /></figure>
+                <a href={project.href} target="_blank" rel="nofollow noopener noreferrer" aria-labelledby={`v3-project-${index}-title`} aria-describedby={`v3-project-${index}-description`}>
+                  <figure class="v3-project__media" aria-hidden="true">
+                    <img class="v3-project__device v3-project__device--desktop" src={project.desktopImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                    <img class="v3-project__device v3-project__device--laptop" src={project.laptopImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                    <img class="v3-project__device v3-project__device--phone" src={project.phoneImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                  </figure>
                   <div class="v3-project__content">
-                    <div><span>{String(index + 1).padStart(2, "0")}</span><p>{project.category}</p></div>
+                    <p class="v3-project__category">{project.category}</p>
                     <h3 id={`v3-project-${index}-title`}>{project.name}</h3>
                     <p id={`v3-project-${index}-description`}>{project.description}</p>
+                    <ul class="v3-project__tags" aria-label="Выполненные работы">
+                      {project.tags.map((tag) => <li>{tag}</li>)}
+                    </ul>
                     <strong>Открыть сайт <span aria-hidden="true">↗</span></strong>
                   </div>
                 </a>
@@ -246,39 +254,21 @@ const description = "Дизайн, разработка и SEO сайтов дл
             <span>{String(index + 1).padStart(2, "0")}</span>
             <h3>{service.title}</h3>
             <p>{service.text}</p>
+            <button
+              class="v3-button v3-button--quiet v3-services__action"
+              type="button"
+              data-v3-service-dialog
+              data-service-title={service.title}
+              aria-haspopup="dialog"
+              aria-controls="v3-service-lead-dialog"
+            >Обсудить</button>
           </article>
         ))}
       </div>
     </div>
   </section>
 
-  <section id="pricing" class="v3-pricing v3-section" aria-labelledby="v3-pricing-title">
-    <div class="v3-shell">
-      <div class="v3-section-heading v3-section-heading--split">
-        <div><p class="v3-kicker">Рабочие ориентиры</p><h2 id="v3-pricing-title">Стоимость зависит от масштаба</h2></div>
-        <p>Это стартовые ориентиры, а не публичная оферта. Финальная оценка появляется после уточнения состава и сроков.</p>
-      </div>
-      <div class="v3-pricing__groups">
-        {pricingGroups.map((group) => (
-          <section class="v3-pricing__group" aria-labelledby={`v3-pricing-${group.id}-title`}>
-            <h3 id={`v3-pricing-${group.id}-title`}>{group.title}</h3>
-            <div class="v3-pricing__grid">
-              {group.offers.map((offer) => (
-                <article class:list={["v3-price", offer.featured && "v3-price--featured"]} data-offer-id={offer.id}>
-                  <div><p>{offer.title}</p>{offer.featured && <span>Частый выбор</span>}</div>
-                  <strong>{offer.priceLabel}</strong>
-                  <p>{offer.summary}</p>
-                  <ul>{offer.includes.map((item) => <li>{item}</li>)}</ul>
-                  <p class="v3-price__boundary">{offer.boundary}</p>
-                  <a class="v3-button v3-button--quiet" href="/messengers/" data-v3-open-calculator>Обсудить состав</a>
-                </article>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
-    </div>
-  </section>
+  <ServiceLeadDialog />
 
   <section id="faq" class="v3-faq v3-section" aria-labelledby="v3-faq-title">
     <div class="v3-shell v3-faq__grid">

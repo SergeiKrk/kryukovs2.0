@@ -9,7 +9,6 @@ import "lenis/dist/lenis.css";
   import { MotionPathPlugin } from "gsap/MotionPathPlugin";
   import Lenis from "lenis";
   import {
-    getHorizontalTravel,
     readMotionEvent,
     resolveMotionEnabled,
   } from "./v3MotionHelpers.mjs";
@@ -18,6 +17,11 @@ import "lenis/dist/lenis.css";
 
   const CINEMATIC_QUERY = "(min-width: 900px) and (min-height: 650px) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
   const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
+  const NON_CINEMATIC_MOTION = {
+    all: "all",
+    cinematic: CINEMATIC_QUERY,
+    reduced: REDUCED_QUERY,
+  };
   const letterPresets = [
     { xPercent: -148, yPercent: -110, rotation: -24 },
     { xPercent: 106, yPercent: -138, rotation: 21 },
@@ -553,10 +557,74 @@ import "lenis/dist/lenis.css";
         const processCards = Array.from(root.querySelectorAll<HTMLElement>("[data-v3-process-card]"));
         processCards.forEach((card, index) => {
           card.style.setProperty("--v3-process-index", String(index));
+          const processImage = card.querySelector<HTMLImageElement>("figure img");
+          // Compose the landing deformation with the existing stack scale.
+          const cardTransform = { stackScale: 1, squashX: 1, squashY: 1 };
+          gsap.set(card, { scaleX: 1, scaleY: 1 });
+          const setScaleX = gsap.quickSetter(card, "scaleX");
+          const setScaleY = gsap.quickSetter(card, "scaleY");
+          const renderCardScale = () => {
+            setScaleX(cardTransform.stackScale * cardTransform.squashX);
+            setScaleY(cardTransform.stackScale * cardTransform.squashY);
+          };
+          const landing = gsap.timeline({ paused: true, onUpdate: renderCardScale })
+            .to(cardTransform, {
+              squashX: 1.035,
+              squashY: 0.94,
+              duration: 0.09,
+              ease: "power2.out",
+            })
+            .to(cardTransform, {
+              squashX: 1,
+              squashY: 1,
+              duration: 0.45,
+              ease: "elastic.out(1, 0.32)",
+            });
+          ScrollTrigger.create({
+            trigger: card,
+            start: () => `top top+=${parseFloat(getComputedStyle(card).top) || 0}`,
+            invalidateOnRefresh: true,
+            onEnter: () => landing.restart(),
+            onLeaveBack: () => {
+              landing.pause(0);
+              cardTransform.squashX = 1;
+              cardTransform.squashY = 1;
+              renderCardScale();
+            },
+          });
+          if (processImage) {
+            ScrollTrigger.create({
+              trigger: card,
+              start: () => `top top+=${parseFloat(getComputedStyle(card).top) || 0}`,
+              invalidateOnRefresh: true,
+              onEnter: () => {
+                gsap.fromTo(processImage,
+                  { scaleX: 0.88, scaleY: 1.1, y: 14, autoAlpha: 0.7, transformOrigin: "50% 85%" },
+                  { scaleX: 1, scaleY: 1, y: 0, autoAlpha: 1, duration: 0.72, ease: "elastic.out(1, 0.48)", overwrite: true, onComplete: () => setWillChange([processImage], "") },
+                );
+                setWillChange([processImage], "transform, opacity");
+              },
+              onLeaveBack: () => {
+                gsap.killTweensOf(processImage);
+                gsap.set(processImage, { clearProps: "transform,opacity,visibility,willChange" });
+              },
+            });
+          }
           const nextCard = processCards[index + 1];
           if (!nextCard) return;
+          gsap.to(cardTransform, {
+            stackScale: 0.965 - index * 0.006,
+            ease: "none",
+            onUpdate: renderCardScale,
+            scrollTrigger: {
+              trigger: nextCard,
+              start: "top 78%",
+              end: "top 22%",
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
+          });
           gsap.to(card, {
-            scale: 0.965 - index * 0.006,
             autoAlpha: 0.52,
             ease: "none",
             scrollTrigger: {
@@ -581,27 +649,54 @@ import "lenis/dist/lenis.css";
           });
         }
 
-        const workPin = root.querySelector<HTMLElement>("[data-v3-work-pin]");
         const workViewport = root.querySelector<HTMLElement>("[data-v3-work-viewport]");
         const workTrack = root.querySelector<HTMLElement>("[data-v3-work-track]");
-        if (workPin && workViewport && workTrack) {
-          const travel = () => getHorizontalTravel(workTrack.scrollWidth, workViewport.clientWidth);
-          gsap.to(workTrack, {
-            x: () => -travel(),
-            ease: "none",
-            scrollTrigger: {
-              trigger: workPin,
-              start: "top top+=84",
-              end: () => `+=${Math.max(1, travel())}`,
-              pin: workPin,
-              scrub: 0.75,
-              invalidateOnRefresh: true,
-              onEnter: () => setWillChange([workTrack], "transform"),
-              onEnterBack: () => setWillChange([workTrack], "transform"),
-              onLeave: () => setWillChange([workTrack], ""),
-              onLeaveBack: () => setWillChange([workTrack], ""),
-            },
-          });
+        if (workViewport && workTrack) {
+          const workCards = Array.from(workTrack.querySelectorAll<HTMLElement>(".v3-project"));
+          if (workCards.length > 1) {
+            root.classList.add("v3-motion-work-radial");
+            const playhead = { phase: 0 };
+            const layoutCards = () => {
+              const step = workViewport.clientWidth * 0.3;
+              const radius = Math.max(workViewport.clientWidth * 0.9, 720);
+
+              workCards.forEach((card, index) => {
+                const offset = index - playhead.phase;
+                const distance = Math.abs(offset);
+                const x = offset * step;
+                const angle = Math.asin(gsap.utils.clamp(-0.92, 0.92, x / radius));
+                const y = radius - Math.sqrt(Math.max(0, radius ** 2 - x ** 2));
+                gsap.set(card, {
+                  x,
+                  y,
+                  scale: gsap.utils.clamp(0.58, 1, 1 - distance * 0.16),
+                  rotation: angle * (180 / Math.PI),
+                  autoAlpha: gsap.utils.clamp(0.08, 1, 1 - distance * 0.3),
+                  zIndex: 100 - Math.round(distance * 10),
+                });
+              });
+            };
+
+            gsap.set(workCards, { xPercent: -50, yPercent: -50 });
+            layoutCards();
+            gsap.to(playhead, {
+              phase: workCards.length - 1,
+              ease: "none",
+              onUpdate: layoutCards,
+              scrollTrigger: {
+                trigger: workViewport,
+                start: "top top+=84",
+                end: () => `+=${Math.max(1, Math.round(window.innerHeight * (workCards.length - 1) * 0.68))}`,
+                pin: workViewport,
+                scrub: 0.75,
+                invalidateOnRefresh: true,
+                onEnter: () => setWillChange(workCards, "transform, opacity"),
+                onEnterBack: () => setWillChange(workCards, "transform, opacity"),
+                onLeave: () => setWillChange(workCards, ""),
+                onLeaveBack: () => setWillChange(workCards, ""),
+              },
+            });
+          }
         }
 
         const restrainedRevealGroups = [
@@ -628,8 +723,10 @@ import "lenis/dist/lenis.css";
             ...heroAnimated,
             ...capabilityLetters,
             ...processCards,
+            ...processCards.flatMap((card) => Array.from(card.querySelectorAll("figure img"))),
             ...restrainedRevealGroups,
-            ...(workTrack ? [workTrack] : []),
+            ...(workTrack ? Array.from(workTrack.querySelectorAll<HTMLElement>(".v3-project")) : []),
+            ...(workTrack ? Array.from(workTrack.querySelectorAll<HTMLElement>(".v3-project__media")) : []),
           ], "");
           if (ticker) gsap.ticker.remove(ticker);
           if (lenis) {
@@ -641,8 +738,29 @@ import "lenis/dist/lenis.css";
             element?.style.removeProperty("visibility");
           });
           if (identityStage) delete identityStage.dataset.v3MediaFallback;
+          root.classList.remove("v3-motion-work-radial");
           root.classList.remove("v3-motion-cinematic");
         };
+      });
+
+      media.add(NON_CINEMATIC_MOTION, ({ conditions }) => {
+        if (conditions?.cinematic || conditions?.reduced) return;
+        const images = Array.from(root.querySelectorAll<HTMLElement>("[data-v3-process-card] figure img"));
+        images.forEach((image) => {
+          ScrollTrigger.create({
+            trigger: image.closest("[data-v3-process-card], .v3-project") ?? image,
+            start: "top 88%",
+            once: true,
+            onEnter: () => {
+              setWillChange([image], "transform, opacity");
+              gsap.fromTo(image,
+                { scaleX: 0.9, scaleY: 1.08, y: 12, autoAlpha: 0.75, transformOrigin: "50% 80%" },
+                { scaleX: 1, scaleY: 1, y: 0, autoAlpha: 1, duration: 0.65, ease: "elastic.out(1, 0.5)", overwrite: true, onComplete: () => setWillChange([image], "") },
+              );
+            },
+          });
+        });
+        return () => setWillChange(images, "");
       });
     }, root);
 

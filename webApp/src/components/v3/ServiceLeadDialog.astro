@@ -1,0 +1,122 @@
+<dialog
+  id="v3-service-lead-dialog"
+  class="v3-service-dialog"
+  aria-labelledby="v3-service-lead-title"
+  aria-describedby="v3-service-lead-description"
+  data-lenis-prevent
+>
+  <form class="v3-service-dialog__form" novalidate>
+    <div class="v3-contact-dialog__header">
+      <p class="v3-kicker">Обсудить направление</p>
+      <button class="v3-contact-dialog__close" type="button" data-v3-service-dialog-close aria-label="Закрыть окно">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" /></svg>
+      </button>
+    </div>
+
+    <h2 id="v3-service-lead-title">Оставьте телефон</h2>
+    <p id="v3-service-lead-description" class="v3-contact-dialog__description">
+      Вы выбрали «<strong data-v3-service-dialog-title></strong>». Оставьте номер, чтобы продолжить обсуждение.
+    </p>
+
+    <label class="v3-service-dialog__field" for="v3-service-phone">
+      <span>Телефон</span>
+      <input
+        id="v3-service-phone"
+        name="phone"
+        type="tel"
+        inputmode="tel"
+        autocomplete="tel"
+        placeholder="+7 999 123-45-67"
+        maxlength="24"
+        required
+        aria-describedby="v3-service-phone-hint v3-service-phone-error"
+      />
+    </label>
+    <p id="v3-service-phone-hint" class="v3-service-dialog__hint">От 10 до 15 цифр. Пробелы, скобки и дефисы допустимы.</p>
+    <p id="v3-service-phone-error" class="v3-service-dialog__error" aria-live="polite"></p>
+
+    <button class="v3-button v3-button--primary" type="submit">Отправить</button>
+    <p class="v3-service-dialog__status" aria-live="polite" data-v3-service-dialog-status></p>
+  </form>
+</dialog>
+
+<script>
+  import { validateLeadPhone } from "./serviceLeadHelpers.mjs";
+
+  const dialog = document.querySelector<HTMLDialogElement>("#v3-service-lead-dialog");
+  const form = dialog?.querySelector<HTMLFormElement>("form");
+  const phone = dialog?.querySelector<HTMLInputElement>("#v3-service-phone");
+  const serviceTitle = dialog?.querySelector<HTMLElement>("[data-v3-service-dialog-title]");
+  const error = dialog?.querySelector<HTMLElement>("#v3-service-phone-error");
+  const status = dialog?.querySelector<HTMLElement>("[data-v3-service-dialog-status]");
+  let activeTrigger: HTMLElement | null = null;
+  let previousHtmlOverflow = "";
+  let previousBodyOverflow = "";
+
+  const clearFeedback = () => {
+    phone?.setCustomValidity("");
+    phone?.removeAttribute("aria-invalid");
+    if (error) error.textContent = "";
+    if (status) status.textContent = "";
+  };
+
+  const validate = () => {
+    if (!phone) return false;
+    const result = validateLeadPhone(phone.value);
+    phone.setCustomValidity(result.error);
+    phone.toggleAttribute("aria-invalid", !result.valid);
+    if (error) error.textContent = result.error;
+    return result.valid;
+  };
+
+  const openDialog = (trigger: HTMLElement) => {
+    if (!dialog || dialog.open) return;
+    activeTrigger = trigger;
+    if (serviceTitle) serviceTitle.textContent = trigger.dataset.serviceTitle ?? "выбранное направление";
+    if (phone) phone.value = "";
+    clearFeedback();
+    previousHtmlOverflow = document.documentElement.style.overflow;
+    previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    dialog.showModal();
+    requestAnimationFrame(() => phone?.focus({ preventScroll: true }));
+  };
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const trigger = target.closest<HTMLElement>("[data-v3-service-dialog]");
+    if (trigger) {
+      event.preventDefault();
+      openDialog(trigger);
+      return;
+    }
+    if (target.closest("[data-v3-service-dialog-close]")) dialog?.close();
+  });
+
+  phone?.addEventListener("input", () => {
+    if (phone.hasAttribute("aria-invalid")) validate();
+    if (status) status.textContent = "";
+  });
+  phone?.addEventListener("blur", validate);
+
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!validate()) {
+      phone?.focus();
+      return;
+    }
+    if (status) status.textContent = "Телефон проверен. Отправка на почту будет подключена после настройки сервера.";
+  });
+
+  dialog?.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+  dialog?.addEventListener("close", () => {
+    document.documentElement.style.overflow = previousHtmlOverflow;
+    document.body.style.overflow = previousBodyOverflow;
+    activeTrigger?.focus({ preventScroll: true });
+    activeTrigger = null;
+  });
+</script>

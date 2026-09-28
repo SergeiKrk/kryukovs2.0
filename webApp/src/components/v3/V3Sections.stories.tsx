@@ -5,6 +5,7 @@ import "../../styles/v3.css";
 import "./v3-storybook.css";
 import ProjectCalculator from "./ProjectCalculator";
 import Navigation from "./Navigation";
+import { MESSENGERS_PATH, TELEGRAM_HREF } from "./messengerLinks";
 import { capabilities, faq, pricingGroups, processSteps, projects, proofs, services } from "../../data/v3";
 
 const rockFiles = ["rock-1.png", "rock-2.png", "rock-3.png", "rock-4.png", "rock-2.png", "rock-4.png"];
@@ -172,11 +173,18 @@ function WorkSection() {
               {projects.map((project, index) => (
                 <article className={`v3-project${index === 0 ? " v3-project--lead" : ""}`} key={project.name}>
                   <a href={project.href} target="_blank" rel="noreferrer" aria-label={`Открыть проект ${project.name}`}>
-                    <figure><img src={project.image} alt={`Скриншот десктопной версии сайта ${project.name}`} width="1440" height="900" loading="lazy" /></figure>
+                    <figure className="v3-project__media" aria-hidden="true">
+                      <img className="v3-project__device v3-project__device--desktop" src={project.desktopImage} alt="" width="1024" height="1024" loading="lazy" />
+                      <img className="v3-project__device v3-project__device--laptop" src={project.laptopImage} alt="" width="1024" height="1024" loading="lazy" />
+                      <img className="v3-project__device v3-project__device--phone" src={project.phoneImage} alt="" width="1024" height="1024" loading="lazy" />
+                    </figure>
                     <div className="v3-project__content">
-                      <div><span>{String(index + 1).padStart(2, "0")}</span><p>{project.category}</p></div>
+                      <p className="v3-project__category">{project.category}</p>
                       <h3>{project.name}</h3>
                       <p>{project.description}</p>
+                      <ul className="v3-project__tags" aria-label="Выполненные работы">
+                        {project.tags.map((tag) => <li key={tag}>{tag}</li>)}
+                      </ul>
                       <strong>Открыть сайт <span aria-hidden="true">↗</span></strong>
                     </div>
                   </a>
@@ -204,6 +212,7 @@ function ServicesSection() {
               <span>{String(index + 1).padStart(2, "0")}</span>
               <h3>{service.title}</h3>
               <p>{service.text}</p>
+              <button className="v3-button v3-button--quiet v3-services__action" type="button">Обсудить</button>
             </article>
           ))}
         </div>
@@ -278,19 +287,31 @@ function CalculatorSection() {
 
 function FooterSection() {
   return (
-    <footer className="v3-footer" aria-labelledby="storybook-v3-footer-title">
+    <footer id="site-footer" className="v3-footer" aria-labelledby="storybook-v3-footer-title">
       <div className="v3-shell">
-        <p className="v3-kicker">Следующий проект</p>
-        <h2 id="storybook-v3-footer-title">Есть задача.<br /><a href="https://t.me/sergeikrk" target="_blank" rel="noreferrer">Давайте обсудим <span aria-hidden="true">↗</span></a></h2>
-        <div className="v3-footer__grid">
-          <p>Расскажите о продукте, бренде или сайте, который пора обновить. Отвечу на вопросы и предложу первый шаг.</p>
-          <nav aria-label="Контакты">
-            <a href="https://t.me/sergeikrk" target="_blank" rel="noreferrer">Telegram ↗</a>
+        <div className="v3-footer__lead">
+          <div className="v3-footer__intro">
+            <p className="v3-kicker">Следующий шаг</p>
+            <h2 id="storybook-v3-footer-title">Обсудим <span>вашу задачу.</span></h2>
+            <p className="v3-footer__description">Сайт, калькулятор или сложный интерфейс — начнём с того, что нужно сделать и что уже есть.</p>
+          </div>
+          <div className="v3-footer__contact">
+            <p className="v3-footer__contact-label">Начать разговор</p>
+            <p>Опишите задачу в нескольких словах. Помогу определить разумный первый шаг.</p>
+            <a className="v3-button v3-button--primary v3-button--hero" href={MESSENGERS_PATH}>Написать о проекте</a>
+            <p className="v3-footer__contact-note">Можно сразу выбрать удобный мессенджер.</p>
+          </div>
+        </div>
+        <div className="v3-footer__directory">
+          <div className="v3-footer__identity"><strong>Сергей Крюков</strong><span>Сайты и цифровые продукты</span></div>
+          <nav aria-label="Разделы сайта" className="v3-footer__nav"><a href="/services/">Услуги</a><a href="/#work">Проекты</a><a href="/#process">Подход</a></nav>
+          <div className="v3-footer__channels" aria-label="Контакты">
+            <a href={TELEGRAM_HREF} target="_blank" rel="noopener noreferrer">Telegram ↗</a>
             <a href="mailto:ksv.progect@gmail.com">ksv.progect@gmail.com ↗</a>
             <a href="tel:+79176103476">+7 917 610-34-76</a>
-          </nav>
+          </div>
         </div>
-        <div className="v3-footer__line"><span>© 2026 Сергей Крюков</span><a href="#storybook-v3-hero-title">Наверх ↑</a></div>
+        <div className="v3-footer__line"><span>© {new Date().getFullYear()} Сергей Крюков</span><a href="#storybook-v3-hero-title">Наверх ↑</a></div>
       </div>
     </footer>
   );

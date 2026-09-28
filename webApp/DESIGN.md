@@ -34,7 +34,7 @@ The runtime tokens live in `src/styles/v3.css`. This table is the source of visu
 | Role | Family | Runtime token | Rule |
 |---|---|---|---|
 | Hero H1 | Serati | `--v3-type-hero` | Keep the existing outlined composition and responsive scale. |
-| Main H2 | Serati | `--v3-type-section` | Use for section themes, FAQ, calculator and footer. The footer may increase its size for the final CTA. H2 uses transparent fill with a `1.5px` outline: `--v3-title-stroke-light` on dark surfaces and `--v3-title-stroke-dark` in the footer. |
+| Main H2 | Serati | `--v3-type-section` | Use for section themes, FAQ, calculator and footer. The footer increases its size for the closing invitation. H2 uses transparent fill with a `1.5px` outline on dark surfaces; the footer fills the second line to emphasize the subject. |
 | Card H3 | Oswald Variable | `--v3-type-card` | Use for process, services, projects and quiz headings. It must stay visually below H2. |
 | Prices and proof values | Oswald Variable | `--v3-type-price` | Use for numbers and compact proof statements. |
 | Lead | Manrope Variable | `--v3-type-lead` | Use for explanatory text paired with a section title. |
@@ -62,6 +62,7 @@ All headline blocks use `text-wrap: balance`; prose uses `text-wrap: pretty`. Pr
 - Project, service and process cards use the shared Oswald card level, then Manrope body copy.
 - Pricing groups use Manrope labels, Oswald numbers and Manrope boundaries.
 - Quiz forms use Manrope for questions, labels, values, hints and errors. The H3 titles remain card-level headings.
+- The footer closes on a dark surface: outlined invitation plus one filled line, a contained teal contact panel, then a quiet directory for services, projects and direct channels. Keep the primary contact path on `/messengers/`; preserve email and phone as alternatives.
 - Storybook includes `V3 / Sections / Typography` as the visual regression specimen for long Russian headings, lead/body copy, captions, price and an input.
 
 ## Accessibility and review
