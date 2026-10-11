@@ -1,0 +1,87 @@
+09:25:07 [types] Generated 89ms
+09:25:07 [check] Getting diagnostics for Astro files in C:\Users\ksv\hermes-workspace\projects\KryukovS.ru\webApp...
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m494[0m:[93m137[0m - [93mwarning[0m[90m ts(6385): [0m'ArrowDown' is deprecated.
+
+[7m494[0m       {isCalculatorOpen && isMobile && !summary && <span ref={scrollHintRef} className="v3-calculator__scroll-hint" aria-hidden="true"><ArrowDown weight="bold" /></span>}
+[7m   [0m [93m                                                                                                                                        ~~~~~~~~~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m491[0m:[93m293[0m - [93mwarning[0m[90m ts(6385): [0m'ArrowRight' is deprecated.
+
+[7m491[0m         {summary && <div className="v3-quiz__controls"><button className="v3-button v3-button--quiet" type="button" onClick={moveBack}><CaretLeft aria-hidden="true" />Изменить ответы</button><button className="v3-button v3-button--primary" type="button" onClick={discuss}>Обсудить результат <ArrowRight aria-hidden="true" /></button></div>}
+[7m   [0m [93m                                                                                                                                                                                                                                                                                                    ~~~~~~~~~~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m491[0m:[93m137[0m - [93mwarning[0m[90m ts(6385): [0m'CaretLeft' is deprecated.
+
+[7m491[0m         {summary && <div className="v3-quiz__controls"><button className="v3-button v3-button--quiet" type="button" onClick={moveBack}><CaretLeft aria-hidden="true" />Изменить ответы</button><button className="v3-button v3-button--primary" type="button" onClick={discuss}>Обсудить результат <ArrowRight aria-hidden="true" /></button></div>}
+[7m   [0m [93m                                                                                                                                        ~~~~~~~~~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m490[0m:[93m157[0m - [93mwarning[0m[90m ts(6385): [0m'CaretLeft' is deprecated.
+
+[7m490[0m         {!summary && currentStep > 0 && <div className="v3-quiz__controls"><button className="v3-button v3-button--quiet" type="button" onClick={moveBack}><CaretLeft aria-hidden="true" />Назад</button><button className="v3-button v3-button--primary" type="submit">{currentStep === stepIds.length - 1 ? "Показать ориентир" : "Продолжить"}</button></div>}
+[7m   [0m [93m                                                                                                                                                            ~~~~~~~~~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m479[0m:[93m607[0m - [93mwarning[0m[90m ts(6385): [0m'ArrowRight' is deprecated.
+
+[7m479[0m       <aside className="v3-quiz__summary v3-calculator__aside" aria-labelledby="v3-calculator-summary-title"><p className="v3-kicker">До первого сообщения</p><h3 id="v3-calculator-summary-title">Сначала разберём задачу</h3><p>Выберите формат и добавьте только те услуги, которые меняют состав работы. Для сложных проектов калькулятор предложит следующий шаг.</p><p className="v3-calculator__or">или</p><button ref={contactTriggerRef} className="v3-calculator__contact" type="button" aria-haspopup="dialog" aria-controls="v3-contact-dialog" onClick={() => setContactDialogOpen(true)}>Сразу обсудить задачу <ArrowRight aria-hidden="true" /></button></aside>
+[7m   [0m [93m                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ~~~~~~~~~~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m478[0m:[93m203[0m - [93mwarning[0m[90m ts(6385): [0m'X' is deprecated.
+
+[7m478[0m       <button className="v3-contact-dialog__close v3-calculator__close" type="button" aria-label="Закрыть калькулятор" onClick={() => document.querySelector<HTMLDialogElement>("#calculator")?.close()}><X aria-hidden="true" weight="bold" /></button>
+[7m   [0m [93m                                                                                                                                                                                                          ~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m256[0m:[93m220[0m - [93mwarning[0m[90m ts(6385): [0m'X' is deprecated.
+
+[7m256[0m         <div className="v3-contact-dialog__header"><p className="v3-kicker">Прямой контакт</p><button ref={closeButtonRef} className="v3-contact-dialog__close" type="button" onClick={onClose} aria-label="Закрыть окно"><X aria-hidden="true" weight="bold" /></button></div>
+[7m   [0m [93m                                                                                                                                                                                                                           ~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m186[0m:[93m443[0m - [93mwarning[0m[90m ts(6385): [0m'Info' is deprecated.
+
+[7m186[0m       <button type="button" className="v3-calculator__tooltip-trigger" aria-label="Подробнее о формате" aria-expanded={open} aria-controls={id} onFocus={() => { clearCloseTimer(); setOpen(true); }} onBlur={(event) => { if (!rootRef.current?.contains(event.relatedTarget as Node)) closeSoon(); }} onPointerDown={(event) => { if (event.pointerType === "touch") { event.preventDefault(); clearCloseTimer(); setOpen((current) => !current); } }}><Info aria-hidden="true" weight="bold" /></button>
+[7m   [0m [93m                                                                                                                                                                                                                                                                                                                                                                                                                                                          ~~~~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m1[0m:[93m50[0m - [93mwarning[0m[90m ts(6385): [0m'X' is deprecated.
+
+[7m1[0m import { ArrowDown, ArrowRight, CaretLeft, Info, X } from "@phosphor-icons/react";
+[7m [0m [93m                                                 ~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m1[0m:[93m44[0m - [93mwarning[0m[90m ts(6385): [0m'Info' is deprecated.
+
+[7m1[0m import { ArrowDown, ArrowRight, CaretLeft, Info, X } from "@phosphor-icons/react";
+[7m [0m [93m                                           ~~~~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m1[0m:[93m33[0m - [93mwarning[0m[90m ts(6385): [0m'CaretLeft' is deprecated.
+
+[7m1[0m import { ArrowDown, ArrowRight, CaretLeft, Info, X } from "@phosphor-icons/react";
+[7m [0m [93m                                ~~~~~~~~~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m1[0m:[93m21[0m - [93mwarning[0m[90m ts(6385): [0m'ArrowRight' is deprecated.
+
+[7m1[0m import { ArrowDown, ArrowRight, CaretLeft, Info, X } from "@phosphor-icons/react";
+[7m [0m [93m                    ~~~~~~~~~~[0m
+[96msrc/components/v3/ProjectCalculator.tsx[0m:[93m1[0m:[93m10[0m - [93mwarning[0m[90m ts(6385): [0m'ArrowDown' is deprecated.
+
+[7m1[0m import { ArrowDown, ArrowRight, CaretLeft, Info, X } from "@phosphor-icons/react";
+[7m [0m [93m         ~~~~~~~~~[0m
+
+[96msrc/components/v3/ProjectQuiz.tsx[0m:[93m316[0m:[93m38[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m316[0m   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+[7m   [0m [93m                                     ~~~~~~~~~[0m
+
+[96msrc/components/v3/V3Buttons.stories.tsx[0m:[93m51[0m:[93m16[0m - [93mwarning[0m[90m ts(6385): [0m'Headset' is deprecated.
+
+[7m51[0m               <Headset aria-hidden="true" weight="duotone" />
+[7m  [0m [93m               ~~~~~~~[0m
+[96msrc/components/v3/V3Buttons.stories.tsx[0m:[93m47[0m:[93m16[0m - [93mwarning[0m[90m ts(6385): [0m'PaperPlaneTilt' is deprecated.
+
+[7m47[0m               <PaperPlaneTilt aria-hidden="true" weight="duotone" />
+[7m  [0m [93m               ~~~~~~~~~~~~~~[0m
+[96msrc/components/v3/V3Buttons.stories.tsx[0m:[93m2[0m:[93m19[0m - [93mwarning[0m[90m ts(6385): [0m'PaperPlaneTilt' is deprecated.
+
+[7m2[0m import { Headset, PaperPlaneTilt } from "@phosphor-icons/react";
+[7m [0m [93m                  ~~~~~~~~~~~~~~[0m
+[96msrc/components/v3/V3Buttons.stories.tsx[0m:[93m2[0m:[93m10[0m - [93mwarning[0m[90m ts(6385): [0m'Headset' is deprecated.
+
+[7m2[0m import { Headset, PaperPlaneTilt } from "@phosphor-icons/react";
+[7m [0m [93m         ~~~~~~~[0m
+
+[96msrc/layouts/BaseLayout.astro[0m:[93m22[0m:[93m3[0m - [93mwarning[0m[90m ts(6133): [0m'variant' is declared but its value is never read.
+
+[7m22[0m   variant = "cinematic",
+[7m  [0m [93m  ~~~~~~~[0m
+
+Result (42 files): 
+- 0 errors
+- 0 warnings
+- 19 hints
+

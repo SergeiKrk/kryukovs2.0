@@ -1,0 +1,103 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navigation from "./Navigation";
+import DirectLandingMotion from "./DirectLandingMotion.astro";
+import { MAX_HREF, TELEGRAM_HREF } from "./messengerLinks";
+import { projects } from "../../data/v3";
+import "../../styles/v3.css";
+import "../../styles/direct-landing.css";
+
+const selectedProjects = [projects[4], projects[3], projects[2]];
+const mailSubject = encodeURIComponent("Вопрос по предложению: Лендинг + Яндекс.Директ");
+const emailHref = `mailto:ksv.progect@gmail.com?subject=${mailSubject}`;
+const year = new Date().getFullYear();
+const route = [
+  { title: "Поиск и РСЯ", description: "Настройка Яндекс.Директа в вашем рекламном кабинете." },
+  { title: "Посадочная", description: "Лендинг под согласованное предложение, адаптивная версия и внутренняя SEO-оптимизация." },
+  { title: "Действие", description: "На странице ясно, как посетителю связаться с вами." },
+];
+const steps = [
+  { title: "Согласуем задачу", description: "Уточним предложение, назначение страницы и необходимые материалы и доступы." },
+  { title: "Соберу лендинг", description: "Подготовлю посадочную под согласованное предложение и адаптирую её для телефона." },
+  { title: "Настрою Директ", description: "Настрою Поиск и РСЯ в вашем рекламном кабинете." },
+  { title: "Сверим связку", description: "Посмотрим, как объявление ведёт к странице и следующему действию." },
+];
+const questions = [
+  { question: "Когда начинаются 4 дня?", answer: "После согласования задачи и получения необходимых материалов и доступов. Дату старта уточним в разговоре." },
+  { question: "Рекламный бюджет входит в 35 000 ₽?", answer: "Нет. 35 000 ₽ — стоимость работ. Бюджет для показов вы пополняете отдельно в собственном рекламном кабинете." },
+  { question: "Что понадобится для старта?", answer: "Описание предложения, имеющиеся материалы и доступ к рекламному кабинету. Точный список согласуем под вашу задачу." },
+];
+---
+
+<BaseLayout title="Лендинг + Яндекс.Директ за 4 дня — 35 000 ₽ | Сергей Крюков" description="Посадочная под ваше предложение и настройка рекламы в Поиске и РСЯ. Стоимость работ — 35 000 ₽, срок — 4 дня после согласования задачи и получения материалов и доступов." canonical="/landing-direct/" image="/assets/v3/sergey-kryukov.png" noindex={true} variant="cinematic">
+  <Navigation slot="before-main" client:load />
+
+  <div class="direct-landing">
+    <section class="direct-hero" aria-labelledby="direct-title" data-direct-hero data-direct-state="static">
+      <div class="v3-shell">
+        <div class="direct-hero__scene" data-direct-scene>
+          <img class="direct-hero__poster" src="/assets/v3/sergey-kryukov.png" alt="" width="1600" height="900" fetchpriority="high" decoding="async" data-direct-poster />
+          <canvas class="direct-hero__canvas" aria-hidden="true" data-direct-canvas></canvas>
+          <div class="direct-hero__copy">
+            <p class="v3-kicker">Сергей Крюков · сайты и реклама</p>
+            <h1 id="direct-title">Лендинг +<br />Яндекс.Директ</h1>
+            <p class="direct-hero__lead">Посадочная под ваше предложение и настройка рекламы в Поиске и РСЯ. Вы знаете состав работ, срок и расходы до старта.</p>
+            <dl class="direct-hero__terms"><div><dt>Стоимость работ</dt><dd>35 000 ₽</dd></div><div><dt>Срок</dt><dd>4 дня</dd></div></dl>
+            <p class="direct-hero__condition">Отсчёт после согласования задачи и получения необходимых материалов и доступов.</p>
+            <div class="direct-hero__actions"><a class="v3-button v3-button--primary" href="#contact">Обсудить запуск <span aria-hidden="true">↗</span></a><a class="direct-text-link" href="#scope">Что входит <span aria-hidden="true">↓</span></a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="scope" class="direct-section direct-scope" aria-labelledby="direct-scope-title">
+      <div class="v3-shell">
+        <div class="direct-heading"><div><p class="v3-kicker">Один маршрут</p><h2 id="direct-scope-title">От объявления к вашему предложению.</h2></div><p>Реклама ведёт на страницу с тем же предложением и понятным следующим шагом для посетителя.</p></div>
+        <ol class="direct-route">{route.map((item) => <li><h3>{item.title}</h3><p>{item.description}</p></li>)}</ol>
+        <p class="direct-scope__budget">35 000 ₽ — стоимость работ. Рекламный бюджет вы пополняете отдельно в своём кабинете.</p>
+      </div>
+    </section>
+
+    <section class="direct-section direct-work" aria-labelledby="direct-work-title">
+      <div class="v3-shell">
+        <div class="direct-heading"><div><p class="v3-kicker">Примеры разработки</p><h2 id="direct-work-title">Посмотрите на мои проекты.</h2></div><p>Эти проекты показывают разработку сайтов и интерфейсов.</p></div>
+        <div class="direct-work__grid">
+          {selectedProjects.map((project, index) => (
+            <article class:list={["direct-project", { "direct-project--lead": index === 0 }]}>
+              <a href={project.href} target="_blank" rel="noopener noreferrer" aria-labelledby={`direct-project-${index}-title`} aria-describedby={`direct-project-${index}-description`}>
+                <div class="direct-project__media" aria-hidden="true">
+                  <img class="direct-project__desktop" src={project.desktopImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                  <img class="direct-project__laptop" src={project.laptopImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                  <img class="direct-project__phone" src={project.phoneImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                </div>
+                <div class="direct-project__copy"><p class="direct-project__category">{project.category}</p><h3 id={`direct-project-${index}-title`}>{project.name}</h3><p id={`direct-project-${index}-description`}>{project.description}</p><span class="direct-project__open">Открыть сайт <span aria-hidden="true">↗</span></span></div>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="direct-section direct-process" aria-labelledby="direct-process-title">
+      <div class="v3-shell">
+        <div class="direct-heading"><div><p class="v3-kicker">Как работаем</p><h2 id="direct-process-title">Четыре шага до готовой связки.</h2></div><p>Срок в 4 дня начинается после согласования задачи и получения необходимых материалов и доступов.</p></div>
+        <ol class="direct-steps">{steps.map((step, index) => <li><span class="direct-steps__number">0{index + 1}</span><h3>{step.title}</h3><p>{step.description}</p></li>)}</ol>
+      </div>
+    </section>
+
+    <section class="direct-section direct-faq" aria-labelledby="direct-faq-title">
+      <div class="v3-shell direct-faq__grid"><div><p class="v3-kicker">Перед стартом</p><h2 id="direct-faq-title">Коротко о главном.</h2></div><div class="direct-faq__questions">{questions.map((item) => <details><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div></div>
+    </section>
+
+    <section class="direct-section direct-contact" aria-labelledby="direct-contact-title">
+      <div class="v3-shell direct-contact__grid">
+        <div class="direct-contact__intro"><p class="v3-kicker">Обсудим задачу</p><h2 id="direct-contact-title">Расскажите о вашем предложении.</h2><p>Напишите, что хотите рекламировать, какие материалы уже есть и когда планируете старт. Я уточню задачу и необходимые доступы.</p></div>
+        <div id="contact" class="direct-contact__panel"><p class="direct-contact__label">Лендинг + настройка Яндекс.Директа</p><div class="direct-contact__terms"><strong>35 000 ₽</strong><span>4 дня</span></div><p class="direct-contact__note">Рекламный бюджет оплачивается отдельно.</p><div class="direct-contact__links"><a class="v3-button v3-button--primary" href={TELEGRAM_HREF} target="_blank" rel="noopener noreferrer">Написать в Telegram <span aria-hidden="true">↗</span></a><a class="v3-button direct-contact__secondary" href={MAX_HREF} target="_blank" rel="noopener noreferrer">Написать в MAX <span aria-hidden="true">↗</span></a><a class="direct-text-link" href={emailHref}>Отправить письмо <span aria-hidden="true">↗</span></a></div></div>
+      </div>
+    </section>
+  </div>
+
+  <DirectLandingMotion />
+
+  <footer class="direct-footer" slot="after-main"><div class="v3-shell direct-footer__inner"><div><strong>Сергей Крюков</strong><span>Сайты и цифровые продукты</span></div><nav aria-label="Разделы сайта"><a href="/services/">Услуги</a><a href="/#work">Проекты</a><a href="/#process">Подход</a></nav><div class="direct-footer__contacts"><a href={TELEGRAM_HREF} target="_blank" rel="noopener noreferrer">Telegram ↗</a><a href="mailto:ksv.progect@gmail.com">ksv.progect@gmail.com ↗</a><a href="tel:+79176103476">+7 917 610-34-76</a></div></div><div class="v3-shell direct-footer__bottom"><span>© {year} Сергей Крюков</span><a href="#main-content">Наверх ↑</a></div></footer>
+</BaseLayout>

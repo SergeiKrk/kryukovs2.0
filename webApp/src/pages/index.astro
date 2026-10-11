@@ -44,7 +44,7 @@ const description = "Дизайн, разработка и SEO сайтов дл
   <section class="v3-hero" aria-labelledby="v3-hero-title">
     <div class="v3-shell v3-hero__grid">
       <div class="v3-hero__copy" data-v3-hero-copy>
-        <p class="v3-kicker">Посадочная + Яндекс.Директ от 35 000 ₽</p>
+        <p class="v3-kicker">Лендинг + Яндекс.Директ от 35 000 ₽</p>
         <h1 id="v3-hero-title" data-v3-hero-title>
           <span class="v3-hero__title-outline"><span>Создание сайтов</span><span>под ключ</span></span>
         </h1>
@@ -93,7 +93,7 @@ const description = "Дизайн, разработка и SEO сайтов дл
     <div class="v3-shell v3-proof-strip" aria-label="Проверенные факты">
       <div class="v3-proof-strip__grid">
         {proofs.map(([value, label], index) => index === 2 ? (
-          <a class="v3-proof-strip__item v3-proof-strip__item--featured" href="/messengers/" data-v3-open-calculator aria-label={`${value}, ${label}`}>
+          <a class="v3-proof-strip__item v3-proof-strip__item--featured" href="/messengers/" data-v3-service-dialog data-service-title="Лендинг + настройка Яндекс.Директа" aria-haspopup="dialog" aria-controls="v3-service-lead-dialog" aria-label={`${value}, ${label}`}>
             <strong>{value}</strong>
             <span>{label}</span>
           </a>

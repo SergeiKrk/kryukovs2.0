@@ -28,7 +28,7 @@ function HeroSection() {
     <section className="v3-hero" aria-labelledby="storybook-v3-hero-title">
       <div className="v3-shell v3-hero__grid">
         <div className="v3-hero__copy">
-          <p className="v3-kicker">Посадочная + Яндекс.Директ от 35 000 ₽</p>
+          <p className="v3-kicker">Лендинг + Яндекс.Директ от 35 000 ₽</p>
           <h1 id="storybook-v3-hero-title">
             <span className="v3-hero__title-outline"><span>Создание сайтов</span><span>под ключ</span></span>
           </h1>

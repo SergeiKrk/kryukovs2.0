@@ -475,7 +475,7 @@ export default function ProjectCalculator({ initialAnswers, initialStep = 0, ini
 
   return (
     <div className="v3-calculator" tabIndex={-1}>
-      <button className="v3-contact-dialog__close v3-calculator__close" type="button" aria-label="Закрыть калькулятор" onClick={() => document.getElementById("calculator")?.close()}><X aria-hidden="true" weight="bold" /></button>
+      <button className="v3-contact-dialog__close v3-calculator__close" type="button" aria-label="Закрыть калькулятор" onClick={() => document.querySelector<HTMLDialogElement>("#calculator")?.close()}><X aria-hidden="true" weight="bold" /></button>
       <aside className="v3-quiz__summary v3-calculator__aside" aria-labelledby="v3-calculator-summary-title"><p className="v3-kicker">До первого сообщения</p><h3 id="v3-calculator-summary-title">Сначала разберём задачу</h3><p>Выберите формат и добавьте только те услуги, которые меняют состав работы. Для сложных проектов калькулятор предложит следующий шаг.</p><p className="v3-calculator__or">или</p><button ref={contactTriggerRef} className="v3-calculator__contact" type="button" aria-haspopup="dialog" aria-controls="v3-contact-dialog" onClick={() => setContactDialogOpen(true)}>Сразу обсудить задачу <ArrowRight aria-hidden="true" /></button></aside>
       <form ref={formRef} className="v3-quiz__form v3-calculator__form" noValidate onChangeCapture={(event) => {
         const target = event.target;

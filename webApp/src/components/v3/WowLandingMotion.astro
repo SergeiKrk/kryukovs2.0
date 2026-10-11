@@ -1,0 +1,209 @@
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import Lenis from 'lenis';
+  import { createFrameLoader, framePath, progressIndex, sampleFrames, shouldAnimate } from './wowFrames.mjs';
+
+  gsap.registerPlugin(ScrollTrigger);
+  const host = window as Window & { __wowMotionOwner?: () => void };
+  host.__wowMotionOwner?.();
+  const bootstrap = new AbortController();
+  let disposePage = () => {};
+  function init() {
+    disposePage();
+    const found = document.querySelector<HTMLElement>('[data-wow-root]');
+    if (!found) return;
+    const root: HTMLElement = found;
+    const stage = root.querySelector<HTMLElement>('[data-wow-stage]')!;
+    const hero = root.querySelector<HTMLElement>('[data-wow-hero]')!;
+    const media = root.querySelector<HTMLElement>('[data-wow-media]')!;
+    const image = root.querySelector<HTMLImageElement>('[data-wow-frame]')!;
+    const staticSource = media.querySelector<HTMLSourceElement>('source');
+    const panel = root.querySelector<HTMLElement>('[data-wow-mobile-cta]')!;
+    const faq = root.querySelector<HTMLElement>('[data-wow-faq]')!;
+    const contact = root.querySelector<HTMLElement>('[data-wow-contact]')!;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const desktop = matchMedia('(min-width: 900px)');
+    const connection = (navigator as Navigator & { connection?: EventTarget & { saveData?: boolean } }).connection;
+    const events = new AbortController();
+    let dead = false, failed = false, stopMode = () => {}, refreshTimer = 0, resizeTimer = 0;
+    let lenis: Lenis | undefined;
+    let explicitMotion: boolean | undefined;
+    let heroVisible = true, faqVisible = false, contactVisible = false;
+    root.dataset.wowMotionInitialized = 'true';
+    const blocked = () => !!document.querySelector('dialog[open], .v3-nav.is-open');
+    function syncUI() {
+      const keyboard = !!window.visualViewport && window.visualViewport.height < window.innerHeight * 0.75;
+      panel.hidden = desktop.matches || heroVisible || faqVisible || contactVisible || blocked() || keyboard;
+      if (blocked()) lenis?.stop(); else lenis?.start();
+    }
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target === hero) heroVisible = entry.isIntersecting;
+        if (entry.target === faq) faqVisible = entry.isIntersecting;
+        if (entry.target === contact) contactVisible = entry.isIntersecting || entry.boundingClientRect.top < 0;
+      }
+      syncUI();
+    }, { rootMargin: '0px 0px 90px 0px' });
+    observer.observe(hero); observer.observe(faq); observer.observe(contact);
+    const modalObserver = new MutationObserver(syncUI);
+    modalObserver.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['open', 'class'] });
+    for (const name of ['v3:modal-open', 'v3:modal-close']) window.addEventListener(name, syncUI, { signal: events.signal });
+    window.visualViewport?.addEventListener('resize', syncUI, { signal: events.signal });
+
+    function enabled() {
+      let saved: string | null = null;
+      try { saved = sessionStorage.getItem('v3-motion'); } catch { /* private browsing */ }
+      return shouldAnimate({ failed, reduced: reduced.matches, saveData: !!connection?.saveData,
+        saved, explicit: explicitMotion, bitmapAvailable: typeof createImageBitmap === 'function' });
+    }
+    function setup() {
+      stopMode();
+      syncUI();
+      if (dead) return;
+      const active = enabled();
+      root.dataset.wowMotion = active ? (desktop.matches ? 'desktop' : 'mobile') : 'static';
+      if (!active) {
+        // Load off-DOM; retain the initial stone when the portrait is unavailable.
+        const final = new Image();
+        let cancelled = false;
+        const onLoad = () => { if (!cancelled) image.src = final.src; };
+        const onError = () => {
+          if (cancelled) return;
+          staticSource?.removeAttribute('srcset');
+          image.src = framePath(0);
+        };
+        final.addEventListener('load', onLoad, { once: true });
+        final.addEventListener('error', onError, { once: true });
+        final.src = framePath(106);
+        stopMode = () => {
+          cancelled = true;
+          final.removeEventListener('load', onLoad);
+          final.removeEventListener('error', onError);
+          final.removeAttribute('src');
+        };
+        return;
+      }
+      staticSource?.setAttribute('srcset', framePath(106));
+      let disposed = false;
+      const canvas = document.createElement('canvas');
+      canvas.width = 1280; canvas.height = 720;
+      canvas.className = 'wow-hero__canvas';
+      canvas.setAttribute('aria-hidden', 'true');
+      canvas.hidden = true;
+      media.append(canvas);
+      const painter = canvas.getContext('2d', { alpha: false });
+      if (!painter) { canvas.remove(); failed = true; setup(); return; }
+      const frames = sampleFrames(desktop.matches ? 107 : 32);
+      const loader = createFrameLoader({
+        frames,
+        load: async (index: number, signal: AbortSignal) => {
+          const response = await fetch(framePath(index), { signal, priority: 'low' } as RequestInit);
+          if (!response.ok) throw new Error(`frame ${index}: ${response.status}`);
+          const blob = await response.blob();
+          if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
+          return createImageBitmap(blob);
+        },
+        draw: (bitmap: ImageBitmap, index: number) => {
+          if (disposed) return;
+          painter.drawImage(bitmap, 0, 0);
+          canvas.hidden = false;
+          image.style.visibility = 'hidden';
+          root.dataset.wowFrame = String(index);
+        },
+        fail: () => { if (!disposed) { failed = true; setup(); } },
+      });
+      let ticker: ((time: number) => void) | undefined;
+      if (desktop.matches) {
+        lenis = new Lenis({ autoRaf: false, smoothWheel: true, syncTouch: false, anchors: true });
+        lenis.on('scroll', ScrollTrigger.update);
+        ticker = (seconds) => lenis?.raf(seconds * 1000);
+        gsap.ticker.add(ticker);
+        syncUI();
+      }
+      // Measure only at setup/resize, never inside a scroll callback.
+      const pin = desktop.matches && stage.offsetHeight <= innerHeight - 88;
+      root.dataset.wowPinned = String(pin);
+      loader.seek(0);
+      const seekProgress = (progress: number) => {
+        const target = progressIndex(progress, frames);
+        root.dataset.wowTarget = String(frames[target]);
+        loader.seek(target);
+      };
+      const context = gsap.context(() => {
+        const timeline = gsap.timeline({ scrollTrigger: {
+          trigger: pin ? stage : desktop.matches ? media : stage,
+          start: pin ? 'top 80px' : desktop.matches ? 'top 128px' : 'top top',
+          end: pin ? () => `+=${Math.round(innerHeight * 1.2)}` : 'bottom 38%',
+          pin: pin ? stage : false,
+          scrub: desktop.matches ? 0.22 : 0.1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => seekProgress(self.progress),
+          onRefresh: (self) => seekProgress(self.progress),
+          onToggle: (self) => { media.style.willChange = self.isActive ? 'transform' : ''; },
+        } });
+        timeline.fromTo(media, { y: desktop.matches ? -8 : -6 }, { y: desktop.matches ? 8 : 6, duration: 1, ease: 'none' }, 0);
+        seekProgress(timeline.scrollTrigger?.progress ?? 0);
+        root.querySelectorAll<HTMLElement>('[data-wow-result], [data-wow-cases], [data-wow-scope], [data-wow-process], [data-wow-author], [data-wow-contact]').forEach((section) => {
+          const content = section.firstElementChild;
+          if (content) gsap.fromTo(content, { y: 14 }, { y: 0, duration: 0.48, ease: 'power2.out', scrollTrigger: { trigger: section, start: 'top 90%', once: true } });
+        });
+      }, root);
+      // Initial SSR frame stays visible while a bounded first window decodes.
+      stopMode = () => {
+        disposed = true;
+        loader.dispose();
+        context.revert();
+        if (ticker) gsap.ticker.remove(ticker);
+        lenis?.off('scroll', ScrollTrigger.update);
+        lenis?.destroy(); lenis = undefined;
+        canvas.remove(); canvas.width = canvas.height = 0;
+        image.style.removeProperty('visibility');
+        media.style.removeProperty('will-change');
+        delete root.dataset.wowFrame; delete root.dataset.wowPinned; delete root.dataset.wowTarget;
+      };
+    }
+    function scheduleRefresh() {
+      clearTimeout(refreshTimer);
+      refreshTimer = window.setTimeout(() => { if (!dead) ScrollTrigger.refresh(); }, 100);
+    }
+    let width = innerWidth, height = innerHeight;
+    function resize() {
+      const widthChanged = innerWidth !== width;
+      if (!widthChanged && innerHeight === height) return;
+      width = innerWidth; height = innerHeight;
+      // Mobile browser chrome/keyboard must not discard the frame cache on every swipe.
+      if (!desktop.matches && !widthChanged) { scheduleRefresh(); return; }
+      clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => { if (!dead) { setup(); ScrollTrigger.refresh(); } }, 180);
+    }
+    window.addEventListener('resize', resize, { signal: events.signal });
+    window.addEventListener('v3:motion', (event) => {
+      explicitMotion = (event as CustomEvent<{ enabled: boolean }>).detail?.enabled;
+      setup(); scheduleRefresh();
+    }, { signal: events.signal });
+    reduced.addEventListener('change', () => { setup(); scheduleRefresh(); }, { signal: events.signal });
+    desktop.addEventListener('change', () => { setup(); scheduleRefresh(); }, { signal: events.signal });
+    connection?.addEventListener('change', () => { setup(); scheduleRefresh(); }, { signal: events.signal });
+    root.addEventListener('load', scheduleRefresh, { capture: true, signal: events.signal });
+    root.addEventListener('toggle', scheduleRefresh, { capture: true, signal: events.signal });
+    document.fonts.ready.then(() => { if (!dead) { setup(); scheduleRefresh(); } });
+    setup(); scheduleRefresh();
+    disposePage = () => {
+      dead = true; events.abort(); clearTimeout(refreshTimer); clearTimeout(resizeTimer);
+      observer.disconnect(); modalObserver.disconnect(); stopMode(); panel.hidden = true;
+      delete root.dataset.wowMotionInitialized; delete root.dataset.wowMotion;
+    };
+  }
+  const disposeOwner = () => {
+    bootstrap.abort();
+    disposePage();
+    if (host.__wowMotionOwner === disposeOwner) delete host.__wowMotionOwner;
+  };
+  host.__wowMotionOwner = disposeOwner;
+  document.addEventListener('astro:page-load', init, { signal: bootstrap.signal });
+  document.addEventListener('astro:before-swap', () => disposePage(), { signal: bootstrap.signal });
+  window.addEventListener('pagehide', () => disposePage(), { signal: bootstrap.signal });
+  window.addEventListener('pageshow', (event) => { if (event.persisted) init(); }, { signal: bootstrap.signal });
+  init();
+</script>

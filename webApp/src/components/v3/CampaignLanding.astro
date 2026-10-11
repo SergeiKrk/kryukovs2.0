@@ -1,0 +1,234 @@
+---
+import "@fontsource-variable/oswald";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navigation from "./Navigation";
+import Footer from "./Footer.astro";
+import { MAX_HREF, TELEGRAM_HREF } from "./messengerLinks";
+import { projects } from "../../data/v3";
+import type { CampaignLanding as Campaign } from "../../data/campaignLandings";
+import { Picture } from "astro:assets";
+import heroLaptop from "../../assets/v3/development-laptop.png";
+import heroHead from "../../assets/v3/hero-stone-head.png";
+import processDesign from "../../assets/v3/process-design.png";
+import processLaunch from "../../assets/v3/process-launch.png";
+import "../../styles/v3.css";
+import "../../styles/campaign-landing.css";
+
+interface Props { campaign: Campaign }
+const { campaign } = Astro.props;
+const isWow = campaign.id === "wow";
+const selectedProjects = isWow ? [projects[3], projects[0]] : [projects[3], projects[2]];
+const mailSubject = encodeURIComponent(`Вопрос по предложению: ${campaign.eyebrow}`);
+---
+
+<BaseLayout
+  title={campaign.title}
+  description={campaign.description}
+  canonical={campaign.path}
+  image={isWow ? "/assets/v3/hero-stone-head.png" : "/assets/v3/development-laptop.png"}
+  noindex={true}
+  variant="cinematic"
+>
+  <Navigation slot="before-main" client:load />
+
+  <div class:list={["v3-campaign", `v3-campaign--${campaign.id}`]} data-v3-campaign>
+    <section class="v3-campaign__hero" aria-labelledby="campaign-title">
+      <div class="v3-shell v3-campaign__hero-grid">
+        <div class="v3-campaign__hero-copy">
+          <p class="v3-kicker">{campaign.eyebrow}</p>
+          <h1 id="campaign-title">{campaign.headline}</h1>
+          <p class="v3-campaign__lead">{campaign.lead}</p>
+          <div class="v3-campaign__terms" aria-label="Стоимость и срок">
+            <div><span>Стоимость работ</span><strong>{campaign.price}</strong></div>
+            <div><span>Срок реализации</span><strong>{campaign.duration}</strong></div>
+          </div>
+          <p class="v3-campaign__start-condition">{campaign.startCondition}</p>
+          <div class="v3-campaign__actions">
+            <a class="v3-button v3-button--primary" href="#contact">{campaign.primaryAction} <span aria-hidden="true">↗</span></a>
+            <a class="v3-campaign__text-link" href="#scope">Что входит <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <div class="v3-campaign__visual" aria-hidden="true" data-campaign-visual>
+          <div class="v3-campaign__visual-orbit v3-campaign__visual-orbit--outer"></div>
+          <div class="v3-campaign__visual-orbit v3-campaign__visual-orbit--inner"></div>
+          <Picture class="v3-campaign__visual-stone" src={heroHead} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="640" height="640" loading="eager" decoding="async" />
+          <Picture class="v3-campaign__visual-laptop" src={heroLaptop} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="1050" height="800" loading="eager" decoding="async" />
+          <div class="v3-campaign__visual-ticket v3-campaign__visual-ticket--first">
+            <span>{isWow ? "ПЕРВЫЙ ЭКРАН" : "ОБЪЯВЛЕНИЕ"}</span>
+            <strong>{isWow ? "Смысл" : "Оффер"}</strong>
+          </div>
+          <div class="v3-campaign__visual-ticket v3-campaign__visual-ticket--second">
+            <span>{isWow ? "ПЕРЕХОД" : "ПОСАДОЧНАЯ"}</span>
+            <strong>{isWow ? "Движение" : "Действие"}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="v3-shell v3-campaign__hero-foot" aria-label="Условия предложения">
+        <span>01 / одна страница</span>
+        <span>{isWow ? "02 / анимация для desktop и mobile" : "02 / Директ в вашем кабинете"}</span>
+        <span>03 / прямой разговор с разработчиком</span>
+      </div>
+    </section>
+
+    <section id="scope" class="v3-campaign__scope v3-section" aria-labelledby="campaign-scope-title">
+      <div class="v3-shell">
+        <div class="v3-section-heading v3-section-heading--split">
+          <div><p class="v3-kicker">Состав работ</p><h2 id="campaign-scope-title">{isWow ? "Эффект работает на идею." : "Страница и объявление говорят об одном."}</h2></div>
+          <p>{isWow ? "Выразительность не должна стоить скорости чтения, доступности или понятного действия." : "Одна связка вместо двух частей, которые посетителю пришлось бы соединять самому."}</p>
+        </div>
+        <div class="v3-campaign__scope-grid">
+          {campaign.scope.map((item, index) => (
+            <article class="v3-campaign__scope-card">
+              <span class="v3-campaign__card-number">0{index + 1}</span>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="v3-campaign__showcase v3-section" aria-labelledby="campaign-showcase-title">
+      <div class="v3-shell v3-campaign__showcase-grid">
+        <div class="v3-campaign__showcase-copy">
+          <p class="v3-kicker">Как это выглядит</p>
+          <h2 id="campaign-showcase-title">{isWow ? "Движение. Пауза. Действие." : "От объявления — к понятному действию."}</h2>
+          <p>{isWow ? "Элементы появляются по мере чтения. На телефоне сценарий короче; при отключённой анимации вся информация доступна сразу." : "Посетитель приходит с конкретным запросом. Первый экран продолжает обещание объявления, а страница ведёт к одному следующему шагу."}</p>
+          <a class="v3-button v3-button--quiet" href="#contact">Обсудить этот формат <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="v3-campaign__showcase-art" aria-hidden="true" data-campaign-showcase>
+          <Picture src={isWow ? processDesign : processLaunch} formats={["avif", "webp"]} fallbackFormat="png" alt="" width="512" height="512" loading="lazy" decoding="async" />
+          <div class="v3-campaign__showcase-caption">
+            <span>{isWow ? "MOTION / MEANING" : "AD / LANDING"}</span>
+            <strong>{isWow ? "Внимание — смыслу" : "Один маршрут"}</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="v3-campaign__process v3-section" aria-labelledby="campaign-process-title">
+      <div class="v3-shell">
+        <div class="v3-section-heading v3-section-heading--split">
+          <div><p class="v3-kicker">Порядок работы</p><h2 id="campaign-process-title">Четыре понятных шага.</h2></div>
+          <p>Этапы показывают состав работы; точный момент старта фиксируем после материалов и согласования задачи.</p>
+        </div>
+        <ol class="v3-campaign__steps">
+          {campaign.steps.map((step, index) => (
+            <li>
+              <span>0{index + 1}</span>
+              <h3>{step.title}</h3>
+              <p>{step.description}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="v3-campaign__work v3-section" aria-labelledby="campaign-work-title">
+      <div class="v3-shell">
+        <div class="v3-section-heading v3-section-heading--split">
+          <div><p class="v3-kicker">Реальные проекты</p><h2 id="campaign-work-title">Посмотрите на выполненную работу.</h2></div>
+          <p>Это примеры разработки и интерфейсов, а не обещание, что каждый проект сделан за {campaign.duration} или в составе этого предложения.</p>
+        </div>
+        <div class="v3-campaign__work-grid">
+          {selectedProjects.map((project) => (
+            <article class="v3-campaign__work-card">
+              <a href={project.href} target="_blank" rel="noopener noreferrer" aria-label={`Открыть проект ${project.name} в новой вкладке`}>
+                <img src={project.desktopImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                <span><strong>{project.name}</strong><small>{project.category} ↗</small></span>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="v3-campaign__boundaries v3-section" aria-labelledby="campaign-boundaries-title">
+      <div class="v3-shell v3-campaign__boundaries-grid">
+        <div><p class="v3-kicker">До начала</p><h2 id="campaign-boundaries-title">Что важно знать.</h2></div>
+        <ul>{campaign.boundaries.map((boundary) => <li>{boundary}</li>)}</ul>
+      </div>
+    </section>
+
+    <section class="v3-campaign__faq v3-section" aria-labelledby="campaign-faq-title">
+      <div class="v3-shell v3-campaign__faq-grid">
+        <div><p class="v3-kicker">Коротко о главном</p><h2 id="campaign-faq-title">Частые вопросы.</h2></div>
+        <div>
+          {campaign.questions.map((item) => (
+            <details>
+              <summary>{item.question}<span aria-hidden="true">+</span></summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="v3-campaign__contact v3-section" aria-labelledby="campaign-contact-title">
+      <div class="v3-shell v3-campaign__contact-grid">
+        <div>
+          <p class="v3-kicker">Следующий шаг</p>
+          <h2 id="campaign-contact-title">{isWow ? "Покажите, что нужно оживить." : "Расскажите, что будем запускать."}</h2>
+          <p>Напишите, какое предложение нужно показать, что уже готово и когда планируете старт. Я отвечу лично и уточню состав работ.</p>
+          <a class="v3-campaign__next" href={campaign.nextPage.href}>{campaign.nextPage.label} <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="v3-campaign__contact-panel">
+          <p class="v3-campaign__contact-label">{campaign.eyebrow}</p>
+          <strong>{campaign.price} <span>/ {campaign.duration}</span></strong>
+          <a class="v3-button v3-button--primary" href={TELEGRAM_HREF} target="_blank" rel="noopener noreferrer">Написать в Telegram ↗</a>
+          <a class="v3-button v3-button--quiet" href={MAX_HREF} target="_blank" rel="noopener noreferrer">Написать в MAX ↗</a>
+          <a class="v3-campaign__email" href={`mailto:ksv.progect@gmail.com?subject=${mailSubject}`}>Или отправить письмо ↗</a>
+          <p>Сообщение откроется в выбранном канале — отправляете его вы сами.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <Footer slot="after-main" />
+
+  <script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+    const root = document.querySelector<HTMLElement>("[data-v3-campaign]");
+    if (root) {
+      let context: gsap.Context | undefined;
+      const motionAllowed = () => {
+        let savedOff = false;
+        try { savedOff = sessionStorage.getItem("v3-motion") === "off"; } catch { /* Storage is optional. */ }
+        return !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          && document.documentElement.dataset.motion !== "off"
+          && !savedOff;
+      };
+      const init = () => {
+        context?.revert();
+        if (!motionAllowed()) return;
+        context = gsap.context(() => {
+          gsap.fromTo("[data-campaign-visual] img, .v3-campaign__visual-ticket",
+            { y: 24, scale: 0.94 },
+            { y: 0, scale: 1, duration: 0.75, stagger: 0.12, ease: "back.out(1.35)", clearProps: "transform" },
+          );
+          gsap.fromTo("[data-campaign-showcase]",
+            { y: 36, scale: 0.94 },
+            { y: 0, scale: 1, duration: 0.85, ease: "elastic.out(1, 0.55)", clearProps: "transform",
+              scrollTrigger: { trigger: "[data-campaign-showcase]", start: "top 88%", once: true } },
+          );
+          gsap.utils.toArray<HTMLElement>(".v3-campaign__scope-card, .v3-campaign__steps li, .v3-campaign__work-card").forEach((item) => {
+            gsap.fromTo(item,
+              { y: 20 },
+              { y: 0, duration: 0.48, ease: "power2.out", clearProps: "transform",
+                scrollTrigger: { trigger: item, start: "top 88%", once: true } },
+            );
+          });
+        }, root);
+      };
+      init();
+      const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const onChange = () => init();
+      preference.addEventListener("change", onChange);
+      window.addEventListener("v3:motion", onChange);
+      window.addEventListener("pagehide", () => context?.revert(), { once: true });
+    }
+  </script>
+</BaseLayout>

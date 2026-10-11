@@ -1,7 +1,14 @@
 ---
 import { MESSENGERS_PATH, TELEGRAM_HREF } from "./messengerLinks";
 
+interface Props {
+  ctaHref?: string;
+  ctaLabel?: string;
+  ctaDescription?: string;
+}
+
 const year = new Date().getFullYear();
+const { ctaHref = MESSENGERS_PATH, ctaLabel = "Написать о проекте", ctaDescription = "Опишите задачу в нескольких словах. Помогу определить разумный первый шаг." }: Props = Astro.props;
 ---
 
 <footer id="site-footer" class="v3-footer" aria-labelledby="v3-footer-title">
@@ -14,9 +21,9 @@ const year = new Date().getFullYear();
       </div>
       <div class="v3-footer__contact">
         <p class="v3-footer__contact-label">Начать разговор</p>
-        <p>Опишите задачу в нескольких словах. Помогу определить разумный первый шаг.</p>
-        <a class="v3-button v3-button--primary v3-button--hero" href={MESSENGERS_PATH}>
-          Написать о проекте
+        <p>{ctaDescription}</p>
+        <a class="v3-button v3-button--primary v3-button--hero" href={ctaHref} data-wow-cta-position={ctaHref === "#contact" ? "footer" : undefined}>
+          {ctaLabel}
         </a>
         <p class="v3-footer__contact-note">Можно сразу выбрать удобный мессенджер.</p>
       </div>

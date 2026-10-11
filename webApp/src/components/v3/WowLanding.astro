@@ -1,0 +1,220 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navigation from "./Navigation";
+import Footer from "./Footer.astro";
+import WowLandingMotion from "./WowLandingMotion.astro";
+import { MAX_HREF, TELEGRAM_HREF } from "./messengerLinks";
+import { getWowContactLinks } from "./wowContact.mjs";
+import { projects } from "../../data/v3";
+import "../../styles/v3.css";
+import "../../styles/wow-landing.css";
+
+const caseNames = ["Росснаб73", "Зелёная крона", "СЭС МСК"];
+const cases = caseNames.map((name) => {
+  const project = projects.find((item) => item.name === name);
+  if (!project) throw new Error(`Не найден проект для /landing-wow/: ${name}`);
+  return project;
+});
+const pageTitle = "Анимированный лендинг за 2 дня — 35 000 ₽ | Сергей Крюков";
+const pageDescription = "Анимированный лендинг за 35 000 ₽ и 2 дня. Тексты, домен на 1 год и хостинг на 3 месяца включены; регистрация на заказчика.";
+const pageCanonical = "/landing-wow/";
+const pageNoindex = true;
+const contactLinks = getWowContactLinks({ telegramHref: TELEGRAM_HREF });
+const faq = [
+  { question: "Нужно ли мне написать тексты до старта?", answer: "Нет. Расскажите о бизнесе, продукте, аудитории и предложении — тексты для лендинга подготовлю я в рамках двухдневной работы. Если есть свои формулировки, используем их как исходный материал." },
+  { question: "Будет ли wow-эффект на телефоне?", answer: "Да. Для телефона предусмотрены отдельная композиция и движение. Содержание и кнопка остаются доступными и при уменьшенной анимации." },
+  { question: "Когда начинаются 2 дня?", answer: "После согласования предложения и получения сведений о бизнесе и продукте, а также данных для регистрации домена и хостинга на ваше имя. Подготовка текстов входит в эти 2 дня." },
+  { question: "На какой срок входят домен и хостинг?", answer: "Домен на 1 год и хостинг на 3 месяца включены в 35 000 ₽. Домен и аккаунты оформляются на вас. Продление оплачиваете вы или я — как договоримся." },
+  { question: "Входит ли настройка Яндекс.Директа?", answer: "Нет. Если нужны лендинг и настройка рекламы вместе, посмотрите отдельный формат." },
+];
+const additionalSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Service",
+      name: "Лендинг с wow-эффектом",
+      serviceType: "Разработка анимированного лендинга",
+      description: "Один лендинг под одно согласованное предложение. Тексты, домен на 1 год и хостинг на 3 месяца входят в стоимость. Сложная 3D-сцена, личный кабинет и дополнительные интеграции требуют отдельной оценки.",
+      provider: { "@type": "Person", name: "Сергей Крюков" },
+      offers: {
+        "@type": "Offer",
+        price: "35000",
+        priceCurrency: "RUB",
+        description: "2 дня после согласования предложения, получения сведений о бизнесе и продукте и данных, необходимых для регистрации домена и хостинга на имя заказчика.",
+      },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faq.map(({ question, answer }) => ({
+        "@type": "Question",
+        name: question,
+        acceptedAnswer: { "@type": "Answer", text: answer },
+      })),
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={pageCanonical}
+  image="/assets/v3/identity-frames/frame-0000.webp"
+  noindex={pageNoindex}
+  variant="cinematic"
+>
+  <Navigation slot="before-main" client:load ctaHref="#contact" ctaLabel="Обсудить лендинг" />
+
+  <div id="wow-root" class="v3 wow-root" data-wow-root>
+    <section class="wow-hero" data-wow-hero aria-labelledby="campaign-title">
+      <div class="v3-shell">
+        <div class="wow-hero__stage" data-wow-stage>
+          <picture class="wow-hero__media" data-wow-media aria-hidden="true">
+            <source media="(prefers-reduced-motion: reduce)" srcset="/assets/v3/identity-frames/frame-0106.webp" />
+            <img data-wow-frame src="/assets/v3/identity-frames/frame-0000.webp" alt="" width="1280" height="720" loading="eager" fetchpriority="high" decoding="async" />
+          </picture>
+          <div class="wow-hero__shade" aria-hidden="true"></div>
+          <div class="wow-hero__copy" data-wow-copy>
+            <p class="v3-kicker">Лендинг, который хочется досмотреть</p>
+            <h1 id="campaign-title">Лендинг с wow-эффектом за 2 дня — 35 000 ₽</h1>
+            <p class="wow-hero__lead">Покажу ваш продукт через выразительный первый экран, движение по прокрутке и понятный путь к обращению. Анимация работает и на телефоне; предложение и кнопка остаются на виду.</p>
+            <div class="wow-hero__terms" aria-label="Цена и срок"><strong>35 000 ₽</strong><span aria-hidden="true">/</span><strong>2 дня</strong></div>
+            <p class="wow-hero__included">Тексты, домен на 1 год и хостинг на 3 месяца входят в 35 000 ₽.</p>
+            <p class="wow-hero__start">2 дня считаем после согласования предложения, получения сведений о бизнесе и продукте и данных, нужных для регистрации домена и хостинга на ваше имя. Готовые тексты не нужны — я подготовлю их в ходе работы.</p>
+            <div class="wow-hero__actions">
+          <a class="v3-button v3-button--primary wow-button" href="#contact" data-wow-cta-position="hero">Обсудить лендинг <span aria-hidden="true">↗</span></a>
+              <a class="wow-link" href="#cases">Смотреть работы <span aria-hidden="true">↓</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="result" class="wow-section wow-result" data-wow-result aria-labelledby="campaign-showcase-title">
+      <div class="v3-shell wow-split">
+        <div class="wow-section__intro">
+          <p class="v3-kicker">Что получит ваш продукт</p>
+          <h2 id="campaign-showcase-title">Впечатление, которое помогает понять предложение</h2>
+          <p>Движение должно подвести взгляд к сути, а не заставлять искать её. Поэтому сначала — ваше предложение, затем детали, доказательства и удобный способ связаться.</p>
+          <a class="wow-link" href="#cases">Посмотреть примеры работ <span aria-hidden="true">↘</span></a>
+        </div>
+        <ol class="wow-result__list">
+          <li><span>01 / Первый экран</span><p>Человек сразу видит, что вы предлагаете и куда нажать дальше.</p></li>
+          <li><span>02 / Показ продукта</span><p>Анимация помогает раскрыть форму, детали или последовательность, которые трудно показать одним статичным кадром.</p></li>
+          <li><span>03 / Телефон</span><p>Для небольшого экрана движение и композиция подстраиваются отдельно; текст и контакт остаются читаемыми. Если посетитель уменьшил движение в настройках устройства, смысл страницы сохраняется.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="cases" class="wow-section wow-cases" data-wow-cases aria-labelledby="campaign-work-title">
+      <div class="v3-shell">
+        <div class="wow-section__head">
+          <div><p class="v3-kicker">Работы</p><h2 id="campaign-work-title">Посмотрите, как я собираю страницы</h2></div>
+          <p>Ниже — проекты из моего портфолио. Они показывают работу со структурой и подачей. Это не примеры пакета за 35 000 ₽ и не доказательство срока в 2 дня.</p>
+        </div>
+        <div class="wow-cases__grid">
+          {cases.map((project, index) => (
+            <article class="wow-case">
+              <a href={project.href} target="_blank" rel="nofollow noopener noreferrer" aria-labelledby={`wow-case-${index}-title`} aria-describedby={`wow-case-${index}-description`}>
+                <figure class="wow-case__media" aria-hidden="true">
+                  <img class="wow-case__device wow-case__device--desktop" src={project.desktopImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                  <img class="wow-case__device wow-case__device--laptop" src={project.laptopImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                  <img class="wow-case__device wow-case__device--phone" src={project.phoneImage} alt="" width="1024" height="1024" loading="lazy" decoding="async" />
+                </figure>
+                <div class="wow-case__content">
+                  <p class="wow-case__category">{project.category}</p>
+                  <h3 id={`wow-case-${index}-title`}>{project.name}</h3>
+                  <p id={`wow-case-${index}-description`}>{project.description}</p>
+                  <ul class="wow-case__tags" aria-label="Направления работы">{project.tags.map((tag) => <li>{tag}</li>)}</ul>
+                  <strong>Открыть проект <span aria-hidden="true">↗</span></strong>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+        <a class="v3-button v3-button--primary wow-button wow-cases__cta" href="#contact" data-wow-cta-position="cases">Обсудить лендинг <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <section id="scope" class="wow-section wow-scope" data-wow-scope aria-labelledby="campaign-scope-title">
+      <div class="v3-shell wow-split">
+        <div class="wow-section__intro"><p class="v3-kicker">Что входит</p><h2 id="campaign-scope-title">Один лендинг. 35 000 ₽ за весь пакет</h2><p>Вы рассказываете о бизнесе и предложении. Я превращаю эти сведения в текст и страницу с выразительной подачей.</p></div>
+        <div>
+          <ul class="wow-scope__list">
+            <li><h3>Тексты и структура</h3><p>Сформулирую предложение и выстрою последовательность блоков из ваших исходных сведений.</p></li>
+            <li><h3>Дизайн и разработка лендинга</h3><p>Оформлю страницу вокруг одного предложения и действия, к которому она ведёт.</p></li>
+            <li><h3>Анимация и версия для телефона</h3><p>Движение поддерживает историю страницы, а мобильная композиция сохраняет эффект и читаемость.</p></li>
+            <li><h3>Домен и хостинг</h3><p>Регистрация на ваше имя, домен на 1 год и хостинг на 3 месяца входят в стоимость пакета. Дальнейшее продление оплачиваете вы или я — по договорённости.</p></li>
+          </ul>
+          <div class="wow-scope__boundary">
+            <h3 id="campaign-boundaries-title">Граница пакета</h3>
+            <p>В стоимость входит один лендинг под одно согласованное предложение. Сложная 3D-сцена, личный кабинет и дополнительные интеграции требуют отдельной оценки.</p>
+            <p>Настройка Яндекс.Директа в этот пакет не входит.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" class="wow-section wow-process" data-wow-process aria-labelledby="campaign-process-title">
+      <div class="v3-shell wow-split">
+        <div class="wow-section__intro"><p class="v3-kicker">Как проходят 2 дня</p><h2 id="campaign-process-title">От ваших вводных — к готовой странице</h2><p>Согласуем ключевое предложение и получим исходные сведения о бизнесе и продукте, а также данные, нужные для регистрации домена и хостинга на ваше имя. С этого момента отсчитываются 2 дня. Готовый текст приносить не нужно.</p></div>
+        <div>
+          <ol class="wow-process__list">
+            <li><span>01 / Сначала</span><h3>Смысл и текст</h3><p>Уточняю, что важно показать, пишу заголовки и основной текст, собираю порядок блоков.</p></li>
+            <li><span>02 / Затем</span><h3>Страница и движение</h3><p>Оформляю лендинг, добавляю анимацию для большого и малого экрана.</p></li>
+            <li><span>03 / В конце</span><h3>Проверка</h3><p>Смотрю читаемость, движение и путь к контакту на разных размерах экрана и передаю страницу.</p></li>
+          </ol>
+          <a class="wow-link" href="#contact" data-wow-cta-position="process">Расскажите о вашем предложении <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="author" class="wow-section wow-author" data-wow-author aria-labelledby="campaign-author-title">
+      <div class="v3-shell wow-split">
+        <div><p class="v3-kicker">Автор</p><h2 id="campaign-author-title">На связи Сергей Крюков</h2></div>
+        <div><p>Я отвечаю за страницу: от формулировки предложения до визуальной подачи и разработки. Вы общаетесь со мной напрямую, поэтому можно сразу показать продукт, примеры желаемого настроения и обсудить, где движение поможет раскрыть его лучше.</p><a class="v3-button v3-button--primary wow-button" href="#contact" data-wow-cta-position="author">Обсудить лендинг <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+
+    <section id="faq" class="wow-section wow-faq" data-wow-faq aria-labelledby="campaign-faq-title">
+      <div class="v3-shell wow-split">
+        <div><p class="v3-kicker">Коротко о главном</p><h2 id="campaign-faq-title">Частые вопросы</h2></div>
+        <div class="wow-faq__items">
+          {faq.map((item, index) => <details><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{index === 4 ? <>Нет. Если нужны лендинг и настройка рекламы вместе, посмотрите <a href="/landing-direct/">отдельный формат</a>.</> : item.answer}</p></details>)}
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="wow-section wow-contact" data-wow-contact aria-labelledby="campaign-contact-title">
+      <div class="v3-shell wow-split">
+        <div><p class="v3-kicker">Следующий шаг</p><h2 id="campaign-contact-title">Расскажите, что хотите показать</h2><p>Пришлите пару предложений о продукте, ссылку на действующий сайт, если он есть, и примеры подачи, которые вам нравятся. Я помогу определить главный акцент будущей страницы.</p></div>
+        <div class="wow-contact__channels">
+          <p class="wow-contact__offer">Лендинг с wow-эффектом — <strong>35 000 ₽, 2 дня</strong> после согласования предложения, получения сведений о бизнесе и продукте и данных для регистрации домена и хостинга на ваше имя.</p>
+          <p class="wow-contact__label">Обсудить лендинг</p>
+          <a class="v3-button v3-button--primary wow-button" href={contactLinks.telegram} target="_blank" rel="noopener noreferrer" data-wow-cta-position="telegram">Продолжить в Telegram <span aria-hidden="true">↗</span></a>
+          <a class="v3-button v3-button--quiet wow-button" href={contactLinks.max} target="_blank" rel="noopener noreferrer" data-wow-cta-position="max">Подготовить сообщение в MAX <span aria-hidden="true">↗</span></a>
+          <p class="wow-contact__note">Telegram откроет черновик, MAX предложит выбрать чат, а почта подготовит письмо. Ничего не отправится, пока вы сами не нажмёте «Отправить».</p>
+          <a class="wow-link" href={contactLinks.email} data-wow-cta-position="email">Или подготовить письмо <span aria-hidden="true">↗</span></a>
+          <a class="wow-link wow-contact__direct-max" href={MAX_HREF} target="_blank" rel="noopener noreferrer">Открыть профиль Сергея в MAX <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+    <div class="wow-mobile-cta" data-wow-mobile-cta hidden><span>35 000 ₽ · 2 дня</span><a href="#contact" data-wow-cta-position="mobile-sticky">Обсудить</a></div>
+  </div>
+
+  <Footer slot="after-main" ctaHref="#contact" ctaLabel="Обсудить лендинг" ctaDescription="Лендинг с wow-эффектом — 35 000 ₽ и 2 дня после согласования предложения, получения сведений о бизнесе и продукте и данных, нужных для регистрации домена и хостинга на ваше имя." />
+  <WowLandingMotion />
+</BaseLayout>
+{!pageNoindex && <script type="application/ld+json" is:inline set:html={JSON.stringify(additionalSchema)} />}
+<script>
+  import { getWowCtaEvent } from "./wowContact.mjs";
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const cta = target.closest<HTMLElement>("[data-wow-cta-position]");
+    if (!cta) return;
+    const goal = getWowCtaEvent(cta.dataset.wowCtaPosition ?? "");
+    if (goal && typeof window.ym === "function") window.ym(112080682, "reachGoal", goal.name, goal.params);
+  });
+</script>

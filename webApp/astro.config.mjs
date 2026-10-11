@@ -27,7 +27,7 @@ export default defineConfig({
     "/services/seo-audit/": "/#services",
     "/contacts/": "/#calculator",
   },
-  integrations: [react(), sitemap({ filter: (page) => page !== "https://kryukovs.ru/" && !page.includes("/v3/") && !page.includes("/messengers/") })],
+  integrations: [react(), sitemap({ filter: (page) => page !== "https://kryukovs.ru/" && !page.includes("/v3/") && !page.includes("/messengers/") && !page.includes("/landing-direct/") && !page.includes("/landing-wow/") })],
   vite: {
     server: {
       host: "0.0.0.0",

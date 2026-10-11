@@ -12,7 +12,9 @@ const links = [
 
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
-export default function Navigation() {
+type NavigationProps = { ctaHref?: string; ctaLabel?: string };
+
+export default function Navigation({ ctaHref = "/messengers/", ctaLabel = "Рассчитать проект" }: NavigationProps) {
   const [open, setOpen] = useState(false);
   const [motionEnabled, setMotionEnabled] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -194,8 +196,8 @@ export default function Navigation() {
             </a>
           </div>
         </div>
-        <a className="v3-nav__cta v3-nav__cta--featured" href="/messengers/" data-v3-open-calculator onClick={closeMenu}>
-          <span>Рассчитать проект</span>
+        <a className="v3-nav__cta v3-nav__cta--featured" href={ctaHref} data-v3-open-calculator={ctaHref === "/messengers/" ? "true" : undefined} data-wow-cta-position={ctaHref === "#contact" ? "navigation" : undefined} onClick={closeMenu}>
+          <span>{ctaLabel}</span>
         </a>
         <button
           ref={menuButtonRef}
@@ -237,8 +239,8 @@ export default function Navigation() {
           >
             {reducedMotion ? "Анимация: ограничена системой" : `Анимация: ${motionEnabled ? "включена" : "выключена"}`}
           </button>
-          <a className="v3-nav__panel-cta" href="/messengers/" data-v3-open-calculator onClick={closeMenu}>
-            Рассчитать проект <span aria-hidden="true">↗</span>
+          <a className="v3-nav__panel-cta" href={ctaHref} data-v3-open-calculator={ctaHref === "/messengers/" ? "true" : undefined} data-wow-cta-position={ctaHref === "#contact" ? "navigation" : undefined} onClick={closeMenu}>
+            {ctaLabel} <span aria-hidden="true">↗</span>
           </a>
           <p>Сергей Крюков<br />Независимый дизайнер и разработчик</p>
         </div>

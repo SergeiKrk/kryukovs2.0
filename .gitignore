@@ -6,6 +6,7 @@ webApp/dist/
 webApp/.astro/
 .DS_Store
 *.log
+.env
 
 # Generated local outputs
 storybook-static/
@@ -26,3 +27,8 @@ design-reference.png
 implementation-home-desktop.png
 implementation-home-desktop-v2.png
 resume-reference.png
+
+# Large local asset dumps
+Pinterest/
+outputs/
+Авито/

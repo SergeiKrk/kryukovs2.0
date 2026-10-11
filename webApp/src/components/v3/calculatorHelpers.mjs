@@ -25,8 +25,8 @@ export const SITE_FORMATS = [
   {
     id: "business-card",
     title: "Сайт-визитка",
-    priceFrom: 30000,
-    priceLabel: "от 30 000 ₽",
+    priceFrom: 40000,
+    priceLabel: "от 40 000 ₽",
     shortDescription: "Небольшой сайт о специалисте, компании или услуге.",
     basePages: 3,
     volume: true,
@@ -35,8 +35,8 @@ export const SITE_FORMATS = [
   {
     id: "catalog",
     title: "Каталог услуг / товаров",
-    priceFrom: 40000,
-    priceLabel: "от 40 000 ₽",
+    priceFrom: 45000,
+    priceLabel: "от 45 000 ₽",
     shortDescription: "Отдельные страницы для услуг или товаров.",
     basePages: 4,
     volume: true,
@@ -45,8 +45,8 @@ export const SITE_FORMATS = [
   {
     id: "corporate",
     title: "Корпоративный сайт",
-    priceFrom: 50000,
-    priceLabel: "от 50 000 ₽",
+    priceFrom: 60000,
+    priceLabel: "от 60 000 ₽",
     shortDescription: "Направления, услуги, экспертиза и блог компании.",
     basePages: 6,
     volume: true,
@@ -280,15 +280,16 @@ function getSiteCost(answers) {
   const pageCount = format.volume ? clampNumber(answers.sitePageCount, format.basePages, SITE_VOLUME_MAX) : format.basePages;
   const articleCount = format.hasArticles ? clampNumber(answers.siteArticleCount, 0, ARTICLE_MAX) : 0;
   const extraPages = Math.max(0, pageCount - format.basePages);
-  const pagesCost = extraPages * 2000;
+  const pagesCost = extraPages * 2500;
   const articlesCost = articleCount * 2000;
   const contentBase = format.priceFrom + pagesCost + articlesCost;
   const semantic = format.volume && answers.promotionSemantic === true;
   const semanticBase = semantic ? contentBase * 1.5 : contentBase;
   const animated = answers.siteDesign === "animated";
-  const animationCost = animated ? format.priceFrom * 0.4 : 0;
-  const siteSubtotal = semanticBase + animationCost;
   const directIncluded = format.id === "landing-direct";
+  const animationBase = directIncluded ? getSiteFormat("landing").priceFrom : format.priceFrom;
+  const animationCost = animated ? animationBase * 0.4 : 0;
+  const siteSubtotal = semanticBase + animationCost;
   const directCount = format.id === "landing" ? DIRECT_MIN : clampNumber(answers.promotionDirectCount, DIRECT_MIN, DIRECT_MAX);
   const directSelected = !directIncluded && answers.promotionDirect === true;
   const directCost = directSelected ? 10000 + Math.max(0, directCount - 1) * 7500 : 0;
@@ -301,7 +302,7 @@ function getSiteCost(answers) {
   if (pagesCost > 0) lines.push({ id: "pages", label: `Дополнительные страницы: ${extraPages}`, amount: pagesCost });
   if (articlesCost > 0) lines.push({ id: "articles", label: `Дополнительные статьи: ${articleCount}`, amount: articlesCost });
   if (semantic) lines.push({ id: "semantic", label: "Глубокая смысловая архитектура × 1,5", amount: semanticBase - contentBase });
-  if (animated) lines.push({ id: "animation", label: "Дизайн с анимацией: +40% от базы", amount: animationCost });
+  if (animated) lines.push({ id: "animation", label: directIncluded ? "Дизайн с анимацией: +40% от обычного лендинга" : "Дизайн с анимацией: +40% от базы", amount: animationCost });
   if (directIncluded) lines.push({ id: "direct-included", label: "Настройка Яндекс.Директа включена в формат", amount: 0, note: "Бюджет рекламы отдельно" });
   if (directCost > 0) lines.push({ id: "direct", label: `Яндекс.Директ: ${directCount} ${directCount === 1 ? "услуга или товар" : "услуги или товара"}`, amount: directCost, note: "Рекламный бюджет отдельно" });
   if (seoMonthly !== null) lines.push({ id: "seo", label: "SEO-продвижение", amount: seoMonthly, unit: "month", note: "Ежемесячный платёж: 50% время, 50% размещения" });

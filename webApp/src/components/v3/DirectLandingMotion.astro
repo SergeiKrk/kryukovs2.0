@@ -1,0 +1,213 @@
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const hero = document.querySelector<HTMLElement>("[data-direct-hero]");
+  const scene = hero?.querySelector<HTMLElement>("[data-direct-scene]");
+  const canvas = hero?.querySelector<HTMLCanvasElement>("[data-direct-canvas]");
+  const context = canvas?.getContext("2d", { alpha: false });
+
+  if (hero && scene && canvas && context) {
+    const FRAME_COUNT = 107;
+    const CACHE_LIMIT = 16;
+    const LOAD_LIMIT = 3;
+    const LOOKAHEAD = 6;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const desktop = window.matchMedia("(min-width: 68rem)");
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    type FrameResource = { source: CanvasImageSource; width: number; height: number; release: () => void };
+
+    const cache = new Map<number, FrameResource>();
+    const loading = new Map<number, AbortController>();
+    const failed = new Set<number>();
+    let enabled = false;
+    let epoch = 0;
+    let requested = 0;
+    let displayed = -1;
+    let direction = 1;
+    let resizeFrame = 0;
+    let trigger: ScrollTrigger | undefined;
+
+    const framePath = (index: number) => `/assets/v3/identity-frames/frame-${String(index).padStart(4, "0")}.webp`;
+    const clampFrame = (index: number) => Math.max(0, Math.min(FRAME_COUNT - 1, index));
+
+    const allowed = () => {
+      let savedOff = false;
+      try { savedOff = sessionStorage.getItem("v3-motion") === "off"; } catch { /* Storage is optional. */ }
+      return desktop.matches && !reducedMotion.matches && !savedOff
+        && document.documentElement.dataset.motion !== "off" && connection?.saveData !== true;
+    };
+
+    const decodeFrame = async (index: number, signal: AbortSignal): Promise<FrameResource> => {
+      const response = await fetch(framePath(index), { signal });
+      if (!response.ok) throw new Error(`Identity frame ${index}: HTTP ${response.status}`);
+      const blob = await response.blob();
+      if (signal.aborted) throw new DOMException("Aborted", "AbortError");
+
+      if (typeof createImageBitmap === "function") {
+        const bitmap = await createImageBitmap(blob);
+        return { source: bitmap, width: bitmap.width, height: bitmap.height, release: () => bitmap.close() };
+      }
+
+      const url = URL.createObjectURL(blob);
+      const image = new Image();
+      try {
+        image.src = url;
+        await image.decode();
+        return {
+          source: image,
+          width: image.naturalWidth,
+          height: image.naturalHeight,
+          release: () => { image.src = ""; },
+        };
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    };
+
+    const sizeCanvas = () => {
+      const bounds = scene.getBoundingClientRect();
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.max(1, Math.round(bounds.width * pixelRatio));
+      const height = Math.max(1, Math.round(bounds.height * pixelRatio));
+      if (canvas.width === width && canvas.height === height) return;
+      canvas.width = width;
+      canvas.height = height;
+      if (displayed >= 0) draw(displayed);
+    };
+
+    const draw = (index: number) => {
+      const frame = cache.get(index);
+      if (!frame || !frame.width || !frame.height) return;
+      const scale = Math.max(canvas.width / frame.width, canvas.height / frame.height);
+      const width = frame.width * scale;
+      const height = frame.height * scale;
+      const x = (canvas.width - width) * 0.65;
+      const y = (canvas.height - height) * 0.5;
+      context.drawImage(frame.source, x, y, width, height);
+      displayed = index;
+      canvas.classList.add("is-ready");
+      canvas.dataset.directFrame = String(index);
+      hero.dataset.directState = "playing";
+    };
+
+    const trimCache = () => {
+      while (cache.size > CACHE_LIMIT) {
+        const candidates = [...cache.keys()].filter((index) => index !== displayed);
+        const furthest = candidates.sort((a, b) => Math.abs(b - requested) - Math.abs(a - requested))[0];
+        if (furthest === undefined) break;
+        cache.get(furthest)?.release();
+        cache.delete(furthest);
+      }
+    };
+
+    const priorityFrames = () => {
+      const indices = [requested];
+      for (let distance = 1; distance <= LOOKAHEAD; distance += 1) {
+        indices.push(requested + direction * distance, requested - direction * distance);
+      }
+      return indices.filter((index) => index >= 0 && index < FRAME_COUNT);
+    };
+
+    const pump = () => {
+      if (!enabled) return;
+      for (const index of priorityFrames()) {
+        if (loading.size >= LOAD_LIMIT) break;
+        if (cache.has(index) || loading.has(index) || failed.has(index)) continue;
+        const controller = new AbortController();
+        const batch = epoch;
+        loading.set(index, controller);
+        void decodeFrame(index, controller.signal)
+          .then((frame) => {
+            if (!enabled || batch !== epoch || controller.signal.aborted || Math.abs(index - requested) > LOOKAHEAD) {
+              frame.release();
+              return;
+            }
+            cache.set(index, frame);
+            if (index === requested) draw(index);
+            trimCache();
+          })
+          .catch(() => {
+            if (!controller.signal.aborted && batch === epoch) failed.add(index);
+          })
+          .finally(() => {
+            loading.delete(index);
+            pump();
+          });
+      }
+    };
+
+    const requestFrame = (index: number) => {
+      const next = clampFrame(index);
+      if (next !== requested) direction = next > requested ? 1 : -1;
+      requested = next;
+      for (const [queued, controller] of loading) {
+        if (Math.abs(queued - requested) > LOOKAHEAD) controller.abort();
+      }
+      if (cache.has(requested)) draw(requested);
+      pump();
+    };
+
+    const disable = () => {
+      enabled = false;
+      epoch += 1;
+      trigger?.kill(true);
+      trigger = undefined;
+      if (resizeFrame) cancelAnimationFrame(resizeFrame);
+      resizeFrame = 0;
+      for (const controller of loading.values()) controller.abort();
+      for (const frame of cache.values()) frame.release();
+      cache.clear();
+      failed.clear();
+      displayed = -1;
+      canvas.classList.remove("is-ready");
+      delete canvas.dataset.directFrame;
+      hero.dataset.directState = "static";
+    };
+
+    const enable = () => {
+      if (enabled) return;
+      enabled = true;
+      epoch += 1;
+      requested = 0;
+      displayed = -1;
+      hero.dataset.directState = "loading";
+      sizeCanvas();
+      trigger = ScrollTrigger.create({
+        trigger: scene,
+        start: () => `top top+=${document.querySelector<HTMLElement>(".v3-nav__bar")?.getBoundingClientRect().height ?? 0}`,
+        end: () => `+=${Math.max(500, Math.min(1100, window.innerHeight * 1.05))}`,
+        pin: true,
+        pinSpacing: true,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => requestFrame(Math.round(self.progress * (FRAME_COUNT - 1))),
+      });
+      requestFrame(Math.round(trigger.progress * (FRAME_COUNT - 1)));
+    };
+
+    const reconcile = () => {
+      if (allowed()) enable();
+      else if (enabled) disable();
+    };
+
+    const onResize = () => {
+      reconcile();
+      if (!enabled || resizeFrame) return;
+      resizeFrame = requestAnimationFrame(() => {
+        resizeFrame = 0;
+        sizeCanvas();
+        trigger?.refresh();
+      });
+    };
+
+    reducedMotion.addEventListener("change", reconcile);
+    desktop.addEventListener("change", reconcile);
+    window.addEventListener("v3:motion", reconcile);
+    window.addEventListener("resize", onResize, { passive: true });
+    window.addEventListener("pagehide", disable);
+    window.addEventListener("pageshow", reconcile);
+    reconcile();
+  }
+</script>
